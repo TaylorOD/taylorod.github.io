@@ -1,2 +1,2 @@
-Copy of Troy Leach (Former Actualize Coding Bootcamp Student) github website/resume. 
-troyleach.github.io
+Inspired by Troy Leach's (Former Actualize Coding Bootcamp Student) github website/resume. 
+Check him out at troyleach.github.io
