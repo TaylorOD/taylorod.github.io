@@ -1,0 +1,116 @@
+html, body {
+  min-height: 100%;
+  background-color: #000;
+  font-family: "Times New Roman", Times, serif;
+  color: white;
+}
+
+.design {
+  border: 0px solid red;
+}
+
+.custom-center {
+  text-align: center;
+}
+
+.invert{
+    -webkit-filter: invert(100%);
+}
+
+.envelope-icon {
+  width: 30px;
+  height 30px;
+}
+
+.container {
+  min-height: 100%;
+}
+
+.social-media-icon {
+  width: 24px;
+  height 24px;
+}
+
+
+.content {
+  color: white;
+
+}
+.img-container {
+  text-align: center;
+}
+
+.main-image {
+  margin-top: 5em;
+  width: 250px;
+  border-radius: 50%;
+  opacity: 0.8;
+  filter: alpha(opacity=50);
+}
+.my-information {
+  /*color: #04AE04;*/
+  /*color: #9D915A;*/
+  /*color: #E0DF20; yellow*/
+  color: #DEDEDC;
+  margin-top: 40px;
+  text-align: justify !important;
+}
+
+pre {
+  display: block;
+  font-family: monospace;
+  white-space: pre;
+  margin: 1.5em 0.1em;
+  font-size: 1.1em;
+}
+
+.troy-leach {
+  display: table;
+  vertical-align: middle;
+}
+
+.career-title {
+  text-align: center;
+  font-size: 1.875em;
+}
+
+.articles {
+  text-align: center;
+}
+
+.software-engineeer {
+  font-size: 1.5em;
+}
+
+.footer-text {
+  color: #999;
+  font-size: 75%;
+}
+
+
+/*EMX style*/
+.logos {
+  text-align: center;
+}
+
+.emx-logo {
+  background-color: #C72027;
+  padding: 10px;
+}
+
+.emx-engine-logo {
+  height: 52px;
+}
+
+.top-header {
+  top: 50px;
+}
+
+.cover-body {
+  border: 1px solid red;
+  color: #fff;
+  padding: 20px;
+  font-size: 20px;
+  text-align: justify;
+  font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+}
