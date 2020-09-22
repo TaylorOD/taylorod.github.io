@@ -17,11 +17,6 @@ html, body {
     -webkit-filter: invert(100%);
 }
 
-.envelope-icon {
-  width: 30px;
-  height 30px;
-}
-
 .container {
   min-height: 100%;
 }
@@ -64,10 +59,6 @@ pre {
   font-size: 1.1em;
 }
 
-.troy-leach {
-  display: table;
-  vertical-align: middle;
-}
 
 .career-title {
   text-align: center;
