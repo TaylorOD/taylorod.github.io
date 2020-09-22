@@ -3,6 +3,6 @@ Check him out at troyleach.github.io
 
 ---
 
-There is a jekyll blog compentent to this website which is hosted at taylordorsett.com
+There is a jekyll blog competent to this website which is hosted at taylordorsett.com
 
 ---
