@@ -36,7 +36,7 @@ html, body {
 }
 
 .main-image {
-  margin-top: 5em;
+  margin-top: 7em;
   width: 250px;
   border-radius: 50%;
   opacity: 0.8;
@@ -59,14 +59,10 @@ pre {
   font-size: 1.1em;
 }
 
-.troy-leach {
-  display: table;
-  vertical-align: middle;
-}
 
 .career-title {
   text-align: center;
-  font-size: 1.875em;
+  font-size: 1.800em;
 }
 
 .articles {
