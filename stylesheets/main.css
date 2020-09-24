@@ -43,9 +43,6 @@ html, body {
   filter: alpha(opacity=50);
 }
 .my-information {
-  /*color: #04AE04;*/
-  /*color: #9D915A;*/
-  /*color: #E0DF20; yellow*/
   color: #DEDEDC;
   margin-top: 40px;
   text-align: justify !important;
@@ -57,16 +54,6 @@ pre {
   white-space: pre;
   margin: 1.5em 0.1em;
   font-size: 1.1em;
-}
-
-
-.career-title {
-  text-align: center;
-  font-size: 1.800em;
-}
-
-.articles {
-  text-align: center;
 }
 
 .software-engineeer {
