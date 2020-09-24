@@ -65,21 +65,6 @@ pre {
   font-size: 75%;
 }
 
-
-/*EMX style*/
-.logos {
-  text-align: center;
-}
-
-.emx-logo {
-  background-color: #C72027;
-  padding: 10px;
-}
-
-.emx-engine-logo {
-  height: 52px;
-}
-
 .top-header {
   top: 50px;
 }
