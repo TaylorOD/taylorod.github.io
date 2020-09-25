@@ -13,10 +13,6 @@ html, body {
   text-align: center;
 }
 
-.invert{
-    -webkit-filter: invert(100%);
-}
-
 .container {
   min-height: 100%;
 }
