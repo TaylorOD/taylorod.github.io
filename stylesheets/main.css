@@ -1,4 +1,5 @@
-html, body {
+html,
+body {
   min-height: 100%;
   background-color: #000;
   font-family: "Times New Roman", Times, serif;
@@ -27,6 +28,7 @@ html, body {
   color: white;
 
 }
+
 .img-container {
   text-align: center;
 }
@@ -38,6 +40,7 @@ html, body {
   opacity: 0.8;
   filter: alpha(opacity=50);
 }
+
 .my-information {
   color: #DEDEDC;
   margin-top: 40px;
@@ -52,7 +55,7 @@ pre {
   font-size: 1.1em;
 }
 
-.software-engineeer {
+.software-engineer {
   font-size: 1.5em;
 }
 
