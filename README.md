@@ -1,4 +1,4 @@
-### Taylor's README:
+### taylorod.github.io README:
 
 ### My static GitHub hosted website - taylorod.github.io
 
