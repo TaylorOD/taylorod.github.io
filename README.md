@@ -1,6 +1,4 @@
-### Project README:
-
-
+### Taylor's README:
 
 ### My static GitHub hosted website - taylorod.github.io
 
