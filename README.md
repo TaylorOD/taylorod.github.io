@@ -1,4 +1,4 @@
-### My static github hosted website - taylorod.github.io
+### My static GitHub hosted website - taylorod.github.io
 
 - This is a simple website that lets a viewer get to know me
 - It is laid out in a code like style with hidden hyperlinks throughout.
