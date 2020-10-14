@@ -17,12 +17,12 @@
 - Scroll over some of the text to discover hidden pages
 - My blog website, resume, and portfolio can be found near the bottom of the page
 
+### Contributing
+- Feel free to suggest edits or improvements
+
 ### Known issues
 - Some may disagree with the code layout ability to actually run
 - On mobile the Software Engineer X Technical Recruiter text overlaps with the Taylor Dorsett - 2020 footer
-
-### Contributing
-- Feel free to suggest edits or improvements
 
 ### TODO
 - Add portfolio link when portfolio is finished
