@@ -21,13 +21,13 @@
  - On mobile the Software Engineer X Technical Recruiter text overlaps with the Taylor Dorsett - 2020 footer
 
 ### Contributing
-- Feel free to sudgest edits or improvements
+- Feel free to suggest edits or improvements
 
 ### TODO
 - Add portfolio link when portfolio is finished
 - Add more climbing videos once the world opens back up and I can climb again
-- Add hotsauce recipies blog link once recipies are finished
-- Add podcast recomendation blog link once podcast blog is finished
+- Add hotsauce recipes blog link once recipes are finished
+- Add podcast recommendation blog link once podcast blog is finished
 - Change "reading" link from master list to my blog Book tag link
 
 ### Contact
