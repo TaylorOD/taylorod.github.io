@@ -1,5 +1,7 @@
 ### Project README:
 
+
+
 ### My static GitHub hosted website - taylorod.github.io
 
 - This is a simple website that lets a viewer get to know me
