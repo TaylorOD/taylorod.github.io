@@ -10,10 +10,10 @@
  - This website is written in JavaScript, CSS, HTML, and Bootstrap.
  
 ### Status
- - This website is copy/content is updated as needed but it's core is finished. 
+ - This website is copy/content is updated as needed but otherwise it is finished. 
  
 ### Getting Started
-- You can view it live at taylorod.github.com
+- You can view it live at taylorod.github.io
 - Scroll over some of the text to discover hidden pages
 - My blog website, resume, and portfolio can be found near the bottom of the page
 
