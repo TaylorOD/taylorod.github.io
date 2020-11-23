@@ -27,7 +27,6 @@
 ### TODO
 - Add portfolio link when portfolio is finished
 - Add more climbing videos once the world opens back up and I can climb again
-- Add podcast recommendation blog link once podcast blog is finished
 
 ### Contact
 - dorsetttaylordev@gmail.com
