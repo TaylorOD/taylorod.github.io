@@ -21,7 +21,6 @@
 - Feel free to suggest edits or improvements
 
 ### Known issues
-- Some may disagree with the code layout ability to actually run
 - On mobile the Software Engineer X Technical Recruiter text overlaps with the Taylor Dorsett - 2020 footer
 - When split screen the Software Engineer X Technical Recruiter text overlaps with the Taylor Dorsett - 2020 footer
 
