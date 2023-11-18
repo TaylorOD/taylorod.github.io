@@ -34,15 +34,30 @@
             </div>
             <div class="col custom-center">
                 <pre class='my-information'>
-name: "Taylor Dorsett", {
+const me = {
+    name: "Taylor Dorsett",
     information: {
         phone: undefined,
         email: "dorsetttaylordev@gmail.com",
-        location: "Remote - Missoula, MT / Chicago, IL",
-        employment: {
-            company: "Home Chef",
-            title: "Software Engineer II",
-        },
+        location: "Remote - Missoula, MT",
+        previousLocations: ["Chicago, IL", "Vermont"],
+        employment: [
+            {
+                company: "Home Chef",
+                title: "Software Engineer II",
+                current: true,
+            },
+            {
+                company: "Actualize Coding Bootcamp",
+                title: "Tech Lead",
+                current: true,
+            },
+            {
+                company: "levels.fyi",
+                title: "Engineer",
+                current: false,
+            }
+        ],
     },
     likes: [
         <a href="https://docs.google.com/spreadsheets/d/1vtG6uXgLXjgXU5uHYhK--9IWeOyG5aOnWT59RgpLX3Q/edit?usp=sharing" class="likes">"reading",</a>
@@ -50,15 +65,15 @@ name: "Taylor Dorsett", {
         <a href="http://www.hackertyper.com/" class="likes">"coding",</a>
         <a href="https://www.taylordorsett.com/poker_seater/" class="likes">"poker",</a>
         <a href="https://steamcommunity.com/id/Taylor_OD" class="likes">"video games",</a>
-        "learning new things",
+        <a class="likes">"learning new things",</a>
         <a class="likes">"making hotsauce",</a>
         <a href="https://www.youtube.com/channel/UC0gAFom3mR0uvJp2pVhmXuw" class="likes">"podcasts",</a>
         <a class="likes">"tie-dye shirts",</a>
         <a href="https://www.kiva.org/lender/dorsetttaylor" class="likes">"charities"</a>
     ],
     etc: [
-    <a href="https://drive.google.com/file/d/1D0qvItO0WA28m1fSRWkwzDcMYNOLHgG_/view?usp=sharing" class= "etc">"resume",</a>
-    <a href="https://www.youtube.com/channel/UC0gAFom3mR0uvJp2pVhmXuw" class= "etc">"video podcast"</a>
+        <a href="https://drive.google.com/file/d/1D0qvItO0WA28m1fSRWkwzDcMYNOLHgG_/view?usp=sharing" class= "etc">"resume",</a>
+        <a href="https://www.youtube.com/channel/UC0gAFom3mR0uvJp2pVhmXuw" class= "etc">"video podcast"</a>
     ]
 }
                 </pre>
