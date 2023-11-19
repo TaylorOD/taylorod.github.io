@@ -14,7 +14,6 @@
 ### TODO:
 
 - Add updated resume
-- Add link to private playlist with all bjj matches
 
 ## Credits and references
 
