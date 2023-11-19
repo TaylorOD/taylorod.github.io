@@ -1,30 +1,26 @@
 <!doctype html>
 <html>
     <head>
-        <!-- Favicon -->
         <link rel="shortcut icon" type="image/x-icon" href="favicon.png">
-        <!-- Mobile Styling -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <!-- Material Design for Bootstrap CSS -->
         <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css" integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX" crossorigin="anonymous">
-        <!-- Custom Style Sheets -->
         <link rel="stylesheet" href="./stylesheets/main.css">
         <title>Hey, I'm Taylor Dorsett</title>
     </head>
     <body>
     <header>
-    <div class="d-flex justify-content-center" style="margin-top: 15px;;">
-        <div class="p-2">
-            <a href="https://www.linkedin.com/in/taylordorsett/" target="_blank">
-                <img src="images/in.png" alt="linkedIn logo" class='invert social-media-icon'>
-            </a>
+        <div class="d-flex justify-content-center" style="margin-top: 15px;;">
+            <div class="p-2">
+                <a href="https://www.linkedin.com/in/taylordorsett/" target="_blank">
+                    <img src="images/in.png" alt="linkedIn logo" class='invert social-media-icon'>
+                </a>
+            </div>
+            <div class="p-2">
+                <a href="https://github.com/taylorod" target="_blank">
+                    <img src="images/github.png" alt="github logo" class='social-media-icon'>
+                </a>
+            </div>
         </div>
-        <div class="p-2">
-            <a href="https://github.com/taylorod" target="_blank">
-                <img src="images/github.png" alt="github logo" class='social-media-icon'>
-            </a>
-        </div>
-    </div>
     </header>
     <section>
     <div class="container">
@@ -43,25 +39,20 @@ const me = {
         previousLocations: ["Chicago, IL", "Vermont"],
         employment: [
             {
-                company: "Home Chef",
+                company: <a href="https://www.homechef.com/">"Home Chef",</a>
                 title: "Software Engineer II",
-                current: true,
+                status: "currentRole",
             },
             {
-                company: "Actualize Coding Bootcamp",
-                title: "Tech Lead",
-                current: true,
-            },
-            {
-                company: "levels.fyi",
+                company: <a href="https://www.levels.fyi/">"levels.fyi",</a>
                 title: "Engineer",
-                current: false,
+                status: "pastRole",
             }
         ],
     },
     likes: [
         <a href="https://docs.google.com/spreadsheets/d/1vtG6uXgLXjgXU5uHYhK--9IWeOyG5aOnWT59RgpLX3Q/edit?usp=sharing" class="likes">"reading",</a>
-        <a class="likes">"bjj",</a>
+        <a href="https://www.youtube.com/playlist?list=PLFQBPy8i2-KOzjqDY8w4oQ2RXV-qcSxoI" class="likes">"bjj",</a>
         <a href="http://www.hackertyper.com/" class="likes">"coding",</a>
         <a href="https://www.taylordorsett.com/poker_seater/" class="likes">"poker",</a>
         <a href="https://steamcommunity.com/id/Taylor_OD" class="likes">"video games",</a>
@@ -72,8 +63,8 @@ const me = {
         <a href="https://www.kiva.org/lender/dorsetttaylor" class="likes">"charities"</a>
     ],
     etc: [
-        <a href="https://drive.google.com/file/d/1D0qvItO0WA28m1fSRWkwzDcMYNOLHgG_/view?usp=sharing" class= "etc">"resume",</a>
-        <a href="https://www.youtube.com/channel/UC0gAFom3mR0uvJp2pVhmXuw" class= "etc">"video podcast"</a>
+        <a href="https://drive.google.com/file/d/1D0qvItO0WA28m1fSRWkwzDcMYNOLHgG_/view?usp=sharing" class="etc">"resume",</a>
+        <a href="https://www.youtube.com/channel/UC0gAFom3mR0uvJp2pVhmXuw" class="etc">"video podcast"</a>
     ]
 }
                 </pre>
@@ -82,7 +73,7 @@ const me = {
         <div class="row">
             <div class="col-10 offset-1 custom-center design">
                 <p class='software-engineer'>
-                    Software Engineer and former Technical Recruiter
+                    Software Engineer, former (recovering) Tech Recruiter
                 </p>
             </div>
         </div>
