@@ -13,7 +13,6 @@
 
 ### TODO:
 
-- Add aria-labels
 - Add syntax colors for font in object - highlight.js?
 - Make it work better on phones
 - Implement tailwinds?
