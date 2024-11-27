@@ -58,12 +58,9 @@ pre {
 .string {
 	color: #569cd6;
 }
-.comment {
-	color: #6a9955;
-}
-.number {
-	color: #b5cea8;
-}
 .property {
-	color: #9cdcfe;
+	color: #bee7fd;
+}
+.default {
+	color: #bee7fd;
 }
