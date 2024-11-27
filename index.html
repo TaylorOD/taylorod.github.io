@@ -1,35 +1,41 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
-		<link rel="shortcut icon" type="image/x-icon" href="favicon.png" />
+		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-
+		<link rel="shortcut icon" type="image/x-icon" href="favicon.png" />
 		<link
+			href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
 			rel="stylesheet"
-			href="https://unpkg.com/bootstrap-material-design@4.1.1/dist/css/bootstrap-material-design.min.css"
-			integrity="sha384-wXznGJNEXNG1NFsbm0ugrLFMQPWswR3lds2VeinahP8N0zJw9VWSopbjv2x7WCvX"
-			crossorigin="anonymous"
 		/>
 		<link rel="stylesheet" href="./stylesheets/main.css" />
 		<title>Hey, I'm Taylor Dorsett</title>
 	</head>
 	<body>
 		<header>
-			<div class="d-flex justify-content-center" style="margin-top: 15px">
+			<div class="flex justify-center mt-4">
 				<div class="p-2">
-					<a href="https://www.linkedin.com/in/taylordorsett/" target="_blank">
+					<a
+						href="https://www.linkedin.com/in/taylordorsett/"
+						target="_blank"
+						aria-label="LinkedIn"
+					>
 						<img
 							src="images/in.png"
-							alt="linkedIn logo"
+							alt="LinkedIn logo"
 							class="invert social-media-icon"
 						/>
 					</a>
 				</div>
 				<div class="p-2">
-					<a href="https://github.com/taylorod" target="_blank">
+					<a
+						href="https://github.com/taylorod"
+						target="_blank"
+						aria-label="GitHub"
+					>
 						<img
 							src="images/github.png"
-							alt="github logo"
+							alt="GitHub logo"
 							class="social-media-icon"
 						/>
 					</a>
@@ -37,53 +43,53 @@
 			</div>
 		</header>
 		<section>
-			<div class="container">
-				<div class="row">
-					<div class="col custom-center">
+			<div class="container mx-auto">
+				<div class="flex flex-wrap">
+					<div class="w-full md:w-1/2 flex justify-center">
 						<img src="images/me.jpg" alt="Iceland Photo" class="main-image" />
 					</div>
-					<div class="col custom-center">
+					<div class="w-full md:w-1/2 flex justify-center">
 						<pre class="my-information">
 const me = {
-    name: "Taylor Dorsett",
+    name: "taylor dorsett",
     information: {
         phone: undefined,
         email: "dorsetttaylordev@gmail.com",
-        location: "Remote - Missoula, MT",
-        previousLocations: ["Chicago, IL", "Vermont"],
+        location: "missoula, mt",
+        previousLocations: ["chicago", "vermont"],
         employment: [
             {
-                company: <a href="https://www.homechef.com/">"Home Chef",</a>
-                title: "Software Engineer II",
-                status: "currentRole",
+                company: <a href="https://www.homechef.com/" class="text-blue-500 underline">"home chef",</a>
+                title: "software engineer II",
+                status: "current role",
             },
             {
-                company: <a href="https://www.levels.fyi/">"levels.fyi",</a>
-                title: "Engineer",
-                status: "pastRole",
+                company: <a href="https://www.levels.fyi/" class="text-blue-500 underline">"levels.fyi",</a>
+                title: "engineer",
+                status: "past role",
             }
         ],
     },
     likes: [
             <a class="likes">"reading",</a>
-            <a href="https://smoothcomp.com/en/profile/803695" class="likes">"bjj",</a>
-            <a href="http://www.hackertyper.com/" class="likes">"coding",</a>
-            <a href="https://www.taylordorsett.com/poker_seater/" class="likes">"poker",</a>
-            <a href="https://store.steampowered.com/curator/45035411/" class="likes">"video games",</a>
+            <a href="https://smoothcomp.com/en/profile/803695" class="likes text-blue-500 underline">"bjj",</a>
+            <a href="http://www.hackertyper.com/" class="likes text-blue-500 underline">"coding",</a>
+            <a href="https://www.taylordorsett.com/poker_seater/" class="likes text-blue-500 underline">"poker",</a>
+            <a href="https://store.steampowered.com/curator/45035411/" class="likes text-blue-500 underline">"video games",</a>
             <a class="likes">"learning new things",</a>
             <a class="likes">"making hotsauce",</a>
             <a class="likes">"tie-dye shirts",</a>
-            <a href="https://www.kiva.org/lender/dorsetttaylor" class="likes">"charities"</a>
+            <a href="https://www.kiva.org/lender/dorsetttaylor" class="likes text-blue-500 underline">"charities"</a>
     ],
     etc: [
-            <a href="https://www.youtube.com/channel/UC0gAFom3mR0uvJp2pVhmXuw" class="etc">"video podcast"</a>
+            <a href="https://www.youtube.com/channel/UC0gAFom3mR0uvJp2pVhmXuw" class="etc text-blue-500 underline">"video podcast"</a>
     ]
 }
-                </pre>
+                    </pre>
 					</div>
 				</div>
-				<div class="row">
-					<div class="col-10 offset-1 custom-center design">
+				<div class="flex justify-center mt-4">
+					<div class="w-10/12 text-center">
 						<p class="software-engineer">
 							Software Engineer, former (recovering) Tech Recruiter
 						</p>
