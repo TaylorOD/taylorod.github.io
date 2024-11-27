@@ -13,8 +13,14 @@
 
 ### TODO:
 
-- Add updated resume
+- Add aria-labels
+- Add syntax colors for font in object - highlight.js?
+- Make it work better on phones
+- Implement tailwinds?
+- Implement better Semantic HTML Structure
+- Make object font size smaller
 
 ## Credits and references
 
 1. Inspired by Troy Leach's (Former Actualize Coding Bootcamp Student) github website/resume. Check his out troyleach.github.io
+
