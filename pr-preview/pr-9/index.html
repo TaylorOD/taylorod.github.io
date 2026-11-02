@@ -31,12 +31,48 @@
 		</header>
 		<main class="container mx-auto px-4">
 			<div class="flex flex-wrap">
-				<div class="w-full md:w-1/2 flex justify-center">
+				<div class="w-full md:w-1/2 flex flex-col items-center">
 					<img
+						id="photo"
 						src="images/me.png"
 						alt="Taylor Dorsett in a tie dye shirt eating pizza"
 						class="main-image"
 					/>
+					<button type="button" id="photo-toggle" class="comment underline text-center mt-4" hidden></button>
+					<script>
+						const photo = document.getElementById("photo");
+						const photoToggle = document.getElementById("photo-toggle");
+						const modes = {
+							fun: {
+								src: "images/me.png",
+								alt: "Taylor Dorsett in a tie dye shirt eating pizza",
+								toggle: "// interested in working with me? i clean up nice",
+							},
+							work: {
+								src: "images/headshot.jpg",
+								alt: "Professional headshot of Taylor Dorsett",
+								toggle: "// too serious? back to the pizza",
+							},
+						};
+						let mode = new URLSearchParams(window.location.search).get("mode") === "work" ? "work" : "fun";
+
+						function showMode() {
+							photo.src = modes[mode].src;
+							photo.alt = modes[mode].alt;
+							photoToggle.textContent = modes[mode].toggle;
+						}
+
+						photoToggle.addEventListener("click", () => {
+							mode = mode === "fun" ? "work" : "fun";
+							const url = new URL(window.location.href);
+							url.searchParams.set("mode", mode);
+							window.history.replaceState(null, "", url);
+							showMode();
+						});
+
+						showMode();
+						photoToggle.hidden = false;
+					</script>
 				</div>
 				<div class="w-full md:w-1/2 flex md:justify-center">
 					<pre class="my-information max-w-full overflow-x-auto text-sm md:text-base lg:text-lg">
