@@ -12,22 +12,22 @@ body {
 }
 
 .main-image {
-	width: auto;
+	width: 100%;
+	max-width: 450px;
+	height: auto;
 	border-radius: 50%;
-	opacity: 0.8;
 }
 
 @media (min-width: 769px) {
 	.main-image {
 		margin-top: 50px;
-		height: 600px;
 	}
 }
 
 @media (max-width: 768px) {
 	.main-image {
 		margin-top: 25px;
-		height: 350px;
+		max-width: 300px;
 	}
 }
 
