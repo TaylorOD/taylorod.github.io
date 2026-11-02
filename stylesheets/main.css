@@ -6,10 +6,6 @@ body {
 	color: white;
 }
 
-.custom-center {
-	text-align: center;
-}
-
 .social-media-icon {
 	width: 24px;
 	height: 24px;
@@ -19,7 +15,6 @@ body {
 	width: auto;
 	border-radius: 50%;
 	opacity: 0.8;
-	filter: alpha(opacity=50);
 }
 
 @media (min-width: 769px) {
@@ -38,29 +33,26 @@ body {
 
 .my-information {
 	color: #dededc;
-	text-align: justify !important;
 	margin-top: 10px;
 }
 
 pre {
-	display: block;
 	font-family: monospace;
-	white-space: pre;
-	margin: 0em 0.1em;
-	font-size: 1.1em;
 	background: transparent;
 }
 
 /* Syntax highlighting classes */
-.keyword {
-	color: #569cd6;
-}
-.string {
-	color: #ffffff;
-}
+.keyword,
 .property {
 	color: #569cd6;
 }
+.string,
 .default {
 	color: #ffffff;
+}
+a .string {
+	color: inherit;
+}
+.comment {
+	color: #6a9955;
 }
