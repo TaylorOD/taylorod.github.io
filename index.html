@@ -3,12 +3,12 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<link rel="shortcut icon" type="image/x-icon" href="favicon.png" />
+		<link rel="shortcut icon" type="image/x-icon" href="/favicon.png" />
 		<link
 			href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
 			rel="stylesheet"
 		/>
-		<link rel="stylesheet" href="./stylesheets/main.css" />
+		<link rel="stylesheet" href="/stylesheets/main.css" />
 		<title>Hey, I'm Taylor Dorsett</title>
 	</head>
 	<body>
@@ -16,25 +16,12 @@
 			<div class="flex justify-center mt-4">
 				<div class="p-2">
 					<a
-						href="https://www.linkedin.com/in/taylordorsett/"
-						target="_blank"
-						aria-label="LinkedIn Profile"
-					>
-						<img
-							src="images/in.png"
-							alt="LinkedIn logo"
-							class="invert social-media-icon"
-						/>
-					</a>
-				</div>
-				<div class="p-2">
-					<a
 						href="https://github.com/taylorod"
 						target="_blank"
 						aria-label="GitHub Profile"
 					>
 						<img
-							src="images/github.png"
+							src="/images/github.png"
 							alt="GitHub logo"
 							class="social-media-icon"
 						/>
@@ -42,18 +29,18 @@
 				</div>
 			</div>
 		</header>
-		<section>
-			<div class="container mx-auto">
-				<div class="flex flex-wrap">
-					<div class="w-full md:w-1/2 flex justify-center">
-						<img
-							src="images/me.jpg"
-							alt="Photo of Taylor Dorsett in Iceland"
-							class="main-image"
-						/>
-					</div>
-					<div class="w-full md:w-1/2 flex justify-center">
-						<pre class="my-information">
+		<main class="container mx-auto px-4">
+			<h1 class="text-center mt-2">Software Engineer, former (recovering) Tech Recruiter</h1>
+			<div class="flex flex-wrap">
+				<div class="w-full md:w-1/2 flex justify-center">
+					<img
+						src="/images/me.jpg"
+						alt="Photo of Taylor Dorsett in Iceland"
+						class="main-image"
+					/>
+				</div>
+				<div class="w-full md:w-1/2 flex md:justify-center">
+					<pre class="my-information max-w-full overflow-x-auto text-sm md:text-base lg:text-lg">
 <span class="keyword">const</span> <span class="default">me</span> = {
     <span class="property">name</span>: <span class="string">"taylor dorsett"</span>,
     <span class="property">information</span>: {
@@ -74,30 +61,22 @@
             }
         ],
     },
+    <span class="property">projects</span>: <a href="/projects.html" class="text-blue-500 underline" aria-label="Projects page"><span class="string">"see what i've built"</span></a>,
     <span class="property">likes</span>: [
-            <a class="likes" aria-label="Reading"><span class="string">"reading"</span></a>,
-            <a href="https://smoothcomp.com/en/profile/803695" class="likes text-blue-500 underline" aria-label="BJJ profile"><span class="string">"bjj"</span></a>,
-            <a href="http://www.hackertyper.com/" class="likes text-blue-500 underline" aria-label="Hackertyper website"><span class="string">"coding"</span></a>,
-            <a href="https://www.taylordorsett.com/poker_seater/" class="likes text-blue-500 underline" aria-label="Poker Seater website"><span class="string">"poker"</span></a>,
-            <a href="https://store.steampowered.com/curator/45035411/" class="likes text-blue-500 underline" aria-label="Steam Curator page"><span class="string">"video games"</span></a>,
-            <a class="likes" aria-label="Tie-dye shirts"><span class="string">"tie-dye shirts"</span></a>,
-            <a href="https://www.kiva.org/lender/dorsetttaylor" class="likes text-blue-500 underline" aria-label="Kiva lender profile"><span class="string">"charities"</span></a>
+            <span class="string">"reading"</span>,
+            <a href="https://smoothcomp.com/en/profile/803695" class="text-blue-500 underline" aria-label="BJJ profile"><span class="string">"bjj"</span></a>,
+            <a href="https://hackertyper.com/" class="text-blue-500 underline" aria-label="Hackertyper website"><span class="string">"coding"</span></a>,
+            <a href="https://www.taylordorsett.com/poker_seater/" class="text-blue-500 underline" aria-label="Poker Seater website"><span class="string">"poker"</span></a>,
+            <a href="https://store.steampowered.com/curator/45035411/" class="text-blue-500 underline" aria-label="Steam Curator page"><span class="string">"video games"</span></a>,
+            <span class="string">"tie-dye shirts"</span>,
+            <a href="https://www.kiva.org/lender/dorsetttaylor" class="text-blue-500 underline" aria-label="Kiva lender profile"><span class="string">"charities"</span></a>
     ],
     <span class="property">etc</span>: [
-            <a href="https://www.youtube.com/channel/UC0gAFom3mR0uvJp2pVhmXuw" class="etc text-blue-500 underline" aria-label="YouTube channel"><span class="string">"video podcast"</span></a>
+            <a href="https://www.youtube.com/TaylorDorsett" class="text-blue-500 underline" aria-label="YouTube channel"><span class="string">"video podcast"</span></a>
     ]
-}
-                    </pre>
-					</div>
-				</div>
-				<div class="flex justify-center">
-					<div class="w-10/12 text-center">
-						<p class="software-engineer">
-							<span>Software Engineer, former (recovering) Tech Recruiter</span>
-						</p>
-					</div>
+}</pre>
 				</div>
 			</div>
-		</section>
+		</main>
 	</body>
 </html>
