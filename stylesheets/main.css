@@ -18,12 +18,6 @@ body {
 	border-radius: 50%;
 }
 
-@media (min-width: 769px) {
-	.main-image {
-		margin-top: 50px;
-	}
-}
-
 @media (max-width: 768px) {
 	.main-image {
 		margin-top: 25px;
