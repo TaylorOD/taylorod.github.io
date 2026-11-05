@@ -1,0 +1,52 @@
+html,
+body {
+	min-height: 100%;
+	background-color: #000;
+	font-family: monospace;
+	color: white;
+}
+
+.social-media-icon {
+	width: 24px;
+	height: 24px;
+}
+
+.main-image {
+	width: 100%;
+	max-width: 450px;
+	height: auto;
+	border-radius: 50%;
+}
+
+@media (max-width: 768px) {
+	.main-image {
+		margin-top: 25px;
+		max-width: 300px;
+	}
+}
+
+.my-information {
+	color: #dededc;
+	margin-top: 10px;
+}
+
+pre {
+	font-family: monospace;
+	background: transparent;
+}
+
+/* Syntax highlighting classes */
+.keyword,
+.property {
+	color: #569cd6;
+}
+.string,
+.default {
+	color: #ffffff;
+}
+a .string {
+	color: inherit;
+}
+.comment {
+	color: #6a9955;
+}
