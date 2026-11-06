@@ -42,12 +42,15 @@
 		<main class="container mx-auto px-4">
 			<div class="flex flex-wrap">
 				<div class="w-full md:w-1/2 flex flex-col items-center md:justify-center">
+					<div class="photo-wrap">
 					<img
 						id="photo"
 						src="images/me.png"
 						alt="Taylor Dorsett in a tie dye shirt eating pizza"
 						class="main-image"
 					/>
+					<a id="pizza-entrance" href="/one-more-slice/" aria-label="Open pizza delivery game" title="pizza_delivery()"></a>
+					</div>
 					<button type="button" id="photo-toggle" class="comment underline text-center mt-4" hidden></button>
 					<script>
 						const photo = document.getElementById("photo");
@@ -69,6 +72,7 @@
 						function showMode() {
 							photo.src = modes[mode].src;
 							photo.alt = modes[mode].alt;
+							document.getElementById("pizza-entrance").hidden = mode !== "fun";
 							photoToggle.textContent = modes[mode].toggle;
 						}
 
