@@ -1,8 +1,8 @@
 # Pocket pets
 
-Classic pixel sprites in classic-sprites.js are adapted from [plateaukao/tamagochi](https://github.com/plateaukao/tamagochi), whose README declares the MIT license. Retrieved November 6, 2026. The upstream repository does not include a separate copyright notice.
+The P1 gameplay, classic sprites, pixel font, sound, renderer, controls and base game styles are adapted from [plateaukao/tamagochi](https://github.com/plateaukao/tamagochi) at commit `74c7a45c8ef03ac43a500db18d19b8fa7cd4ec62`. Its README declares the MIT license. Retrieved November 6, 2026. The upstream repository does not include a separate copyright notice.
 
-The panel, game logic, pizza and cyberpunk artwork are custom additions. This is a small virtual pet inspired by that project, not a full recreation of the original P1 rules. Tamagotchi is a trademark of Bandai. This project is not affiliated with Bandai.
+The slide out panel, dark themes, pizza and cyberpunk artwork, isolated saves, accessible controls and elapsed time fixes are custom additions. The source was split into modules. The optional OpenAI chat and separate monochrome theme setting were omitted. This uses the clone's gameplay, not official firmware, and does not claim exact hardware parity. Tamagotchi is a trademark of Bandai. This project is not affiliated with Bandai.
 
 ## MIT license
 
