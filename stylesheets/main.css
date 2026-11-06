@@ -50,3 +50,38 @@ a .string {
 .comment {
 	color: #6a9955;
 }
+
+/* The entrance follows the slice as the photo resizes. */
+.photo-wrap {
+	position: relative;
+	width: 100%;
+	max-width: 450px;
+}
+.photo-wrap .main-image {
+	display: block;
+	margin-top: 0;
+}
+#pizza-entrance {
+	position: absolute;
+	left: 34%;
+	top: 47%;
+	width: 25%;
+	height: 27%;
+	border-radius: 35%;
+	cursor: pointer;
+}
+#pizza-entrance:hover,
+#pizza-entrance:focus-visible {
+	outline: 2px solid #569cd6;
+	outline-offset: 3px;
+	background: rgb(86 156 214 / 10%);
+}
+#pizza-entrance[hidden] {
+	display: none;
+}
+@media (max-width: 768px) {
+	.photo-wrap {
+		max-width: 300px;
+		margin-top: 25px;
+	}
+}
