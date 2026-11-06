@@ -242,8 +242,8 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
 }
 :root[data-pet="classic"] { --lcd-bg:#20281d; --lcd-fg:#b4ce83; --accent:#b4ce83; --stat-hearts:#b4ce83; }
 :root[data-pet="cyberpunk"] { --lcd-bg:#0b1c24; --lcd-fg:#8cebdc; --accent:#83e8d7; --stat-hearts:#83e8d7; }
-html,body { height:auto; min-height:100%; overflow-x:hidden; overflow-y:auto; }
-body { display:block; padding:0 0 6px; color:#e7e5df; }
+html,body { height:auto; overflow-x:hidden; overflow-y:auto; color-scheme:dark; }
+body { min-height:0; display:block; padding:0; color:#e7e5df; }
 #device { border-radius:0; padding:34px 0 0; }
 #settings-btn { top:0; right:3px; width:32px; height:30px; opacity:1; }
 #screen-frame { width:100%; padding:6px; }

@@ -20,6 +20,7 @@
 .pet-launcher:hover { border-color: #ffbb79; transform: translateY(-3px); }
 .pet-launcher:focus-visible, .pet-panel :focus-visible { outline: 2px solid #ffbb79; outline-offset: 4px; }
 .pet-panel {
+  color-scheme: dark;
   --pet-accent: #ffbb79;
   --pet-screen: #29231c;
   --pet-ink: #e6c79d;
