@@ -38,9 +38,9 @@ const robot = pixels([
 ]);
 
 export const themes = {
-  classic: { name: 'miso', subtitle: 'a little old school', color: '#b4ce83', ink: '#263a28', screen: '#c5d5a0', palette: ['', '#263a28'] },
-  pizza: { name: 'slice', subtitle: 'emotionally attached to cheese', color: '#ffbb79', ink: '#533527', screen: '#f4dfb5', palette: ['', '#8b4c30', '#d78b43', '#ffce62', '#d95a45', '#49352b'] },
-  cyberpunk: { name: 'byte', subtitle: 'small robot. big feelings.', color: '#83e8d7', ink: '#8cebdc', screen: '#142c36', palette: ['', '#529aaf', '#285262', '#ff78bf', '#8fffe3', '#ffe191'] },
+  classic: { name: 'miso', subtitle: 'a little old school', color: '#b4ce83', ink: '#b4ce83', screen: '#20281d', palette: ['', '#b4ce83'] },
+  pizza: { name: 'slice', subtitle: 'emotionally attached to cheese', color: '#ffbb79', ink: '#e6c79d', screen: '#29231c', palette: ['', '#b37a50', '#d78b43', '#ffce62', '#d95a45', '#49352b'] },
+  cyberpunk: { name: 'byte', subtitle: 'small robot. big feelings.', color: '#83e8d7', ink: '#8cebdc', screen: '#0b1c24', palette: ['', '#529aaf', '#285262', '#ff78bf', '#8fffe3', '#ffe191'] },
 };
 
 export function drawPet(canvas, type, pet, frame, celebrating = false) {
@@ -51,7 +51,7 @@ export function drawPet(canvas, type, pet, frame, celebrating = false) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = theme.screen;
   ctx.fillRect(0, 0, 80, 48);
-  ctx.fillStyle = type === 'cyberpunk' ? '#21444f' : '#00000010';
+  ctx.fillStyle = '#ffffff08';
   for (let x = 0; x < 80; x += 4) for (let y = 0; y < 48; y += 4) ctx.fillRect(x, y, 1, 1);
   ctx.fillStyle = theme.ink + '30';
   ctx.fillRect(29, 39, 22, 2);
