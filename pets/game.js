@@ -517,7 +517,6 @@ export class TamagotchiApp {
       // Show hatching progress bar
       const frac=(now-st.stageStartTime)/C.EGG_MS;
       R.drawBar(6,12,20,frac);
-      R.drawText('EGG',11,14);
       R.render(); return;
     }
 
