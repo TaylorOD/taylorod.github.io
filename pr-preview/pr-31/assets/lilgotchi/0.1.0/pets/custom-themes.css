@@ -1,0 +1,59 @@
+/* Dark embedded version. Gameplay and control layout come from the P1 clone. */
+:root {
+  --bg-page:#080a09;
+  --device-bg:linear-gradient(145deg,#594632,#302820);
+  --device-shadow:none;
+  --device-inset:inset 0 2px 4px #ffffff18;
+  --screen-frame:#1b201b;
+  --lcd-bg:#29231c;
+  --lcd-fg:#e6c79d;
+  --accent:#ffbb79;
+  --accent-dark:#29231c;
+  --btn-bg:#141815;
+  --btn-border:#41483f;
+  --btn-color:#e7e5df;
+  --btn-active-bg:#242a25;
+  --btn-shadow:none;
+  --btn-inset:none;
+  --overlay-bg:#080a09;
+  --overlay-color:#e7e5df;
+  --overlay-btn-bg:#141815;
+  --overlay-btn-border:#535d50;
+  --overlay-btn-color:#e7e5df;
+  --overlay-btn-active-bg:#29231c;
+  --overlay-btn-active-color:#ffbb79;
+  --overlay-close-color:#b5beb0;
+  --overlay-close-border:#535d50;
+  --overlay-close-active:#242a25;
+  --stat-border:#343a34;
+  --stat-hearts:#ffbb79;
+  --settings-btn-color:#b5beb0;
+  --info-color:#aeb5ad;
+  --death-msg:#c6cbbf;
+  --toast-bg:#141815;
+  --toast-border:#535d50;
+  --toast-color:#ffbb79;
+}
+:root[data-pet="classic"] { --lcd-bg:#20281d; --lcd-fg:#b4ce83; --accent:#b4ce83; --stat-hearts:#b4ce83; }
+:root[data-pet="cyberpunk"] { --device-bg:linear-gradient(145deg,#304e59,#172c36); --lcd-bg:#0b1c24; --lcd-fg:#8cebdc; --accent:#83e8d7; --stat-hearts:#83e8d7; }
+html,body { height:auto; overflow-x:hidden; overflow-y:auto; color-scheme:dark; }
+body { min-height:0; display:block; padding:0; color:#e7e5df; }
+/* Keep the shared egg silhouette and spacing for every character family. */
+#settings-btn { top:0; right:3px; width:32px; height:30px; opacity:1; }
+.ctrl-btn .icon-color { display:none; }
+.ctrl-btn .icon-mono { display:block; color:var(--accent); }
+#pet-status { min-height:38px; margin:12px 2px 4px; font-size:11px; line-height:1.6; color:var(--lcd-fg); }
+#save-status { margin:4px 2px; font-size:10px; color:#99a197; }
+.overlay { padding:16px 8px; overflow:auto; justify-content:flex-start; }
+.overlay-title { font-size:14px; margin:12px 0; letter-spacing:1px; }
+.overlay-close { background:transparent; font:inherit; }
+.overlay-btn { max-width:100%; padding:12px; font-size:13px; }
+#stats-overlay .stat-row { max-width:100%; font-size:12px; padding:6px 0; }
+#game-overlay .game-area { gap:12px; }
+#game-overlay .game-arrow { width:60px; height:60px; font-size:26px; }
+#game-overlay .game-score { font-size:13px; }
+#game-overlay .game-result { font-size:12px; text-align:center; }
+#toast { max-width:95%; white-space:normal; text-align:center; font-size:11px; padding:8px 10px; }
+button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+@media(prefers-reduced-motion:reduce) { * { animation:none!important; transition:none!important; } }
+
