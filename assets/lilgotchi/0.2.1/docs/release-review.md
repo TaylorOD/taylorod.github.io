@@ -44,4 +44,4 @@ Screenshots are under pr-screenshots, including release-slice-mobile, release-cy
 
 ## Release contents
 
-The named built zip includes the runtime, install examples, metadata and notices. Local saves retain schema 1. Memorial history remains local to the original website and is not bundled into active pet exports. Published release downloads stay unchanged. The personal site uses the 0.1.0 game copy. The standalone demo and hosted loader include the newer packaging changes; see the current installation guide for their version.
+The named built zip includes the runtime, install examples, metadata and notices. Local saves retain schema 1. Memorial history remains local to the original website and is not bundled into active pet exports. Published release downloads stay unchanged. The personal site, standalone demo and hosted loader use 0.2.1; see the current installation guide for their version.
