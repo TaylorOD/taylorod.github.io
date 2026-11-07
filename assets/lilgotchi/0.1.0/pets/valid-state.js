@@ -16,6 +16,8 @@ export function validState(data) {
   if (('careTotal' in data) !== ('careDuration' in data)) return false;
   if (('sleepOverride' in data) !== ('sleepOverrideUntil' in data)) return false;
   if (data.wellbeingUpdatedAt > data.lastProcessed + 300000) return false;
+  if ('vacationAt' in data && (!Number.isFinite(data.vacationAt) || data.vacationAt<0 || data.vacationAt>data.lastProcessed+300000)) return false;
+  if (data.vacationAt>0 && data.vacationAt<data.lastProcessed) return false;
   if (data.sleepOverride !== undefined && data.sleepOverride !== 'auto' && (!Number.isFinite(data.wellbeingUpdatedAt) || data.sleepOverrideUntil > data.wellbeingUpdatedAt + 7500000)) return false;
   for (const key of ['isSick','isSleeping','lightOn','isDead','isMisbehaving']) if (typeof data[key] !== 'boolean') return false;
   return data.attentionCallTime === null || Number.isFinite(data.attentionCallTime);

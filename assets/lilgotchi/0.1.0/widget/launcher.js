@@ -14,6 +14,7 @@ export function launcherArt(family, state) {
 }
 export function savedCare(state) {
   if(!state)return '';
+  if(state.vacationAt>0)return '';
   if(state.isDead)return 'Your pet passed away';
   if(state.stage==='egg')return '';
   const needs=[];
