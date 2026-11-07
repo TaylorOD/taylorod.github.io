@@ -1,0 +1,21 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Dialogue demo</title>
+<style>body{font:16px system-ui;max-width:650px;margin:24px auto;padding:16px}button,select{font:inherit;padding:8px;margin:6px}pre{white-space:pre-wrap;overflow-wrap:anywhere}label{display:inline-block}select{max-width:100%}</style>
+<h1>Dialogue demo</h1><p>Local fake replies only. Open the pet, turn on personality dialogue in settings, then use these review controls. No paid calls.</p>
+<label>Reply <select id="mode"><option>success</option><option>delayed</option><option>failure</option><option>malformed</option><option>timeout</option></select></label>
+<label>Trigger <select id="trigger"></select></label><button id="send">Try trigger</button><button id="adult">Prepare adult</button><details><summary>Last request context</summary><pre id="log"></pre></details>
+<div id="pet"></div>
+<script type="module">
+import '../lilgotchi.js';import {triggers} from '../pets/dialogue.js';
+const pet=document.createElement('lil-gotchi'),mode=document.querySelector('#mode'),log=document.querySelector('#log');
+for(const event of triggers)document.querySelector('#trigger').add(new Option(event,event));
+pet.dialogueAdapter=async(context,{signal})=>{
+ log.textContent=JSON.stringify(context,null,2);const choice=mode.value;
+ await new Promise((resolve,reject)=>{const timer=setTimeout(resolve,choice==='timeout'?20000:choice==='delayed'?4000:250);signal.addEventListener('abort',()=>{clearTimeout(timer);log.textContent+='\nRequest cancelled';reject(Error('Cancelled'));},{once:true});});
+ if(choice==='failure')throw Error('Fake failure');if(choice==='malformed')return {};
+ return `${context.name}: ${context.event.replaceAll('_',' ')}! Thanks for being here.`;
+};
+pet.setAttribute('mode','inline');pet.setAttribute('storage-key','dialogue-demo');document.querySelector('#pet').append(pet);
+const app=()=>pet.shadowRoot.querySelector('iframe')?.contentWindow.app;
+document.querySelector('#adult').onclick=()=>{const a=app();if(!a)return;Object.assign(a.state,{stage:'adult',character:'mametchi',hunger:2,happiness:2,isDead:false,isSleeping:false});a.updateButtons();};
+document.querySelector('#send').onclick=()=>app()?.talk(document.querySelector('#trigger').value);
+</script></html>
