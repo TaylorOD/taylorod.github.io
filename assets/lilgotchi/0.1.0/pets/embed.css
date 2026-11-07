@@ -31,3 +31,12 @@ html[data-embedded="true"] #settings-btn { width:44px; height:44px; top:0; }
 /* Let the frame report the full speech bubble height. */
 #dialogue { position:relative; bottom:auto; left:auto; transform:none; box-sizing:border-box; margin:18px auto 0; overflow-wrap:anywhere; }
 #dialogue-retry { font:inherit; padding:6px; }
+
+/* Leave a visible shell around the display and both rows of controls. */
+#device { padding:44px 14px 38px; }
+#screen-frame { width:82%; border-radius:22px; padding:7px; }
+#lcd { border-radius:15px; }
+#attention-bar { width:76%; }
+#controls { width:82%; gap:8px; margin-top:8px; }
+.ctrl-btn { border-radius:22px; min-height:52px; padding:8px 2px; }
+html[data-embedded="true"] #settings-btn { top:2px; right:calc(50% - 22px); }
