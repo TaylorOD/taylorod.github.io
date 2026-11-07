@@ -2,7 +2,7 @@ import { catalog, allowedCharacters, requireAllowed, initialCharacter } from './
 import { DialogueHost } from './widget/dialogue-host.js';
 import { visibleControl } from './widget/focus.js';
 import { lockPage, unlockPage } from './widget/scroll-lock.js';
-import { launcherIcon as launcherArt } from './widget/launcher.js';
+import { launcherIcon as launcherArt, savedCare } from './widget/launcher.js';
 import { SaveStore, legacyFamily, parseImport } from './widget/save-store.js';
 
 const asset = path => new URL(path,import.meta.url).href;
@@ -27,15 +27,19 @@ class LilGotchi extends HTMLElement {
       <${this.inline?'section class="inline"':'dialog'} aria-label="lilgotchi">
       <header><h2><img src="${asset('./widget/egg.svg')}" width="20" height="24" alt="" style="vertical-align:middle"> lilgotchi</h2><button class="close" aria-label="Close lilgotchi">×</button>
       <label class="chooser">Your pet <select aria-label="Character">${this.allowed.map(id=>`<option value="${id}">${catalog.find(choice=>choice.id===id).name}</option>`).join('')}</select></label></header>
-      <div class="frame"></div><p class="status" role="status"></p>
+      <aside class="welcome"><p>Meet your little roommate. Feed and play together, then use Care when something needs attention. Growth happens over time, even while you are away.</p><button class="welcome-close">Got it</button></aside>
+      <p class="return-summary" hidden></p><div class="frame"></div><p class="status" role="status"></p>
       <button class="retry" hidden>Try again</button><details><summary>Save and help</summary><div class="tools"><button class="export">Export save</button><button class="import-button">Import save</button></div>
       <input class="file" type="file" accept="application/json,.json" hidden>
       <div class="import" hidden><p></p><button class="confirm-import">Replace this pet</button> <button class="cancel-import">Cancel</button></div>
-      <footer>Progress stays in this browser. <a href="${asset('./pets/NOTICE.md')}" target="_blank" rel="noopener">Credits</a></footer></details>
+      <footer>Progress stays in this browser on this website. Clearing site data removes it. Export a backup to move it or keep it safe. No account or automatic sync is needed. <a href="${asset('./pets/NOTICE.md')}" target="_blank" rel="noopener">Credits</a></footer></details>
       </${this.inline?'section':'dialog'}>`;
     this.panel=this.shadowRoot.querySelector(this.inline?'section':'dialog');
     this.select=this.shadowRoot.querySelector('select');
     this.select.value=this.family;
+    this.shadowRoot.querySelector('.welcome').hidden=this.store.preference('introduced')==='true';
+    this.bind('.welcome-close','click',()=>{this.shadowRoot.querySelector('.welcome').hidden=true;this.store.preference('introduced',true);});
+    this.updateLauncher();
     this.bind('.launcher','click',()=>this.open());
     this.bind('.close','click',()=>this.close());
     this.select.addEventListener('change',()=>this.setCharacter(this.select.value));
@@ -54,7 +58,27 @@ class LilGotchi extends HTMLElement {
     this.bind('.confirm-import','click',()=>this.confirmImport());
     if(this.inline){this.shadowRoot.querySelector('.launcher').hidden=true;this.shadowRoot.querySelector('.close').hidden=true;this.open();}
   }
-  updateLauncher(){this.shadowRoot.querySelector('.launcher').innerHTML=launcherArt(this.family);}
+  updateLauncher(state){
+    if(!state){try{state=this.store.load(this.family)?.state;}catch{ /* Recovery stays in the normal open flow. */ }}
+    const button=this.shadowRoot.querySelector('.launcher'),care=savedCare(state);
+    button.innerHTML=launcherArt(this.family,state||catalog.find(choice=>choice.id===this.family))+(care?'<span class="care-dot" aria-hidden="true"></span>':'');
+    const label=`Open lilgotchi${state?`, ${state.stage}`:''}${care?`. Last saved: ${care}`:''}`;
+    button.setAttribute('aria-label',label);button.title=label;
+  }
+  savedFeedback(state){
+    this.updateLauncher(state);
+    const node=this.shadowRoot.querySelector('.status');node.classList.add('saved');
+    clearTimeout(this.savedTimer);this.savedTimer=setTimeout(()=>node.classList.remove('saved'),1000);
+    if(this.returnState){
+      const previous=this.returnState;this.returnState=null;
+      const summary=this.shadowRoot.querySelector('.return-summary');
+      const changes=[];
+      if(previous.character!==state.character)changes.push(`Your pet grew into a new ${state.stage}.`);
+      if(state.age>previous.age)changes.push(`Now ${state.age} days old.`);
+      const care=savedCare(state);if(care)changes.push(`${care}.`);
+      summary.textContent=changes.length?`While you were away: ${changes.join(' ')}`:'Welcome back. Your progress is ready.';summary.hidden=false;
+    }
+  }
   bind(selector,event,callback){this.shadowRoot.querySelector(selector).addEventListener(event,callback);}
   emit(name,detail={}){this.dispatchEvent(new CustomEvent(`lilgotchi:${name}`,{detail,bubbles:true,composed:true}));}
   serial(callback){this.queue=this.queue.then(callback).catch(error=>this.fail(error));return this.queue;}
@@ -97,6 +121,8 @@ class LilGotchi extends HTMLElement {
     try {
       if(this.hasAttribute('migrate-legacy'))this.store.migrateLegacy(this.family);
       saved=this.store.load(this.family);
+      this.returnState=saved && Date.now()-saved.savedAt>60000?saved.state:null;
+      this.shadowRoot.querySelector('.return-summary').hidden=true;
     } catch(error){this.store.release(this.family);this.fail(error);return;}
     if(!this.isConnected){this.store.release(this.family);return;}
     const frame=document.createElement('iframe');
@@ -113,7 +139,7 @@ class LilGotchi extends HTMLElement {
     this.port.onmessage=event=>{if(this.frame===frame)this.receive(event.data,activeFamily);};
     frame.addEventListener('load',()=>{
       if(this.frame!==frame)return;
-      frame.contentWindow.postMessage({type:'lilgotchi:connect',nonce,dialogueEnabled:this.store.preference('dialogue')==='true',dialogueAvailable:typeof this.dialogueAdapter==='function',state:saved?.state||null,muted:this.hasAttribute('muted') || this.store.preference('muted')!=='false',eink:this.store.preference('eink')==='true'},url.origin,[channel.port2]);
+      frame.contentWindow.postMessage({type:'lilgotchi:connect',nonce,dialogueEnabled:this.store.preference('dialogue')==='true',dialogueAvailable:typeof this.dialogueAdapter==='function',state:saved?.state||null,muted:this.hasAttribute('muted') || this.store.preference('muted')!=='false',eink:this.store.preference('eink')==='true',scanlines:this.store.preference('scanlines')==='true'},url.origin,[channel.port2]);
     },{once:true});
     frame.src=url.href;container.append(frame);
     this.loadTimeout=setTimeout(()=>{if(this.frame===frame && !this.ready)this.fail(new Error('The game did not load. Check that all widget files are available.'));},12000);
@@ -129,13 +155,13 @@ class LilGotchi extends HTMLElement {
     }
     if(message.type==='resize' && Number.isSafeInteger(message.height) && message.height>=100 && message.height<=1200 && this.frame)this.frame.style.height=`${message.height}px`;
     if(message.type==='save'){
-      try{this.store.save(family,message.state);this.status(this.store.persistent?'Saved in this browser':'Progress lasts for this visit');}
+      try{this.store.save(family,message.state);this.status(this.store.persistent?'Saved in this browser':'Progress lasts for this visit');this.savedFeedback(message.state);}
       catch(error){this.fail(error);this.detachFrame();this.store.release(family);}
     }
     if(message.type==='ready'){this.ready=true;clearTimeout(this.loadTimeout);this.emit('ready',{character:family});}
     if(message.type==='snapshot' && Number.isSafeInteger(message.id))this.pending.get(message.id)?.(message.state);
     if(message.type==='close')this.close();
-    if(message.type==='preference' && ['muted','eink','dialogue'].includes(message.name) && typeof message.value==='boolean')this.store.preference(message.name,message.value);
+    if(message.type==='preference' && ['muted','eink','dialogue','scanlines'].includes(message.name) && typeof message.value==='boolean')this.store.preference(message.name,message.value);
   }
   async snapshot(closing=false){
     if(!this.port || !this.ready)return;
@@ -145,7 +171,7 @@ class LilGotchi extends HTMLElement {
       this.pending.set(id,state=>{clearTimeout(timer);this.pending.delete(id);resolve(state);});
       this.port.postMessage({type:'snapshot',id,closing});
     });
-    if(state)this.store.save(this.family,state);
+    if(state){this.store.save(this.family,state);this.updateLauncher(state);}
   }
   detachFrame(){
     this.dialogueHost?.cancel();
@@ -158,7 +184,7 @@ class LilGotchi extends HTMLElement {
   async unload(){this.dialogueHost?.cancel();await this.snapshot(true);this.detachFrame();this.store.release(this.family);}
   disconnectedCallback(){
     // Removal keeps the latest action save. The close method waits for its final snapshot.
-    unlockPage(this);this.detachFrame();this.store?.dispose();this.initialized=false;
+    unlockPage(this);clearTimeout(this.savedTimer);this.detachFrame();this.store?.dispose();this.initialized=false;
   }
   exportSave(){return this.serial(async()=>{
     await this.snapshot();
@@ -175,7 +201,7 @@ class LilGotchi extends HTMLElement {
       if(file.size>32768)throw new Error('This save file is too large.');
       this.importData=parseImport(await file.text(),this.allowed);
       const panel=this.shadowRoot.querySelector('.import');
-      panel.querySelector('p').textContent=`Replace ${this.importData.family} with this age ${this.importData.state.age} pet? Your previous save will be kept as a recovery copy.`;
+      panel.querySelector('p').textContent=`Replace ${catalog.find(choice=>choice.id===this.importData.family).name} with this ${this.importData.state.stage}, age ${this.importData.state.age}? Your previous save will be kept as a recovery copy.`;
       panel.hidden=false;panel.querySelector('button').focus();
     }catch(error){this.fail(error);}
     this.shadowRoot.querySelector('.file').value='';

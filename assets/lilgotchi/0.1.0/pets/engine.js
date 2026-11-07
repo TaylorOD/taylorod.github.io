@@ -1,4 +1,5 @@
 import { now as clockNow } from './clock.js';
+import { initializeWellbeing } from './wellbeing.js';
 import { C } from './constants.js';
 import { saveState, loadState, clearState, selectedCharacter } from './storage.js';
 
@@ -18,10 +19,18 @@ export class GameState {
       attentionCallTime:null, attentionReason:null,
       snacksInWindow:0, snackWindowStart:now,
       medDoses:0, prevTeen:null, sickCount:0,
+      energy:100, health:100, wellbeingUpdatedAt:now, careTotal:0, careDuration:0,
+      sleepOverride:'auto', sleepOverrideUntil:0,
     });
   }
   save(){ return saveState(this); }
-  load(){ return loadState(this); }
+  load(){
+    // Leave known fields enumerable so the storage adapter can copy new saves.
+    this.energy=undefined; this.health=undefined; this.wellbeingUpdatedAt=undefined;
+    const loaded=loadState(this);
+    initializeWellbeing(this,this.lastProcessed);
+    return loaded;
+  }
   clearSave(){ clearState(); }
 }
 
