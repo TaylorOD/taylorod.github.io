@@ -1,6 +1,11 @@
 export class SoundManager {
   constructor(){ this.ctx=null; this.muted=true; }
-  init(){ if(!this.ctx) try{ this.ctx=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} }
+  init(){
+    try {
+      if(!this.ctx) this.ctx=new (window.AudioContext||window.webkitAudioContext)();
+      if(this.ctx.state==='suspended') this.ctx.resume().catch(()=>{});
+    }catch(e){}
+  }
   beep(freq,dur,vol=.15){
     if(this.muted||!this.ctx) return;
     try{

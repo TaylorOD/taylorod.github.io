@@ -9,7 +9,7 @@ import { updateStatus } from './status.js';
 import { drawScene, centeredBody } from './layout.js';
 import { Dialogue, contextFor } from './dialogue.js';
 import { PF } from './font.js';
-import { petType } from './storage.js';
+import { petType, selectedCharacter } from './storage.js';
 
 export class TamagotchiApp {
   constructor(options={}){
@@ -96,7 +96,7 @@ export class TamagotchiApp {
       this.toast(this.eink?'E-ink theme on':'Default theme');
     });
     document.getElementById('reset-game-btn').addEventListener('click',()=>{
-      if(confirm(`Restart ${petType==='pizza'?'Slice':petType==='cyberpunk'?'Cyberpunk':'Default'}? This cannot be undone.`)){
+      if(confirm(`Restart ${selectedCharacter.name}? This cannot be undone.`)){
         this.dialogue?.cancel(); this.state.clearSave(); this.state.reset(); this.animState=null; this.state.save();
         this.closeOverlay('settings-overlay'); this.closeOverlay('death-overlay');
         this.toast('New egg started!');
@@ -147,6 +147,7 @@ export class TamagotchiApp {
     if(this.catchingUp) return;
     const st=this.state;
     updateStatus(st);
+    if(document.getElementById('stats-overlay')?.classList.contains?.('show')) this.renderStats();
     const btns=document.querySelectorAll('.ctrl-btn');
     btns.forEach(btn=>{
       const action=btn.dataset.action;
@@ -448,6 +449,11 @@ export class TamagotchiApp {
   }
 
   showStats(){
+    this.renderStats();
+    this.openOverlay('stats-overlay');
+  }
+
+  renderStats(){
     const st=this.state;
     const hF='\u2665', hE='\u2661';
     const hungerH=hF.repeat(st.hunger)+hE.repeat(C.MAX_HUNGER-st.hunger);
@@ -458,11 +464,10 @@ export class TamagotchiApp {
       <div class="stat-row"><span>Stage</span><span>${st.stage}</span></div>
       <div class="stat-row"><span>Age</span><span>${st.age} days</span></div>
       <div class="stat-row"><span>Weight</span><span>${st.weight} lb</span></div>
-      <div class="stat-row"><span>Hunger</span><span class="hearts">${hungerH}</span></div>
-      <div class="stat-row"><span>Happy</span><span class="hearts">${happyH}</span></div>
+      <div class="stat-row"><span>Food</span><span class="hearts">${hungerH} ${st.hunger}/4</span></div>
+      <div class="stat-row"><span>Happy</span><span class="hearts">${happyH} ${st.happiness}/4</span></div>
       <div class="stat-row"><span>Discipline</span><span>${st.discipline}%</span></div>
     `;
-    this.openOverlay('stats-overlay');
   }
 
   // -- MINI-GAME --
@@ -660,7 +665,7 @@ export class TamagotchiApp {
 
   talk(event){
     if(this.catchingUp || this.state.isDead)return;
-    this.dialogue?.talk(contextFor(this.state,event,{classic:'default',pizza:'slice',cyberpunk:'cyberpunk'}[petType],characterName(this.state.character)));
+    this.dialogue?.talk(contextFor(this.state,event,selectedCharacter.id,characterName(this.state.character)));
   }
   showDialogue(text,status){
     const el=document.getElementById('dialogue');

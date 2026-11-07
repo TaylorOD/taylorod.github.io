@@ -1,7 +1,7 @@
-import { validState } from '../pets/storage.js';
+import { validState } from '../pets/valid-state.js';
 
-export const families = ['default', 'slice', 'cyberpunk'];
-export const legacyFamily = { default:'classic', slice:'pizza', cyberpunk:'cyberpunk' };
+import { families, legacyFamily, requireAllowed } from '../pets/catalog.js';
+export { families, legacyFamily } from '../pets/catalog.js';
 const memory = new Map();
 const sessionOnly = new Set();
 const localOwners = new Map();
@@ -22,11 +22,12 @@ export function validEnvelope(data, instance, family) {
   return [null,'tamatchi','kuchitamatchi'].includes(state.prevTeen) && [null,'hungry','sad','misbehave','sick'].includes(state.attentionReason) && (state.attentionCallTime===null || state.attentionCallTime>=0);
 }
 
-export function parseImport(text) {
+export function parseImport(text, allowed=families) {
   if (typeof text !== 'string' || text.length > 32768) throw new Error('This save file is too large.');
   let data;
   try { data = JSON.parse(text); } catch { throw new Error('This is not a valid save file.'); }
   if (!validEnvelope(data)) throw new Error('This save has unsupported or invalid game data.');
+  requireAllowed(data.family,allowed);
   if (data.savedAt > Date.now() + 300000) throw new Error('This save is dated in the future.');
   for(const key of ['bornAt','stageStartTime','lastHungerDecay','lastHappyDecay','lastPoopTime','lastAgeInc','lastProcessed','snackWindowStart','attentionCallTime']) {
     if(data.state[key]!==null && data.state[key]>Date.now()+300000)throw new Error('This save contains a future game clock.');
@@ -76,6 +77,7 @@ export class SaveStore {
   }
   migrateLegacy(family) {
     if (!families.includes(family)) throw new Error('Unknown character');
+    if (!['default','slice','cyberpunk'].includes(family)) return false;
     if (!this.owns(family)) throw new Error('This pet is active in another window.');
     const key=saveKey(this.instance,family);
     // Check durable storage directly. A failed migration must remain retryable.
