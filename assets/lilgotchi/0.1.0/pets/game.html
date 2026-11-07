@@ -6,6 +6,7 @@
 <title>lilgotchi</title>
 <link rel="stylesheet" href="game.css">
 <link rel="stylesheet" href="embed.css">
+<link rel="stylesheet" href="scenery.css">
 <script type="module" src="boot.js"></script>
 </head>
 <body>
@@ -16,6 +17,7 @@
   <button id="settings-btn" aria-label="Settings">&#9881;</button>
   <div id="pet-clock" aria-label="Local time"></div>
   <div id="screen-frame">
+    <div class="scene-window" aria-hidden="true"><span class="scene-orb"></span><span class="scene-land"></span></div>
     <canvas id="lcd" width="32" height="16" role="img" aria-label="Your pet"></canvas>
   </div>
   <div id="attention-bar"></div>
@@ -35,6 +37,7 @@
 </div>
 <div id="care-panel">
   <div id="pet-identity"></div>
+  <div id="growth-notice" hidden></div>
   <div id="pet-needs" aria-live="off"></div>
   <div id="care-meters" aria-label="Pet needs"></div>
   <p id="care-hint"></p>
@@ -69,7 +72,6 @@
       <span class="label">Muted</span>
     </button></div></details>
 </div>
-<div id="dialogue" role="status"><span id="dialogue-text"></span> <button id="dialogue-retry" hidden>Try again</button></div>
 </div>
 <p id="pet-status" aria-live="off"></p>
 <p id="save-status"></p>
@@ -107,9 +109,9 @@
 <!-- Settings overlay -->
 <div role="dialog" aria-modal="true" class="overlay" id="settings-overlay">
   <div class="overlay-title">SETTINGS</div>
+  <div class="settings-row"><span>Vacation</span><button class="toggle" id="vacation-toggle" role="switch" aria-checked="false" aria-label="Vacation" aria-describedby="vacation-info"></button></div>
+  <p class="settings-info" id="vacation-info">Pause care and growth until you turn Vacation off. Otherwise, up to eight hours pass while you are away.</p>
   <div class="settings-row" id="eink-row"><span>E-ink Theme</span><button class="toggle" id="eink-toggle" role="switch" aria-checked="false" aria-label="Toggle E-ink theme"></button></div>
-  <div class="settings-row"><span>Personality dialogue</span><button class="toggle" id="dialogue-toggle" role="switch" aria-checked="false" aria-label="Personality dialogue"></button></div>
-  <p class="settings-info" id="dialogue-info"></p>
   <div class="settings-row"><span>Subtle scanlines</span><button class="toggle" id="scanline-toggle" role="switch" aria-checked="false" aria-label="Subtle scanlines"></button></div>
   <p class="settings-info">Start again replaces this pet with a fresh copy of your selected starting character.</p>
   <button class="overlay-btn" id="reset-game-btn" style="margin-top:20px">&#9888; Start again</button>

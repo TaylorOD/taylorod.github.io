@@ -1,6 +1,6 @@
 # lilgotchi original clone parity
 
-This is the historical baseline specification. The requested care and presentation update intentionally replaces the exact visual contract with the compact layout in documents 10 through 15. Optional dialogue is now implemented as an adapter. A real provider remains a separate configuration and verification task. The reference is a regression baseline, not proof of original hardware behavior.
+This is the historical baseline specification. The requested care and presentation update intentionally replaces the exact visual contract with the compact layout in documents 10 through 15. AI dialogue is intentionally removed by the current product scope. The reference is a regression baseline, not proof of original hardware behavior.
 
 Use [plateaukao/tamagochi at commit 74c7a45](https://github.com/plateaukao/tamagochi/tree/74c7a45c8ef03ac43a500db18d19b8fa7cd4ec62) as the source of truth. Preserve the complete commit ID in the source manifest and keep an untouched copy for comparison. Do not compare against a moving upstream branch.
 
@@ -36,20 +36,4 @@ Use exact pixel comparison for the logical screen buffer and original sprite mat
 | Random events during offline replay are approximate | Use controlled random input for parity checks. Publish the chosen resume rules |
 | Accessibility and keyboard handling were added | Keep them without changing action outcomes or visible default pixels |
 | Some artwork can crop during motion | Fix placement and frame data. Record affected original frames as intentional visual differences |
-| Optional OpenAI dialogue was removed | Treat this as an explicit remaining feature gap, not complete upstream functionality |
 
-## Optional dialogue
-
-The original includes optional OpenAI personality dialogue and a local API key setting. The core widget should remain usable without a service or key. A complete upstream feature claim requires an optional dialogue adapter with the original triggers and visible responses, plus a separate secure host integration design. Never ship a site owner's secret in browser assets.
-
-Until that adapter exists, describe the release as a fork of the clone's core virtual pet game and list dialogue as omitted. Do not silently remove it from the parity checklist. The [optional dialogue design](09-optional-dialogue.md) covers the adapter. Live provider hosting and credentials are a separate deployment dependency.
-
-## Evidence to keep
-
-Store source revision, comparison fixtures, original screenshots, fork screenshots and a difference register. Each difference needs a reason and an acceptance check. Capture eggs, all evolution outcomes, meals, snacks, refusals, sickness, medicine, waste, sleep with both light states, all game rounds, win, loss, stats, settings, death and restart.
-
-Preserve upstream credit and the source license information in the distributed files. The current [NOTICE](../../pets/NOTICE.md) records that the upstream README declares MIT and lacks a separate copyright notice. Carry that provenance forward without inventing authorship or claiming official firmware compatibility.
-
-## Acceptance
-
-Default passes the controlled gameplay comparisons and logical pixel comparisons. Every intentional difference is listed. Unresolved differences block an unqualified claim of full upstream parity.

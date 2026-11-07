@@ -44,6 +44,8 @@ export class SaveStore {
     this.persistent = true;
     this.revisions = new Map();
     this.releases = new Map();
+    this.lockRequests = new Map();
+    this.pendingReleases = new Map();
     try { this.storage = options.storage === undefined ? globalThis.localStorage : options.storage; }
     catch { this.storage = null; }
     if (!this.storage) this.persistent = false;
@@ -113,17 +115,22 @@ export class SaveStore {
     try { return JSON.parse(this.read(saveKey(this.instance,family)+':lease') || 'null'); } catch { return null; }
   }
   async acquire(family) {
+    // Resolving the callback releases ownership locally before the browser has
+    // finished releasing its Web Lock. Wait only for locks we already released.
+    if(this.pendingReleases.has(family))await this.pendingReleases.get(family);
     const key=saveKey(this.instance,family);
     if (localOwners.has(key) && localOwners.get(key)!==this.owner && (this.locks || this.lease(family)?.expires>this.now())) return false;
     if (this.releases.has(family)) return this.owns(family);
     if (this.locks) {
       let answer;
       const acquired=new Promise(resolve=>{answer=resolve;});
-      this.locks.request(key,{ifAvailable:true},async lock=>{
+      const request=this.locks.request(key,{ifAvailable:true},async lock=>{
         if (!lock) { answer(false); return; }
         localOwners.set(key,this.owner);
         await new Promise(resolve=>{this.releases.set(family,resolve); answer(true);});
       }).catch(()=>answer(false));
+      this.lockRequests.set(family,request);
+      request.then(()=>{if(this.lockRequests.get(family)===request)this.lockRequests.delete(family);});
       return acquired;
     }
     const lease=this.lease(family);
@@ -177,6 +184,11 @@ export class SaveStore {
     const key=saveKey(this.instance,family);
     if (!this.locks && this.lease(family)?.owner===this.owner) this.write(key+':lease',JSON.stringify({owner:this.owner,expires:0}));
     if(localOwners.get(key)===this.owner) localOwners.delete(key);
+    const request=this.lockRequests.get(family);
+    if(this.releases.has(family) && request){
+      this.pendingReleases.set(family,request);
+      request.then(()=>{if(this.pendingReleases.get(family)===request)this.pendingReleases.delete(family);});
+    }
     this.releases.get(family)?.();
     this.releases.delete(family);
   }

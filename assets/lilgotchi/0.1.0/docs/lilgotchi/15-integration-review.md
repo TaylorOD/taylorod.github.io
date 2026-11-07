@@ -27,7 +27,7 @@ Do not weaken original behavior tests to accept an accidental regression. Record
 
 ## External checks
 
-Actual iPhone and Android devices, human listening, a real screen reader and a configured dialogue service cannot be replaced by desktop emulation or mocks. Record these as unverified when unavailable. Do not add credentials or enable a paid provider to satisfy a checklist. Existing merge approval still applies to production PRs.
+Actual iPhone and Android devices, human listening, and a real screen reader cannot be replaced by desktop emulation or mocks. Record these as unverified when unavailable. Existing merge approval still applies to production PRs.
 
 ## Reference research
 
