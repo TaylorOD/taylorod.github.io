@@ -14,7 +14,7 @@ A site with a content security policy must allow the module origin in `script-sr
 
 ## Settings
 
-`character` chooses the initial family. Saved selection wins on later visits. `storage-key` defaults to `default` and should stay stable across pages. `mode="inline"` displays the game in the page. The default drawer uses the bottom right corner, with `placement="bottom-left"` available.
+`character` chooses the initial selection. `characters="all"` is the default. A comma or space separated list such as `characters="default,mametchi,slice"` limits the picker, public method and imports. Invalid or empty lists show a configuration error. Saved selection wins when allowed. If a saved selection is excluded, the first allowed choice opens and its old save stays intact. Settings are read when the element connects. See the [character guide](characters.md). `storage-key` defaults to `default` and should stay stable across pages. `mode="inline"` displays the game in the page. The default drawer uses the bottom right corner, with `placement="bottom-left"` available.
 
 Sound starts muted. The player's choice is saved per instance and restored on later opens. Audio still requires browser user interaction. A `muted` attribute forces a muted start.
 

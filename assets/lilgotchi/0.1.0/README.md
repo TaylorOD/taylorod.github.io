@@ -2,7 +2,7 @@
 
 A small virtual pet for your website, based on [plateaukao/tamagochi](https://github.com/plateaukao/tamagochi).
 
-The widget runs without a backend or dependencies. Choose Default, Slice or Cyberpunk, each with a full set of life stages and its own saved progress.
+The widget runs without a backend or dependencies. Choose the original egg, any of the 11 original characters, Slice or Cyberpunk. Each choice has its own saved progress.
 
 ## Add it to a website
 
@@ -13,7 +13,7 @@ Run `npm run build`, then copy the whole `dist` folder to your site's `/assets/l
 <lil-gotchi character="slice" storage-key="site-pet"></lil-gotchi>
 ```
 
-Use `default`, `slice` or `cyberpunk`. Add `mode="inline"` for an always visible game, or `placement="bottom-left"` to move the launcher. Each storage key has independent saves. Reusing the same key keeps a single active player.
+Use `characters="all"` for the full lineup, or limit the picker with `characters="default,mametchi,slice"`. `character` chooses the starting selection. See the [character guide](docs/characters.md) for every ID and starting stage. Add `mode="inline"` for an always visible game, or `placement="bottom-left"` to move the launcher. Each storage key has independent saves. Reusing the same key keeps a single active player.
 
 The element exposes async `open()`, `close()` and `setCharacter(name)` methods. Events are `lilgotchi:ready`, `lilgotchi:open`, `lilgotchi:close`, `lilgotchi:characterchange` and `lilgotchi:error`. Details include only the selected character or error message, never a save.
 
@@ -30,7 +30,7 @@ npm test
 
 Open `http://localhost:4176`. To choose another port, use `npm start -- --port 4177`.
 
-The demo opens the game from a pixel pet launcher. The untouched original is at `/reference/upstream.html`. The original sprite contact sheet is at `/reference/contact-sheet.html`. These source review pages are not part of the release.
+The demo opens the game from a pixel pet launcher. The untouched original is at `/reference/upstream.html` for source review. See [the reference review](docs/reference-review.md) for its known limits. The original sprite contact sheet is at `/reference/contact-sheet.html`. These source review pages are not part of the release.
 
 After building, open `http://localhost:4176/dist/examples/install.html` to try a plain page using only the built files. The release includes version metadata and license notices. See the [migration instructions](docs/install.md#migrate-the-earlier-personal-site-pets) for the explicit legacy save option.
 
