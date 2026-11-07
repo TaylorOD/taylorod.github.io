@@ -1,3 +1,4 @@
+import { families } from './catalog.js';
 // Optional dialogue context. No provider code or credentials belong here.
 export const personalities={
       babytchi:'a curious newborn baby, very simple speech, coos and babbles',
@@ -18,7 +19,7 @@ export function contextFor(state,event,family,name){
   return {event,family,character:state.character,name,personality:personalities[state.character],hunger:state.hunger,happiness:state.happiness,discipline:state.discipline,age:state.age,weight:state.weight};
 }
 export function validContext(c){
-  return !!c && Object.keys(c).sort().join(',')==='age,character,discipline,event,family,happiness,hunger,name,personality,weight' && triggers.includes(c.event) && ['default','slice','cyberpunk'].includes(c.family) && Object.hasOwn(personalities,c.character) && c.personality===personalities[c.character] && typeof c.name==='string' && c.name.length>0 && c.name.length<=50 && ['hunger','happiness','discipline','age','weight'].every(k=>Number.isFinite(c[k]) && c[k]>=0) && c.hunger<=4 && c.happiness<=4 && c.discipline<=100 && c.age<=1000 && c.weight<=1000;
+  return !!c && Object.keys(c).sort().join(',')==='age,character,discipline,event,family,happiness,hunger,name,personality,weight' && triggers.includes(c.event) && families.includes(c.family) && Object.hasOwn(personalities,c.character) && c.personality===personalities[c.character] && typeof c.name==='string' && c.name.length>0 && c.name.length<=50 && ['hunger','happiness','discipline','age','weight'].every(k=>Number.isFinite(c[k]) && c[k]>=0) && c.hunger<=4 && c.happiness<=4 && c.discipline<=100 && c.age<=1000 && c.weight<=1000;
 }
 export const validReply=text=>typeof text==='string' && text.trim().length>0 && text.length<=LIMIT;
 export class Dialogue {

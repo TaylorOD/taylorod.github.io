@@ -1,8 +1,9 @@
+import { catalog, allowedCharacters, requireAllowed, initialCharacter } from './pets/catalog.js';
 import { DialogueHost } from './widget/dialogue-host.js';
 import { visibleControl } from './widget/focus.js';
 import { lockPage, unlockPage } from './widget/scroll-lock.js';
-import { launcherArt } from './widget/launcher.js';
-import { SaveStore, families, legacyFamily, parseImport } from './widget/save-store.js';
+import { launcherIcon as launcherArt } from './widget/launcher.js';
+import { SaveStore, legacyFamily, parseImport } from './widget/save-store.js';
 
 const asset = path => new URL(path,import.meta.url).href;
 class LilGotchi extends HTMLElement {
@@ -17,14 +18,15 @@ class LilGotchi extends HTMLElement {
     if(this.initialized) return;
     this.initialized=true;
     this.store=new SaveStore(this.getAttribute('storage-key')||'default');
-    const requested=this.store.preference('character')||this.getAttribute('character');
-    this.family=families.includes(requested)?requested:'default';
+    try { this.allowed=allowedCharacters(this.getAttribute('characters')); }
+    catch(error){this.shadowRoot.innerHTML='<p role="alert"></p>';this.shadowRoot.querySelector('p').textContent=error.message;this.emit('error',{message:error.message});return;}
+    this.family=initialCharacter(this.store.preference('character'),this.getAttribute('character'),this.allowed);
     this.inline=this.getAttribute('mode')==='inline';
     this.shadowRoot.innerHTML=`<link rel="stylesheet" href="${asset('./widget/shell.css')}">
       <button class="launcher" aria-label="Open lilgotchi" aria-haspopup="dialog">${launcherArt(this.family)}</button>
       <${this.inline?'section class="inline"':'dialog'} aria-label="lilgotchi">
-      <header><h2>lilgotchi</h2><button class="close" aria-label="Close lilgotchi">×</button>
-      <label class="chooser">Your pet <select aria-label="Character"><option value="default">Default</option><option value="slice">Slice</option><option value="cyberpunk">Cyberpunk</option></select></label></header>
+      <header><h2><img src="${asset('./widget/egg.svg')}" width="20" height="24" alt="" style="vertical-align:middle"> lilgotchi</h2><button class="close" aria-label="Close lilgotchi">×</button>
+      <label class="chooser">Your pet <select aria-label="Character">${this.allowed.map(id=>`<option value="${id}">${catalog.find(choice=>choice.id===id).name}</option>`).join('')}</select></label></header>
       <div class="frame"></div><p class="status" role="status"></p>
       <button class="retry" hidden>Try again</button><details><summary>Save and help</summary><div class="tools"><button class="export">Export save</button><button class="import-button">Import save</button></div>
       <input class="file" type="file" accept="application/json,.json" hidden>
@@ -70,7 +72,7 @@ class LilGotchi extends HTMLElement {
     this.emit('close',{character:this.family});
   });}
   setCharacter(family){
-    if(!families.includes(family))return Promise.reject(new TypeError('Unknown character'));
+    try{requireAllowed(family,this.allowed||[]);}catch(error){return Promise.reject(error);}
     return this.serial(async()=>{
       if(this.family===family)return;
       const visible=this.inline||this.panel.open;
@@ -103,7 +105,7 @@ class LilGotchi extends HTMLElement {
     frame.title=`${this.family} virtual pet game`;
     const url=new URL('./pets/game.html',import.meta.url);
     const nonce=crypto.randomUUID();
-    url.search=new URLSearchParams({pet:legacyFamily[this.family],embed:'1',parentOrigin:location.origin,nonce});
+    url.search=new URLSearchParams({pet:legacyFamily[this.family],character:this.family,embed:'1',parentOrigin:location.origin,nonce});
     const channel=new MessageChannel();
     this.port=channel.port1;
     const activeFamily=this.family;
@@ -167,9 +169,11 @@ class LilGotchi extends HTMLElement {
   });}
   async previewImport(file){
     if(!file)return;
+    this.importData=null;
+    this.shadowRoot.querySelector('.import').hidden=true;
     try{
       if(file.size>32768)throw new Error('This save file is too large.');
-      this.importData=parseImport(await file.text());
+      this.importData=parseImport(await file.text(),this.allowed);
       const panel=this.shadowRoot.querySelector('.import');
       panel.querySelector('p').textContent=`Replace ${this.importData.family} with this age ${this.importData.state.age} pet? Your previous save will be kept as a recovery copy.`;
       panel.hidden=false;panel.querySelector('button').focus();
@@ -178,6 +182,7 @@ class LilGotchi extends HTMLElement {
   }
   confirmImport(){return this.serial(async()=>{
     const data=this.importData;if(!data)return;
+    requireAllowed(data.family,this.allowed);
     await this.unload();
     if(!await this.store.acquire(data.family))throw new Error('Close this pet in the other window before importing.');
     try{
