@@ -86,13 +86,9 @@ a .string {
 	}
 }
 
-/* Keep the pet clear of the footer on phones. */
+/* Leave room below the footer for the pet on phones. */
 @media (max-width: 600px) {
 	body {
 		padding-bottom: calc(96px + env(safe-area-inset-bottom));
-	}
-	lil-gotchi::part(launcher) {
-		left: var(--lilgotchi-spacing, 22px);
-		right: auto;
 	}
 }
