@@ -3,7 +3,7 @@ export const C = {
   MAX_HUNGER: 4, MAX_HAPPY: 4, MAX_DISC: 100, DISC_INC: 25,
   MAX_WEIGHT: 99, MAX_POOP: 4,
   MEAL_WT: 1, SNACK_WT: 2, GAME_WT_LOSS: 1,
-  EGG_MS: 300000,        // 5 min
+  EGG_MS: 90000,         // 90 seconds
   BABY_MS: 3600000,      // 1 hr
   CHILD_MS: 86400000,    // 24 hr
   TEEN_MS: 86400000,     // 24 hr
