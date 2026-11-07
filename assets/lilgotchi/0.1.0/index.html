@@ -18,7 +18,10 @@
     .try { cursor:pointer; font:inherit; color:#101219; background:#d9bc83; border:0; border-radius:12px; padding:14px 22px; min-height:48px; margin:12px 0 36px; }
     h2 { font-size:21px; letter-spacing:-.03em; }
     button:focus-visible,a:focus-visible { outline:2px solid #9de4ce; outline-offset:5px; }
-    .gallery { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:12px; margin:24px 0 48px; }
+    .gallery { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin:24px 0 20px; }
+    .original-picker { display:grid; gap:8px; margin-bottom:48px; color:#b7bbce; }
+    #original-picker { font:inherit; min-height:44px; padding:12px; color:#ececf4; background:#202832; border:1px solid #667486; border-radius:8px; width:100%; }
+    #original-picker:focus-visible { outline:2px solid #9de4ce; outline-offset:3px; }
     .gallery button { display:flex; flex-direction:column; align-items:center; justify-content:end; gap:12px; min-height:160px; padding:18px 10px; font:inherit; color:inherit; background:#171c24; border:1px solid #343c48; border-radius:12px; cursor:pointer; }
     .gallery button:hover { border-color:#9de4ce; background:#202832; }
     .gallery svg { width:64px; height:64px; overflow:visible; }
@@ -44,8 +47,11 @@
     <p>Start with an original egg, choose any of the 11 original characters, or meet Slice and Cyberpunk. Every choice keeps its own saved progress.</p>
     <button class="try" type="button">Meet your pet</button>
     <h2>Meet the lineup</h2>
-    <p>The original characters start at the stage shown. They still grow with your care. Slice and Cyberpunk start as eggs, with a peek at their later looks below.</p>
+    <p>Start with an original egg, a little dough, or a binary seed. Slice and Cyberpunk show a peek at their later looks below.</p>
     <div class="gallery" aria-label="Choose your pet"></div>
+    <label class="original-picker" for="original-picker">Or start with an original character
+      <select id="original-picker"><option value="">Choose a character</option></select>
+    </label>
     <h2>Make a little room</h2>
     <p>Copy the built folder to your site, then add these two lines. No account needed. Sound starts off.</p>
     <p><a href="https://github.com/TaylorOD/lilgotchi/archive/refs/heads/demo.zip">Download the current preview build</a>. Unzip it, then copy its contents into <code>/assets/lilgotchi/0.1.0/</code>.</p>
