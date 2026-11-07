@@ -1,5 +1,15 @@
 # Implementation status
 
+## Compact care update
+
+Design documents 10 through 15 cover the additive care model, compact screen, scenery and motion, host polish, installation and integration. Clock and time icon sit above the pet display. Current identity, stage, four percentage meters, grade and actionable care hint sit below the egg. Three primary controls retain all secondary actions in More care. Family artwork stays complete inside a square canvas with a padded rounded bezel. Optional scanlines persist; E ink and reduced motion suppress decorative movement.
+
+The host uses current saved artwork, an explicitly last saved care indicator, onboarding, return information and save confirmation. The landing page provides the install configurator and preview download without redundant install navigation. A clean source archive script produces a revision named distribution.
+
+Browser integration checked original, Slice and Cyberpunk, desktop and narrow phone layouts, busy care scenes, food percentages, manual sleep across reload, Stats, secondary care, E ink and exported saves. The actual import file picker remains blocked by the Chrome extension's disabled file URL access. Validation and replacement remain covered by automated tests. Real phone hardware, human audio listening, a screen reader and a live dialogue provider remain external verification tasks. These limits are not implied complete by the automated suite.
+
+Production PRs remain separate and await merge approval. The public demo is a built preview, not a merged production release. Historical stage counts below are retained as evidence of their original milestones.
+
 Each stage gets its own branch and PR. Later branches may build on earlier work, but each PR must remain focused and be merged separately after approval.
 
 | Stage | Status | Evidence and handoff |

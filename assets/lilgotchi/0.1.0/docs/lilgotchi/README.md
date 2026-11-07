@@ -2,7 +2,7 @@
 
 lilgotchi is a small virtual pet widget that anyone can add to a website. It keeps the original clone's game and default artwork, adds complete Slice and Cyberpunk families, and fits inside a polished slide out panel.
 
-These are implementation specs. The current pocket pet code does not meet them yet. Character names below are proposed names. The product name, three included families, dough egg, full stage coverage and no clipping are requirements.
+Documents 01 through 09 record the original implementation plan. That foundation is implemented. Documents 10 through 15 specify the current care and presentation update. See implementation-status.md for evidence and remaining external checks.
 
 ## Separate changes
 
@@ -19,6 +19,8 @@ These are implementation specs. The current pocket pet code does not meet them y
 | [Optional dialogue](09-optional-dialogue.md) | Restoring the clone's optional dialogue through a host adapter |
 
 ## What pixel for pixel means
+
+The new clock, scenery, meters and contextual controls intentionally supersede the original presentation contract below. Preserve source sprite data and test the remaining original care rules, but do not describe the updated widget as a pixel exact copy of the original device or clone.
 
 Default mode matches the pinned original clone's screen, sprites, font, spacing, frame sequence and game controls at the same viewport and game state. The outer lilgotchi launcher and drawer are new. Slice and Cyberpunk change artwork and palette, while preserving the same rules and interaction sequence.
 
@@ -40,4 +42,13 @@ Keep each item on its own branch and PR. Include browser screenshots in every PR
 
 The widget is ready when a clean website can install the documented build, all three families pass the same gameplay checks, every required frame is complete and visible, and Default passes the original comparison with only documented exceptions. Reloading, closing, switching characters and upgrading must preserve progress. A desktop demo, phone demo and install example must all use the release build.
 
-No implementation or release is implied by these docs.
+## Current update
+
+| Doc | Scope |
+| --- | --- |
+| [Care model](10-care-model.md) | Energy, health, care grades, manual sleep and existing saves |
+| [Screen layout](11-screen-layout.md) | Clock, stage, readable meters and contextual controls |
+| [Motion and scenery](12-motion-and-scenery.md) | Time palettes, bounded movement and scanlines |
+| [Widget polish](13-widget-polish.md) | Launcher, care status, save feedback and guidance |
+| [Install and release](14-install-and-release.md) | Landing configurator and delivery |
+| [Integration review](15-integration-review.md) | Combined acceptance and external checks |

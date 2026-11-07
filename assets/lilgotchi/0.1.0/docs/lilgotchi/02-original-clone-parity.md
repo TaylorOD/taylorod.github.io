@@ -1,5 +1,7 @@
 # lilgotchi original clone parity
 
+This is the historical baseline specification. The requested care and presentation update intentionally replaces the exact visual contract with the compact layout in documents 10 through 15. Optional dialogue is now implemented as an adapter. A real provider remains a separate configuration and verification task. The reference is a regression baseline, not proof of original hardware behavior.
+
 Use [plateaukao/tamagochi at commit 74c7a45](https://github.com/plateaukao/tamagochi/tree/74c7a45c8ef03ac43a500db18d19b8fa7cd4ec62) as the source of truth. Preserve the complete commit ID in the source manifest and keep an untouched copy for comparison. Do not compare against a moving upstream branch.
 
 The current game already adapts this source, but it changes the styles, storage, elapsed time handling and settings. It is not yet an exact visual replacement.
