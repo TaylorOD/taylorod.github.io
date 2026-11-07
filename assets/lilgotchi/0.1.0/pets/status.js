@@ -10,7 +10,7 @@ export function updateStatus(state) {
   if (state.stage === 'egg') {
     const seconds = Math.max(0, Math.ceil((C.EGG_MS - (now() - state.stageStartTime)) / 1000));
     text = `hatching in ${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}. your egg takes five minutes.`;
-  } else if (state.isDead) text = `lived for ${state.age} days. start a new egg when you’re ready.`;
+  } else if (state.isDead) text = `lived for ${state.age} days. start again when you’re ready.`;
   else text = `${state.stage} · ${state.age} days · food ${state.hunger}/4 · happy ${state.happiness}/4${state.isSleeping ? ' · sleeping' : ''}${state.isSick ? ' · needs medicine' : ''}${state.isMisbehaving ? ' · needs discipline' : ''}`;
   status.textContent = ((petType === 'pizza' || petType === 'cyberpunk') && state.stage !== 'egg' && !state.isDead ? characterName(state.character)+' · ' : '') + text.replace(/ · food \d\/4 · happy \d\/4/,'');
   status.hidden=state.stage==='egg';
