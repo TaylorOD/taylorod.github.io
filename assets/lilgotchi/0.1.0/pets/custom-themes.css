@@ -1,9 +1,9 @@
 /* Dark embedded version. Gameplay and control layout come from the P1 clone. */
 :root {
   --bg-page:#080a09;
-  --device-bg:#080a09;
+  --device-bg:linear-gradient(145deg,#594632,#302820);
   --device-shadow:none;
-  --device-inset:none;
+  --device-inset:inset 0 2px 4px #ffffff18;
   --screen-frame:#1b201b;
   --lcd-bg:#29231c;
   --lcd-fg:#e6c79d;
@@ -35,17 +35,17 @@
   --toast-color:#ffbb79;
 }
 :root[data-pet="classic"] { --lcd-bg:#20281d; --lcd-fg:#b4ce83; --accent:#b4ce83; --stat-hearts:#b4ce83; }
-:root[data-pet="cyberpunk"] { --lcd-bg:#0b1c24; --lcd-fg:#8cebdc; --accent:#83e8d7; --stat-hearts:#83e8d7; }
+:root[data-pet="cyberpunk"] { --device-bg:linear-gradient(145deg,#304e59,#172c36); --lcd-bg:#0b1c24; --lcd-fg:#8cebdc; --accent:#83e8d7; --stat-hearts:#83e8d7; }
 html,body { height:auto; overflow-x:hidden; overflow-y:auto; color-scheme:dark; }
 body { min-height:0; display:block; padding:0; color:#e7e5df; }
-#device { border-radius:0; padding:34px 0 0; }
+/* Keep the shared egg silhouette and spacing for every character family. */
 #settings-btn { top:0; right:3px; width:32px; height:30px; opacity:1; }
-#screen-frame { width:100%; padding:6px; }
-#controls { width:100%; gap:7px; margin-top:12px; }
+#screen-frame { width:92%; padding:6px; }
+#controls { width:94%; gap:8px; margin-top:10px; }
 .ctrl-btn { min-height:55px; padding:8px 2px; }
 .ctrl-btn .icon-color { display:none; }
 .ctrl-btn .icon-mono { display:block; color:var(--accent); }
-#attention-bar { width:100%; height:4px; }
+#attention-bar { width:92%; height:6px; }
 #pet-status { min-height:38px; margin:12px 2px 4px; font-size:11px; line-height:1.6; color:var(--lcd-fg); }
 #save-status { margin:4px 2px; font-size:10px; color:#99a197; }
 .overlay { padding:16px 8px; overflow:auto; justify-content:flex-start; }
