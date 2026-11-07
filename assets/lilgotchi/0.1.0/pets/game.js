@@ -1,6 +1,9 @@
 import { now as clockNow, setSimulationTime } from './clock.js';
 // Adapted from plateaukao/tamagochi at 74c7a45. See NOTICE.md.
 import { C } from './constants.js';
+import { initializeWellbeing, advanceWellbeing, applyWellbeingAction, setManualSleep, sleepDecision, careGrade } from './wellbeing.js';
+import { updatePresentation, careAction, motionOffset } from './presentation.js';
+import { overlayControls } from './focus.js';
 import { GameState, Evo } from './engine.js';
 import { SoundManager } from './sound.js';
 import { Renderer } from './renderer.js';
@@ -17,6 +20,7 @@ export class TamagotchiApp {
     this.sound=new SoundManager();
     this.state=new GameState();
     this.frame=0;
+    this.presentationEnabled=true;
     this.animState=null;
     this.animTimer=0;
     this.gameActive=false;
@@ -27,6 +31,8 @@ export class TamagotchiApp {
     this.toastTimer=null;
     this.eink=options.eink===true;
     this.onThemeChange=options.onThemeChange||(()=>{});
+    this.scanlines=options.scanlines===true;
+    this.onScanlinesChange=options.onScanlinesChange||(()=>{});
     this.dialogue=new Dialogue(options.dialogueSend||(()=>{}),options.dialogueAvailable===true,(text,status)=>this.showDialogue(text,status));
     this.dialogue.enabled=options.dialogueEnabled===true;
     this.onDialogueChange=options.onDialogueChange||(()=>{});
@@ -49,6 +55,17 @@ export class TamagotchiApp {
     } else {
       this.state.reset();
     }
+    initializeWellbeing(this.state,clockNow());
+    const scanlineToggle=document.getElementById('scanline-toggle');
+    document.documentElement.classList.toggle('scanlines',this.scanlines);
+    scanlineToggle?.setAttribute('aria-checked',String(this.scanlines));
+    scanlineToggle?.classList.toggle('on',this.scanlines);
+    scanlineToggle?.addEventListener('click',()=>{
+      const enabled=document.documentElement.classList.toggle('scanlines');
+      scanlineToggle.setAttribute('aria-checked',String(enabled));
+      scanlineToggle.classList.toggle('on',enabled);
+      this.onScanlinesChange(enabled);
+    });
     // Init audio on first interaction
     const initAudio=()=>{ this.sound.init(); };
     document.addEventListener('touchstart',initAudio,{once:true});
@@ -99,14 +116,14 @@ export class TamagotchiApp {
       if(confirm(`Restart ${selectedCharacter.name}? This cannot be undone.`)){
         this.dialogue?.cancel(); this.state.clearSave(); this.state.reset(); this.animState=null; this.state.save();
         this.closeOverlay('settings-overlay'); this.closeOverlay('death-overlay');
-        this.toast('New egg started!');
+        this.toast(`${selectedCharacter.name} started again.`);
       }
     });
     document.getElementById('restart-btn').addEventListener('click',()=>{
       this.dialogue?.cancel(); this.state.clearSave(); this.state.reset();
       this.animState=null; this.state.save(); this.updateButtons();
       this.closeOverlay('death-overlay');
-      this.toast('New egg started!');
+      this.toast(`${selectedCharacter.name} started again.`);
     });
 
     // Visibility change
@@ -147,6 +164,7 @@ export class TamagotchiApp {
     if(this.catchingUp) return;
     const st=this.state;
     updateStatus(st);
+    updatePresentation(st,clockNow(),this.renderer);
     if(document.getElementById('stats-overlay')?.classList.contains?.('show')) this.renderStats();
     const btns=document.querySelectorAll('.ctrl-btn');
     btns.forEach(btn=>{
@@ -160,10 +178,12 @@ export class TamagotchiApp {
         case 'medicine': disabled=!st.isSick; break;
         case 'clean': disabled=st.poopCount===0; break;
         case 'discipline': disabled=!st.isMisbehaving; break;
-        case 'stats': disabled=st.stage==='egg'; break;
+        case 'stats': disabled=false; break;
+        case 'care': disabled=st.stage==='egg'; break;
       }
       btn.classList.toggle('disabled',disabled);
       btn.disabled=disabled;
+      btn.title=disabled?(st.stage==='egg'?'Available after hatching':st.isSleeping?'Wake your pet first':action==='play'&&st.isSick?'Needs medicine before playing':action==='medicine'?'Medicine is only needed when sick':action==='discipline'?'No misbehavior to correct':action==='clean'?'Already clean':'Unavailable right now'):'';
     });
   }
 
@@ -173,6 +193,7 @@ export class TamagotchiApp {
     if(st.isDead) { this.showDeath(); return; }
     const start=Math.max(st.lastProcessed, end-25*86400000);
     if(end<=start) return;
+    if(st.wellbeingUpdatedAt<start)st.wellbeingUpdatedAt=start;
     const sound=this.sound;
     this.sound=new Proxy({}, {get:()=>()=>{}});
     this.catchingUp=true;
@@ -198,6 +219,7 @@ export class TamagotchiApp {
   // -- GAME TICK --
   tick(){
     const st=this.state, now=clockNow();
+    advanceWellbeing(st,now);
     st.lastProcessed=now;
     if(st.isDead) return;
 
@@ -261,7 +283,7 @@ export class TamagotchiApp {
     const st=this.state, h=new Date(clockNow()).getHours();
     const sch=C.SLEEP[st.stage];
     if(!sch) return;
-    const shouldSleep=(h>=sch.s||h<sch.w);
+    const shouldSleep=sleepDecision(st,(h>=sch.s||h<sch.w),clockNow());
     if(shouldSleep&&!st.isSleeping){
       st.isSleeping=true;
       this.talk('going_sleep');
@@ -352,7 +374,17 @@ export class TamagotchiApp {
 
     if(st.isDead){ this.toast('Your pet has passed away...'); return; }
 
+    advanceWellbeing(st,clockNow());
     switch(action){
+      case 'care': {
+        if(st.stage==='egg')return;
+        const next=careAction(st);
+        if(next==='clean'){this.handleAction('clean');return;}
+        setManualSleep(st,next==='sleep',clockNow());
+        this.toast(next==='sleep'?'Settling down for a nap.':'Awake and ready for company.');
+        this.updateButtons();
+        break;
+      }
       case 'feed':
         if(st.stage==='egg'){ this.toast('Egg is hatching... wait!'); this.sound.denied(); return; }
         if(st.isSleeping){ this.toast('Shh... sleeping!'); this.sound.denied(); return; }
@@ -380,6 +412,7 @@ export class TamagotchiApp {
         this.animState='medicine'; this.animTimer=clockNow();
         if(st.medDoses<=0){
           st.isSick=false; st.medDoses=0;
+          applyWellbeingAction(st,'cured',clockNow());
           st.attentionCallTime=null; st.attentionReason=null;
           this.toast('Cured!');
         } else {
@@ -424,11 +457,13 @@ export class TamagotchiApp {
   doFeed(type){
     const st=this.state;
     if(st.isSleeping||st.isDead) return;
+    advanceWellbeing(st,clockNow());
     if(type==='meal'){
       if(st.hunger>=C.MAX_HUNGER){ this.toast('Not hungry!'); this.sound.denied(); return; }
       st.hunger=Math.min(st.hunger+1,C.MAX_HUNGER);
       st.weight=Math.min(st.weight+C.MEAL_WT,C.MAX_WEIGHT);
-      this.toast('Yum! Hunger +1');
+      applyWellbeingAction(st,'meal',clockNow());
+      this.toast('Yum! Food +1');
     } else {
       if(st.happiness>=C.MAX_HAPPY){ this.toast('Already happy!'); this.sound.denied(); return; }
       st.happiness=Math.min(st.happiness+1,C.MAX_HAPPY);
@@ -466,12 +501,16 @@ export class TamagotchiApp {
       <div class="stat-row"><span>Weight</span><span>${st.weight} lb</span></div>
       <div class="stat-row"><span>Food</span><span class="hearts">${hungerH} ${st.hunger}/4</span></div>
       <div class="stat-row"><span>Happy</span><span class="hearts">${happyH} ${st.happiness}/4</span></div>
+      <div class="stat-row"><span>Energy</span><span>${Math.round(st.energy??100)}%</span></div>
+      <div class="stat-row"><span>Health</span><span>${Math.round(st.health??100)}%</span></div>
+      <div class="stat-row"><span>Care</span><span>${careGrade(st).label}</span></div>
       <div class="stat-row"><span>Discipline</span><span>${st.discipline}%</span></div>
     `;
   }
 
   // -- MINI-GAME --
   startGame(){
+    applyWellbeingAction(this.state,'play',clockNow());
     this.gameId=(this.gameId||0)+1;
     this.gameActive=true; this.gameRound=0; this.gameWins=0;
     this.gamePhase='waiting';
@@ -541,7 +580,7 @@ export class TamagotchiApp {
   render(){
     const R=this.renderer, st=this.state;
     R.clear();
-    if(!matchMedia('(prefers-reduced-motion: reduce)').matches) this.frame++;
+    if(!this.eink&&!matchMedia('(prefers-reduced-motion: reduce)').matches) this.frame++;
 
     if(st.isDead){
       const items=[{name:'grave',pixels:SP.grave,x:13,y:8}];
@@ -575,7 +614,8 @@ export class TamagotchiApp {
         const f=sp.sleep||sp.idle1;
         const cx=Math.floor((32-f[0].length)/2);
         const cy=Math.floor((16-f.length)/2)+1;
-        items.push({name:'sleeping body',pixels:f,x:cx,y:cy});
+        const offset=this.petMotion('sleep');
+        items.push({name:'sleeping body',pixels:f,x:cx+offset.x,y:cy+offset.y});
       }
       items.push({name:'sleep mark',pixels:SP.zzz,x:this.frame%60<30?23:24,y:this.frame%60<30?1:2});
       drawScene(R,items);
@@ -590,7 +630,8 @@ export class TamagotchiApp {
       const f=sp[fk]||sp.idle1;
       const cx=Math.floor((32-f[0].length)/2);
       const cy=Math.floor((16-f.length)/2)+1;
-      items.push({name:`${st.character}.${fk}`,pixels:f,x:cx,y:cy});
+      const offset=this.petMotion();
+      items.push({name:`${st.character}.${fk}`,pixels:f,x:cx+offset.x,y:cy+offset.y});
     }
 
     // Poop
@@ -611,13 +652,19 @@ export class TamagotchiApp {
     R.render();
   }
 
+  petMotion(kind='idle'){
+    if(!this.presentationEnabled||this.eink||globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return {x:0,y:0};
+    return motionOffset(clockNow(),kind);
+  }
+
   renderAnim(R,st){
     const sp=SP[st.character];
     if(!sp) return;
     const frame=sp[this.animState]||sp.eat||sp.idle1;
     const cx=Math.floor((32-frame[0].length)/2);
     const cy=Math.floor((16-frame.length)/2)+1;
-    const items=[{name:`${st.character}.${this.animState}`,pixels:frame,x:cx,y:cy}];
+    const offset=this.petMotion(this.animState);
+    const items=[{name:`${st.character}.${this.animState}`,pixels:frame,x:cx+offset.x,y:cy+offset.y}];
     switch(this.animState){
       case 'eat':
         if(this.frame%30<15) items.push({name:'meal',pixels:SP.meal,x:cx-6,y:cy+2});
@@ -646,7 +693,7 @@ export class TamagotchiApp {
     this.returnFocus=document.activeElement;
     overlay.classList.add('show');
     document.getElementById('device').inert=true;
-    overlay.querySelector('button')?.focus();
+    overlayControls(overlay)[0]?.focus();
   }
   closeOverlay(id){
     document.getElementById(id).classList.remove('show');

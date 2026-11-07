@@ -12,27 +12,36 @@
 
 
 <div id="device">
+<div id="egg-shell">
   <button id="settings-btn" aria-label="Settings">&#9881;</button>
+  <div id="pet-clock" aria-label="Local time"></div>
   <div id="screen-frame">
     <canvas id="lcd" width="32" height="16" role="img" aria-label="Your pet"></canvas>
   </div>
   <div id="attention-bar"></div>
-  <div id="pet-needs" aria-live="off"></div>
   <div id="controls">
     <button class="ctrl-btn" data-action="feed">
       <span class="icon icon-color">&#127830;</span>
       <svg class="icon-mono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="7" y1="3" x2="7" y2="11"/><path d="M7 11c0 2 2 3 2 6h-4c0-3 2-4 2-6"/><line x1="7" y1="17" x2="7" y2="21"/><path d="M17 3v4c0 1.5-1 2-2 2h0c1 0 2 .5 2 2v3"/><line x1="17" y1="14" x2="17" y2="21"/></svg>
       <span class="label">Feed</span>
     </button>
-    <button class="ctrl-btn" data-action="light">
-      <span class="icon icon-color">&#128161;</span>
-      <svg class="icon-mono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 2v1"/><path d="M12 7a4 4 0 0 0-4 4c0 2 1.5 3 2 4h4c.5-1 2-2 2-4a4 4 0 0 0-4-4z"/></svg>
-      <span class="label">Light</span>
-    </button>
     <button class="ctrl-btn" data-action="play">
       <span class="icon icon-color">&#127918;</span>
       <svg class="icon-mono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polygon points="10,8 16,12 10,16" fill="currentColor" stroke="none"/></svg>
       <span class="label">Play</span>
+    </button>
+    <button class="ctrl-btn" data-action="care" id="care-btn"><span class="care-symbol" aria-hidden="true">&#9790;</span><span class="label">Sleep</span></button>
+  </div>
+</div>
+<div id="care-panel">
+  <div id="pet-identity"></div>
+  <div id="pet-needs" aria-live="off"></div>
+  <div id="care-meters" aria-label="Pet needs"></div>
+  <p id="care-hint"></p>
+  <details id="more-care"><summary>More care</summary><div class="secondary-controls">    <button class="ctrl-btn" data-action="light">
+      <span class="icon icon-color">&#128161;</span>
+      <svg class="icon-mono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M9 18h6"/><path d="M10 21h4"/><path d="M12 2v1"/><path d="M12 7a4 4 0 0 0-4 4c0 2 1.5 3 2 4h4c.5-1 2-2 2-4a4 4 0 0 0-4-4z"/></svg>
+      <span class="label">Light</span>
     </button>
     <button class="ctrl-btn" data-action="medicine">
       <span class="icon icon-color">&#128138;</span>
@@ -58,8 +67,8 @@
       <span class="icon icon-color" id="mute-icon-color">&#128263;</span>
       <svg class="icon-mono" id="mute-icon-mono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="6,9 2,9 2,15 6,15 11,19 11,5" fill="currentColor" stroke="none"/><path d="M15 9a4 4 0 0 1 0 6"/><path d="M18 7a7 7 0 0 1 0 10"/></svg>
       <span class="label">Muted</span>
-    </button>
-  </div>
+    </button></div></details>
+</div>
 <div id="dialogue" role="status"><span id="dialogue-text"></span> <button id="dialogue-retry" hidden>Try again</button></div>
 </div>
 <p id="pet-status" aria-live="off"></p>
@@ -71,7 +80,7 @@
 <!-- Feed overlay -->
 <div role="dialog" aria-modal="true" class="overlay" id="feed-overlay">
   <div class="overlay-title">FEED</div>
-  <button class="overlay-btn" id="feed-meal-btn" data-feed="meal">&#127834; Meal (+1 Hunger)</button>
+  <button class="overlay-btn" id="feed-meal-btn" data-feed="meal">&#127834; Meal (+1 Food)</button>
   <button class="overlay-btn" id="feed-snack-btn" data-feed="snack">&#127852; Snack (+1 Happy)</button>
   <button type="button" class="overlay-close" data-close="feed-overlay">Cancel</button>
 </div>
@@ -101,8 +110,9 @@
   <div class="settings-row" id="eink-row"><span>E-ink Theme</span><button class="toggle" id="eink-toggle" role="switch" aria-checked="false" aria-label="Toggle E-ink theme"></button></div>
   <div class="settings-row"><span>Personality dialogue</span><button class="toggle" id="dialogue-toggle" role="switch" aria-checked="false" aria-label="Personality dialogue"></button></div>
   <p class="settings-info" id="dialogue-info"></p>
-  <p class="settings-info">Reset starts a new egg for this pet only.</p>
-  <button class="overlay-btn" id="reset-game-btn" style="margin-top:20px">&#9888; Reset Game</button>
+  <div class="settings-row"><span>Subtle scanlines</span><button class="toggle" id="scanline-toggle" role="switch" aria-checked="false" aria-label="Subtle scanlines"></button></div>
+  <p class="settings-info">Start again replaces this pet with a fresh copy of your selected starting character.</p>
+  <button class="overlay-btn" id="reset-game-btn" style="margin-top:20px">&#9888; Start again</button>
   <button type="button" class="overlay-close" data-close="settings-overlay">Close</button>
 </div>
 
@@ -110,7 +120,7 @@
 <div role="dialog" aria-modal="true" class="overlay" id="death-overlay">
   <div class="overlay-title">REST IN PEACE</div>
   <div class="death-msg" id="death-msg"></div>
-  <button class="overlay-btn" id="restart-btn">&#127793; New Egg</button>
+  <button class="overlay-btn" id="restart-btn">Start again</button>
 </div>
 
 

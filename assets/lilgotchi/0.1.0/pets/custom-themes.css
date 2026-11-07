@@ -40,6 +40,7 @@ html,body { height:auto; overflow-x:hidden; overflow-y:auto; color-scheme:dark; 
 body { min-height:0; display:block; padding:0; color:#e7e5df; }
 /* Keep the shared egg silhouette and spacing for every character family. */
 #settings-btn { top:0; right:3px; width:32px; height:30px; opacity:1; }
+html[data-embedded="true"] #settings-btn { color:#e7e5df; }
 .ctrl-btn .icon-color { display:none; }
 .ctrl-btn .icon-mono { display:block; color:var(--accent); }
 #pet-status { min-height:38px; margin:12px 2px 4px; font-size:11px; line-height:1.6; color:var(--lcd-fg); }
@@ -55,5 +56,14 @@ body { min-height:0; display:block; padding:0; color:#e7e5df; }
 #game-overlay .game-result { font-size:12px; text-align:center; }
 #toast { max-width:95%; white-space:normal; text-align:center; font-size:11px; padding:8px 10px; }
 button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+:root[data-scene="morning"] { --scene-top:#79633f; --lcd-bg:#332b20; }
+:root[data-scene="afternoon"] { --scene-top:#635c3c; --lcd-bg:#292b20; }
+:root[data-scene="evening"] { --scene-top:#805440; --lcd-bg:#35231f; }
+:root[data-scene="night"],:root[data-scene="sleep"] { --scene-top:#3d4759; --lcd-bg:#1b202b; }
+:root[data-pet="cyberpunk"][data-scene="morning"] { --scene-top:#4e7478; --lcd-bg:#153039; }
+:root[data-pet="cyberpunk"][data-scene="afternoon"] { --scene-top:#426d74; --lcd-bg:#0c2932; }
+:root[data-pet="cyberpunk"][data-scene="evening"] { --scene-top:#625678; --lcd-bg:#241d35; }
+:root[data-pet="cyberpunk"][data-scene="night"],:root[data-pet="cyberpunk"][data-scene="sleep"] { --scene-top:#304755; --lcd-bg:#0b1c24; }
+#pet-clock { color:#f0e9df; }
 @media(prefers-reduced-motion:reduce) { * { animation:none!important; transition:none!important; } }
 

@@ -34,7 +34,7 @@ Closing waits for a final state snapshot before removing the frame. Disconnectin
 
 ## Current limits
 
-Default retains the original presentation, with documented accessibility and bounds corrections. Slice and Cyberpunk include every life stage. Optional dialogue is implemented and needs a host callback for live replies. Browser file upload remains unverified because the Chrome extension disallows local file URLs. Import validation and replacement are covered by automated tests.
+The original sprites and character branches are retained inside a redesigned compact interface. Slice and Cyberpunk include every life stage. The presentation and wellbeing additions are lilgotchi choices, not verified original hardware behavior. Optional dialogue needs a host callback for live replies. Import validation and replacement are covered by automated tests. See the current implementation status for browser upload verification.
 
 The drawer keeps its header reachable while the game and save tools scroll together. The private frame channel reports bounded content heights, including open overlays. Save and help contains export and import. Escape closes a game overlay before closing the drawer. Closing returns focus to the launcher. Inline mode does not trap focus in the host page. Reduced motion removes the drawer entrance and decorative game movement.
 
@@ -76,3 +76,17 @@ The lower level `SaveStore.migrateLegacy(family)` method requires ownership acqu
 ## Check a copied release
 
 Open `dist/examples/install.html` through your local HTTP server after building. At the default development server that is `http://localhost:4176/dist/examples/install.html`. This page imports the built loader, not the source checkout. The other built examples resolve their modules relative to the same copied folder, including the separate origin example. `version.json`, `LICENSE.md` and `reference/source.json` identify the release and its source. Tests, visual QA fixtures, the original runnable reference and server example are excluded.
+
+## Landing configurator and appearance
+
+The landing page generates a complete install snippet for all characters or a chosen subset, the starting pet, placement and outer shell appearance. `appearance="light"` changes only the outer widget. Dark is the default. Each family retains its game palette.
+
+The launcher shows the last saved character. Its care dot describes the last saved needs, not a live simulation while closed. Opening the widget runs normal elapsed time processing. The welcome message can be dismissed per storage key. Save and help explains browser only storage and portable backups.
+
+## Download and release packaging
+
+[Download the current preview build](https://github.com/TaylorOD/lilgotchi/archive/refs/heads/demo.zip) for the published demo files. This is a moving preview, not an immutable release. Extract the archive and copy the contents of its top folder into your asset directory.
+
+For a reviewed source checkout on Windows, run `pwsh -File scripts/package-release.ps1`. It rebuilds the distribution and creates a zip in the temporary `lilgotchi-releases` folder named with the package version and source commit. Commit reviewed source before packaging so the filename identifies the actual source. Existing archives are never overwritten. Publish that zip as a release asset after reviewing the source and browser checks. A GitHub source archive is not the built distribution.
+
+Real iPhone Safari, Android browser, assistive technology and a configured live dialogue provider still require explicit verification. Browser viewport emulation does not establish those results.

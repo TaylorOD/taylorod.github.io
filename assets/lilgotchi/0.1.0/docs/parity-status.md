@@ -1,5 +1,13 @@
 # Parity status
 
+## Current presentation update
+
+The compact care update supersedes exact source presentation. The original sprite matrices, logical resolution, evolution branches, medicine, discipline, guessing game and sound cues remain regression references. Clock, time palettes, integer movement, rounded bezel, three primary controls, separate information panel and optional scanlines are deliberate visual differences. The untouched source stylesheet remains archived and is overridden by embed styles.
+
+Energy and health are additional companion metrics, with their own migration and elapsed time tests. Health is advisory and does not replace illness or the original death rules. The time weighted care grade does not replace evolution thresholds. Manual sleep overrides the schedule temporarily. Older saves start metric tracking at their last processed time without invented care history. Original care comparisons exclude only the added fields and retain strict comparisons for original state.
+
+The sections below describe the earlier baseline and retained exceptions. They are not a claim that the new UI matches the source pixel for pixel.
+
 Default now uses the complete pinned original stylesheet, original sprite matrices, pixel font, control order, palette, E ink setting and sound cues. Its raster colors also match the original with the lights off. The dark outer widget remains separate.
 
 Controlled tests compare care actions and refusals, snack sickness, attention mistakes, random misbehavior, hatching, evolution, adult mortality, secret evolution and all five rounds of winning and losing games. The screen comparison covers all 12 character identities, 12 reactions and six frame positions. Raster tests check exact paint colors and rectangles in both themes and light states. Sound tests compare frequency, duration and volume arguments for all 13 cues.

@@ -1,4 +1,5 @@
 import { TamagotchiApp } from './game.js';
+import { overlayControls } from './focus.js';
 import { petType, validState, configureStorage } from './storage.js';
 
 const params=new URLSearchParams(location.search);
@@ -15,7 +16,7 @@ if(petType!=='classic') {
   document.head.append(style); await loaded;
   document.getElementById('eink-row').hidden=true;
 }
-function start(initial, muted=true, eink=false,dialogueAvailable=false,dialogueEnabled=false) {
+function start(initial, muted=true, eink=false,dialogueAvailable=false,dialogueEnabled=false,scanlines=false) {
   for(const overlay of document.querySelectorAll('.overlay')) {
     const title=overlay.querySelector('.overlay-title');
     title.id=`${overlay.id}-title`;overlay.setAttribute('aria-labelledby',title.id);
@@ -25,7 +26,10 @@ function start(initial, muted=true, eink=false,dialogueAvailable=false,dialogueE
     saved=state;
     channel.postMessage({type:'save',id:++saveId,state});
   }});
-  window.app=new TamagotchiApp({dialogueAvailable,dialogueEnabled,onDialogueChange:value=>channel?.postMessage({type:'preference',name:'dialogue',value}),dialogueSend:message=>channel?.postMessage(message),eink:petType==='classic'&&eink,onThemeChange:value=>{
+  window.app=new TamagotchiApp({scanlines,onScanlinesChange:value=>{
+    if(channel)channel.postMessage({type:'preference',name:'scanlines',value});
+    else try{localStorage.setItem('lilgotchi:scanlines',String(value));}catch{}
+  },dialogueAvailable,dialogueEnabled,onDialogueChange:value=>channel?.postMessage({type:'preference',name:'dialogue',value}),dialogueSend:message=>channel?.postMessage(message),eink:petType==='classic'&&eink,onThemeChange:value=>{
     if(channel)channel.postMessage({type:'preference',name:'eink',value});
     else try{localStorage.setItem('lilgotchi:eink',String(value));}catch{}
   }});
@@ -73,13 +77,13 @@ if(embedded) {
       if(message.type==='save-status') document.getElementById('save-status').textContent=String(message.text||'').slice(0,160);
     };
     const initial=event.data.state;
-    start(validState(initial)?initial:null,event.data.muted!==false,event.data.eink===true,event.data.dialogueAvailable===true,event.data.dialogueEnabled===true);
+    start(validState(initial)?initial:null,event.data.muted!==false,event.data.eink===true,event.data.dialogueAvailable===true,event.data.dialogueEnabled===true,event.data.scanlines===true);
   };
   window.addEventListener('message',connect);
 } else {
-  let eink=false;
-  try{eink=localStorage.getItem('lilgotchi:eink')==='true';}catch{}
-  start(null,true,eink);
+  let eink=false,scanlines=false;
+  try{eink=localStorage.getItem('lilgotchi:eink')==='true';scanlines=localStorage.getItem('lilgotchi:scanlines')==='true';}catch{}
+  start(null,true,eink,false,false,scanlines);
 }
 window.addEventListener('pagehide',()=>window.app?.state.save());
 window.restorePetSession=data=>{
@@ -96,7 +100,7 @@ document.addEventListener('keydown',event=>{
     } else if(channel) channel.postMessage({type:'close'});
   }
   if(event.key==='Tab' && overlay) {
-    const controls=[...overlay.querySelectorAll('button:not(:disabled), input')];
+    const controls=overlayControls(overlay);
     const first=controls[0],last=controls.at(-1);
     if(event.shiftKey && document.activeElement===first) {event.preventDefault();last?.focus();}
     else if(!event.shiftKey && document.activeElement===last) {event.preventDefault();first?.focus();}
