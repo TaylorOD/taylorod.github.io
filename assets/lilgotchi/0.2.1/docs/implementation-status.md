@@ -4,7 +4,7 @@
 
 The public GitHub release includes a built zip and npm installable tarball. The landing configurator generates a versioned one script hosted embed. The source, package and release include MIT terms and the upstream notice. An npm registry listing still needs an authorized login.
 
-The game update is deployed on the personal site using its 0.1.0 asset copy. The standalone demo and hosted loader include the newer packaging changes. See [installation](install.md) for the current download and snippet.
+The game update is deployed on the personal site using its 0.2.1 asset copy. The standalone demo and hosted loader use the same 0.2.1 release. See [installation](install.md) for the current download and snippet.
 
 The standalone widget, all original starting characters, complete Slice and Cypunk lifecycles, local saves, curated installs and personal site integration are implemented. Original sprites remain intact. This is an adapted pixel game, not verified hardware emulation.
 
