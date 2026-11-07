@@ -2,10 +2,18 @@
 
 The pizza button on the home and projects pages opens a small virtual pet panel. Choose classic, pizza slice or cyberpunk. Each pet has its own progress in localStorage. Clearing browser data clears the pets too.
 
-Feed, clean and win a left or right guess to care for a pet. Six care actions make it grow and twenty make it a grown up. Sleep restores energy over time. Care needs change while away, capped at eight hours per visit. Pets do not die. This is a lightweight adaptation, not the full P1 simulation.
+The game now uses the P1 clone implementation from plateaukao/tamagochi. Eggs hatch after five minutes, babies become children after an hour, and the child and teen stages each last a day. Care mistakes and discipline determine the evolution branch and adult character. The six adult branches and secret Oyajitchi check are retained.
 
-The game loads on the first click and stops its animation timer when closed. There are no dependencies, accounts or API calls. Blocked browser storage falls back to the current visit and shows a note.
+Meals, snacks, weight, hunger, happiness, discipline, waste, sickness, medicine, attention calls, local clock sleep schedules, lights, aging and death are included. Play is the clone's five round guessing game. Sound starts muted and can be enabled with the sound button. Reset and New Egg restart only the selected pet.
 
-Files are split between the launcher, panel, state and art. Classic sprite credits and license are in [NOTICE.md](NOTICE.md).
+All three pets use the same rules with separate saves. Pizza and cyberpunk replace the character artwork, including variations across evolutions. Classic keeps the original sprites. This is the open source clone's game, not official firmware or a claim of exact hardware parity. Optional AI chat is not included.
 
-Run the state checks with `node --test pets/state.test.mjs`. Serve the repository over HTTP to test the module scripts in a browser.
+Time away is processed in minute steps, capped at 25 days per catch up. Sleep uses local time. Catch up advances hatching, age and care, and preserves timer fractions across repeated opens. Random events during catch up are approximate. The clone's limits remain, including sickness blocking evolution and adult mortality rules.
+
+Full game saves use `taylor-pocket-pets-p1-v1-{type}`. The earlier simplified save at `taylor-pocket-pets-v1` is left untouched. The new rules start with new eggs rather than inventing a history of care and discipline for old pets.
+
+The game loads on the first click. Closing the panel removes its iframe and stops its timers and sound. There are no dependencies, accounts or API calls. Blocked browser storage falls back to the current page visit and shows a note.
+
+Files separate the panel, game controller, state and evolution, storage, clock, sound, renderer, font and skins. Source credits and license are in [NOTICE.md](NOTICE.md).
+
+Run the gameplay checks with `node --test pets/game.test.mjs`. Serve the repository over HTTP to test the module scripts in a browser.
