@@ -44,4 +44,4 @@ The pinned upstream HTML is kept intact under `reference/`. Its exact revision a
 
 See the [difference register](docs/parity-status.md) and [module handoff](docs/module-handoff.md) for remaining work.
 
-The landing page includes a setup configurator and a preview build download. Use `appearance="light"` for a light outer widget. The pet display keeps its family colors. See the [release packaging instructions](docs/install.md#download-and-release-packaging) for a versioned built archive.
+The landing page includes a setup configurator and a named release download. Use `appearance="light"` for a light outer widget. The pet display keeps its family colors. See the [release packaging instructions](docs/install.md#download-and-release-packaging) for a versioned built archive.

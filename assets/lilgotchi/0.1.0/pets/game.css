@@ -41,9 +41,6 @@
   --input-color:#c4cfa1;
   --info-color:#666;
   --death-msg:#888;
-  --dialogue-bg:#1a2a1a;
-  --dialogue-border:#8bac0f;
-  --dialogue-color:#c4cfa1;
   --toggle-bg:#333;
   --toggle-knob:#888;
   --toggle-active-bg:#8bac0f;
@@ -91,9 +88,6 @@
   --input-color:#111;
   --info-color:#777;
   --death-msg:#555;
-  --dialogue-bg:#fff;
-  --dialogue-border:#333;
-  --dialogue-color:#111;
   --toggle-bg:#ccc;
   --toggle-knob:#888;
   --toggle-active-bg:#333;
@@ -279,19 +273,3 @@ body{display:flex;flex-direction:column;align-items:center;justify-content:cente
 #death-overlay{z-index:150}
 #death-overlay .death-msg{font-size:14px;color:var(--death-msg);margin:10px 0}
 
-/* Dialogue bubble */
-#dialogue{
-  position:fixed;bottom:10px;left:50%;transform:translateX(-50%);
-  max-width:340px;width:90%;
-  background:var(--dialogue-bg);border:2px solid var(--dialogue-border);border-radius:12px;
-  padding:12px 16px;color:var(--dialogue-color);font-size:13px;
-  font-family:'Courier New',monospace;
-  display:none;z-index:50;
-  box-shadow:0 4px 16px rgba(0,0,0,.3);
-}
-#dialogue.show{display:block}
-#dialogue::before{
-  content:'';position:absolute;top:-8px;left:50%;transform:translateX(-50%);
-  border-left:8px solid transparent;border-right:8px solid transparent;
-  border-bottom:8px solid var(--dialogue-border);
-}

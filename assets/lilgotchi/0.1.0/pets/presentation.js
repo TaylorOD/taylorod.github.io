@@ -11,6 +11,7 @@ export function careAction(state) {
 export const sceneFor=(state,period)=>!state.lightOn?'dark':state.isSleeping?'sleep':period;
 export function careHint(state) {
   if(state.isDead)return 'Your pet has passed away. Start again when you are ready.';
+  if(state.vacationAt>0)return 'Vacation paused. Resume in Settings when you are ready.';
   if(state.stage==='egg')return 'Your egg takes 90 seconds to hatch. Care starts after hatching.';
   if(state.isSick)return 'Needs medicine. Open More care to help.';
   if(state.poopCount)return 'A little cleanup will help your pet feel better.';
@@ -31,7 +32,7 @@ export function updatePresentation(state,now,renderer) {
   clock.setAttribute('aria-label',`${period}, ${date.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'})} local time`);
   const scene=sceneFor(state,period);
   if(document.documentElement.dataset.scene!==scene){document.documentElement.dataset.scene=scene;renderer?.updateColors();}
-  identity.textContent=`${characterName(state.character)} · ${state.stage}`;
+  identity.textContent=`${characterName(state.character)} · ${state.stage}${state.vacationAt>0?' · paused':''}`;
   identity.title=`Starting character and current identity are independent. Care: ${grade.label}.`;
   const meters=document.getElementById('care-meters');
   meters.hidden=state.stage==='egg'||state.isDead;
@@ -47,6 +48,33 @@ export function updatePresentation(state,now,renderer) {
 }
 
 // Integer offsets preserve complete pixel cells and stay inside placement bounds.
-export function motionOffset(time,kind='idle') {
-  return {x:kind==='idle'?Math.round(Math.sin(time/1600)):0,y:kind==='eat'||kind==='happy'?-Math.round((Math.sin(time/180)+1)/2):kind==='sleep'?-Math.round((Math.sin(time/1300)+1)/2):0};
+export function motionOffset(time,kind='idle',options={}) {
+  if(options.reducedMotion||options.eink||options.paused)return {x:0,y:0};
+  const elapsed=Math.max(0,Number.isFinite(time)?time:0);
+  if(kind==='land') {
+    // One short drop, then a quiet settle. Never loop a falling character.
+    if(elapsed>=650)return {x:0,y:0};
+    const progress=Math.min(1,elapsed/450);
+    return {x:0,y:Math.round(-2*(1-progress*progress))};
+  }
+  const bouncing=['eat','happy','play','evolve'].includes(kind);
+  return {x:kind==='idle'?Math.round(Math.sin(elapsed/1600)):0,y:bouncing?-Math.round((Math.sin(elapsed/180)+1)/2):kind==='sleep'?-Math.round((Math.sin(elapsed/1300)+1)/2):0};
+}
+
+const tiltedFrames=new WeakMap();
+export function tiltFrame(pixels,time) {
+  // Small row shear gives a pixel tilt without resampling, cropping or moving effects.
+  if(!pixels?.length||pixels[0].length>14)return pixels;
+  const wave=Math.sin(time/1900),direction=wave>.45?1:wave<-.45?-1:0;
+  if(!direction)return pixels;
+  let cached=tiltedFrames.get(pixels);
+  if(!cached){cached=new Map();tiltedFrames.set(pixels,cached);}
+  if(cached.has(direction))return cached.get(direction);
+  const width=pixels[0].length+2;
+  const result=Object.freeze(pixels.map((row,y)=>{
+    const shift=y<Math.ceil(pixels.length/2)?1+direction:1;
+    return Object.freeze([...Array(shift).fill(0),...row,...Array(width-row.length-shift).fill(0)]);
+  }));
+  cached.set(direction,result);
+  return result;
 }

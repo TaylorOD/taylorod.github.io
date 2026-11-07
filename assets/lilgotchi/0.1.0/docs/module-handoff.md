@@ -10,7 +10,6 @@ The foundation intentionally preserves the existing game modules. Later tasks ca
 | Logical drawing | `pets/renderer.js` and render methods in `game.js` | Rendering |
 | Artwork | `pets/classic-sprites.js`, `skins.js` | Default and character families |
 | Original presentation | `pets/game.html`, `game.css`, `font.js`, `sound.js` | Default parity |
-| Optional dialogue | New adapter plus controller hooks | Dialogue |
 
 `GameState` provides reset, load, save and clearSave. `Evo` exposes evolution decisions. `setSimulationTime` controls the adapted clock for tests. `TamagotchiApp` owns actions and rendering. The current browser boot exposes `window.app`, which is a development aid rather than the planned public API.
 
@@ -22,11 +21,11 @@ The public entry is `lilgotchi.js`. It defines `<lil-gotchi>` and imports `widge
 
 `pets/storage.js` now exports `configureStorage(adapter)`. Embedded boot supplies synchronous `load()` and a `save(state)` callback that sends validated state to the host. Direct game pages retain their original storage path for reference testing. Keep those function exports stable.
 
-`pets/boot.js` delays app creation until the host connection arrives. It handles `snapshot` requests, sends `save`, `ready`, `close` and sound `preference` messages, and receives `save-status`. Later dialogue support can extend this private protocol with validated message types. Public families map to the existing internal `classic`, `pizza` and `cyberpunk` values.
+`pets/boot.js` delays app creation until the host connection arrives. It handles `snapshot` requests, sends `save`, `ready`, `close` and sound `preference` messages, and receives `save-status`. Public families map to the existing internal `classic`, `pizza` and `cyberpunk` values.
 
 Default also sends the boolean `eink` preference through that channel. `TamagotchiApp` accepts optional `{eink, onThemeChange}` constructor options. The host passes both sound and E ink preferences at connection. Direct game pages use a guarded local theme preference instead.
 
-`pets/game.css` is the complete original stylesheet and is checked against the pinned source. Keep embedding and accessible control differences in `pets/embed.css`. Custom families additionally load `pets/custom-themes.css` before starting the game. Do not put custom palette overrides back into the original stylesheet.
+`pets/game.css` retains the original stylesheet except removed speech bubble styling and is checked against the pinned source. Keep embedding and accessible control differences in `pets/embed.css`. Custom families additionally load `pets/custom-themes.css` before starting the game. Do not put custom palette overrides back into the original stylesheet.
 
 The host owns all embedded persistence. Do not read parent DOM or parent localStorage from the iframe. `SaveStore` handles validation, locks, leases, revisions, export data and confirmed replacement backups. The opt in site migration uses this adapter after acquiring ownership. See docs/install.md for migrate-legacy.
 
@@ -58,14 +57,9 @@ Open `/qa/cyberpunk.html` for all 68 matrices at native and six times scale. Use
 
 ## Shell polish handoff
 
-`widget/launcher.js` renders a fixed portrait from existing sprite matrices. `pets/boot.js` reports `resize` over the private channel after device resize or overlay changes. The host accepts integer heights from 100 to 1200 only, from the current frame and family. Overlays contribute their natural child heights so the outer drawer owns scrolling. Keep the original stylesheet unchanged.
+`widget/launcher.js` renders a fixed portrait from existing sprite matrices. `pets/boot.js` reports `resize` over the private channel after device resize or overlay changes. The host accepts integer heights from 100 to 1200 only, from the current frame and family. Overlays contribute their natural child heights so the outer drawer owns scrolling. Keep unrelated source styles unchanged.
 
 Save tools use a native disclosure. The modal dialog provides host inertness, with explicit outer keyboard wrapping and launcher focus restoration. Inner overlay focus handling remains in boot and game modules. Inline widgets do not apply the outer focus loop. Closing waits for the final snapshot and cancels unfinished rounds without rewards.
 
 Wheel and single touch drags inside the frame send a bounded `scroll` delta. The host scrolls its drawer, or the page for inline mode. Ctrl wheel and multiple touch gestures stay native. `widget/scroll-lock.js` restores the original host overflow after the last modal closes or disconnects.
 
-## Dialogue handoff
-
-`pets/dialogue.js` owns the exact context allowlist, trigger list, original personality map and frame request lifecycle. `widget/dialogue-host.js` validates again before invoking `element.dialogueAdapter(context, {signal})`. Boot carries dialogue requests, results, cancellation and the saved opt in preference over the existing private channel. No provider code or secret is in the game. Set callbacks before opening or before connecting an inline element.
-
-`examples/dialogue.html` has deterministic success, delayed, failure, malformed and timeout modes plus all trigger controls. Prepare adult after opening, enable dialogue in settings, then try triggers. This review page uses direct same origin access for fixtures only. Production has no fixture controls. Reset and close should cancel delayed requests. The examples folder enters dist and contains no server code. `server-example/` stays outside dist and needs hosting, authentication, durable budget counters and a real provider test before deployment.

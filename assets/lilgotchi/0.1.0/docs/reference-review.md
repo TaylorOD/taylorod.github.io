@@ -19,4 +19,11 @@ The game includes synthesized square wave sound cues for care, play, attention, 
 
 ## Further discrepancies
 
-The source fills needs at hatching and later evolution. The official instructions describe a newly hatched pet needing attention. Exact initial levels, timing, character schedules and evolution thresholds need separate evidence before claiming authentic hardware behavior. Do not treat another clone agreeing as proof, and do not silently change existing pets while reviewing these rules.
+The source refilled needs during growth. lilgotchi now begins hatchling care with empty needs and preserves needs on later evolution. Exact firmware timing, character schedules, and evolution thresholds remain unverified. Agreement between clones is not hardware evidence. Existing saved needs remain unchanged.
+
+## Evidence based care updates
+
+The hardware review in [16-hardware-review.md](lilgotchi/16-hardware-review.md) distinguishes documented behavior from unknown firmware details. Newly hatched pets now need food and play and raise attention. Later evolution preserves needs instead of filling them automatically. Newly assigned illnesses can require one, two, or three medicine doses. Existing saves and assigned doses are not rewritten. The 90 second hatch is a deliberate user selected difference from the official approximate five minutes.
+
+Away catchup is now capped at eight hours and Vacation explicitly pauses progression. These are lilgotchi convenience features. See [away care](lilgotchi/17-away-care.md).
+
