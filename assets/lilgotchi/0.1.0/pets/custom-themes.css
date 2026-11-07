@@ -40,12 +40,8 @@ html,body { height:auto; overflow-x:hidden; overflow-y:auto; color-scheme:dark; 
 body { min-height:0; display:block; padding:0; color:#e7e5df; }
 /* Keep the shared egg silhouette and spacing for every character family. */
 #settings-btn { top:0; right:3px; width:32px; height:30px; opacity:1; }
-#screen-frame { width:92%; padding:6px; }
-#controls { width:94%; gap:8px; margin-top:10px; }
-.ctrl-btn { min-height:55px; padding:8px 2px; }
 .ctrl-btn .icon-color { display:none; }
 .ctrl-btn .icon-mono { display:block; color:var(--accent); }
-#attention-bar { width:92%; height:6px; }
 #pet-status { min-height:38px; margin:12px 2px 4px; font-size:11px; line-height:1.6; color:var(--lcd-fg); }
 #save-status { margin:4px 2px; font-size:10px; color:#99a197; }
 .overlay { padding:16px 8px; overflow:auto; justify-content:flex-start; }
