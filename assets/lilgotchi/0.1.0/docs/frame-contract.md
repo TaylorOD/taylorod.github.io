@@ -32,4 +32,4 @@ The guessing game canvas uses the complete frame's dimensions at its original sc
 
 `npm test` checks all families through every identity, 90 animation frame positions and 15 reactions. The combined fixture includes maximum waste, sickness and attention. Tests compare every intended opaque body pixel with the rendered buffer and reject overlapping composition rectangles.
 
-Open `/qa/`, choose a family, identity and reaction, and select Animate fork for a live animation loop at frozen game time. The original reference stays frozen. No QA view saves or calls a provider. Use the combined reaction and egg to inspect the tightest layouts on desktop and phone.
+Open `/qa/`, choose a family, identity and reaction, and select Animate fork for a live animation loop at frozen game time. The original reference stays frozen. No QA view saves or makes network requests. Use the combined reaction and egg to inspect the tightest layouts on desktop and phone.
