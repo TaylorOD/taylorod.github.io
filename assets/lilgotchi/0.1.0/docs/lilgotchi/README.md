@@ -2,7 +2,7 @@
 
 lilgotchi is a small virtual pet widget that anyone can add to a website. It keeps the original clone's game and default artwork, adds complete Slice and Cyberpunk families, and fits inside a polished slide out panel.
 
-Documents 01 through 09 record the original implementation plan. That foundation is implemented. Documents 10 through 15 specify the current care and presentation update. See implementation-status.md for evidence and remaining external checks.
+Documents 01 through 08 record the original implementation plan. Documents 10 through 15 cover the compact care update. Documents 16 through 25 cover evidence based care, vacation, removal of AI, history, scenery, guidance, accessibility, live care, release and recovery. See ../implementation-status.md for current evidence and external verification limits.
 
 ## Separate changes
 
@@ -16,7 +16,6 @@ Documents 01 through 09 record the original implementation plan. That foundation
 | [Animation and screen bounds](06-animation-and-screen-bounds.md) | Complete frames, safe movement and effects that stay visible |
 | [Widget polish and accessibility](07-widget-polish-and-accessibility.md) | Dark shell, responsive layout, controls, focus and motion |
 | [Saves and site migration](08-saves-and-site-migration.md) | Portable saves, browser storage and replacing the personal site version |
-| [Optional dialogue](09-optional-dialogue.md) | Restoring the clone's optional dialogue through a host adapter |
 
 ## What pixel for pixel means
 
@@ -33,8 +32,7 @@ Fixing visible cropping is an intentional difference. Any other change to origin
 3. Restore default parity and fix frame placement without altering gameplay.
 4. Build the full Slice family, then the full Cyberpunk family.
 5. Finish the shell, accessibility and install examples.
-6. Restore optional dialogue through the separate adapter.
-7. Replace the personal site's widget using the same public install path other sites will use.
+6. Replace the personal site's widget using the same public install path other sites will use.
 
 Keep each item on its own branch and PR. Include browser screenshots in every PR. Visual work must be viewed at desktop and phone sizes before pushing. Merge each PR separately after approval.
 
@@ -52,3 +50,5 @@ The widget is ready when a clean website can install the documented build, all t
 | [Widget polish](13-widget-polish.md) | Launcher, care status, save feedback and guidance |
 | [Install and release](14-install-and-release.md) | Landing configurator and delivery |
 | [Integration review](15-integration-review.md) | Combined acceptance and external checks |
+
+| [Dialogue removal](18-dialogue-removal.md) | Remove AI callbacks, settings and service examples |

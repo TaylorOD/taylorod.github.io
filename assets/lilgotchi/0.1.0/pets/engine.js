@@ -21,6 +21,7 @@ export class GameState {
       medDoses:0, prevTeen:null, sickCount:0,
       energy:100, health:100, wellbeingUpdatedAt:now, careTotal:0, careDuration:0,
       sleepOverride:'auto', sleepOverrideUntil:0,
+      vacationAt:0,
     });
   }
   save(){ return saveState(this); }

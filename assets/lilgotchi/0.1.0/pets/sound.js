@@ -7,7 +7,7 @@ export class SoundManager {
     }catch(e){}
   }
   beep(freq,dur,vol=.15){
-    if(this.muted||!this.ctx) return;
+    if(this.muted||this.suspended||!this.ctx) return;
     try{
       const o=this.ctx.createOscillator(),g=this.ctx.createGain();
       o.type='square'; o.frequency.value=freq; g.gain.value=vol;
