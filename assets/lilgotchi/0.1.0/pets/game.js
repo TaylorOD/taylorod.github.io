@@ -594,7 +594,7 @@ export class TamagotchiApp {
     // Animation override
     if(this.animState&&now-this.animTimer<2000){
       this.renderAnim(R,st);
-      R.render(st.isSleeping&&!st.lightOn); return;
+      R.render(!st.lightOn); return;
     }
     this.animState=null;
 
@@ -649,7 +649,7 @@ export class TamagotchiApp {
 
     // Needs live below the LCD so they cannot overwrite the character.
     drawScene(R,items);
-    R.render();
+    R.render(!st.lightOn);
   }
 
   petMotion(kind='idle'){

@@ -73,7 +73,7 @@ html[data-embedded="true"] #settings-btn { top:5px; right:23%; width:44px; heigh
 :root[data-scene="morning"] { --scene-top:#b8b389; --lcd-bg:#c6cfa7; }
 :root[data-scene="afternoon"] { --scene-top:#9fb6ac; --lcd-bg:#c4cfa1; }
 :root[data-scene="evening"] { --scene-top:#ba9c86; --lcd-bg:#c9b89b; }
-:root[data-scene="night"],:root[data-scene="sleep"] { --scene-top:#697c79; --lcd-bg:#a4b2a0; }
+:root[data-scene="night"],:root[data-scene="sleep"],:root[data-scene="dark"] { --scene-top:#697c79; --lcd-bg:#a4b2a0; }
 :root.eink { --scene-top:#ddd; --lcd-bg:#f0f0f0; }
 .scanlines:not(.eink) #screen-frame::after { content:''; position:absolute; inset:12px; pointer-events:none; background:repeating-linear-gradient(transparent 0 3px,#0000000b 3px 4px); }
 html[data-embedded="true"],html[data-embedded="true"] body { background:#121619; }
