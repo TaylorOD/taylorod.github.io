@@ -1,13 +1,13 @@
 import { now as clockNow } from './clock.js';
 import { C } from './constants.js';
-import { saveState, loadState, clearState } from './storage.js';
+import { saveState, loadState, clearState, selectedCharacter } from './storage.js';
 
 export class GameState {
-  constructor(){ this.reset(); }
+  constructor(choice=selectedCharacter){ Object.defineProperty(this,'preset',{value:choice}); this.reset(); }
   reset(){
     const now=clockNow();
     Object.assign(this,{
-      stage:'egg', character:'egg', age:0, weight:5,
+      stage:this.preset.stage, character:this.preset.character, age:0, weight:C.BASE_WT[this.preset.stage] || 5,
       hunger:0, happiness:0, discipline:0,
       careMistakes:0, poopCount:0,
       isSick:false, isSleeping:false, lightOn:true,
