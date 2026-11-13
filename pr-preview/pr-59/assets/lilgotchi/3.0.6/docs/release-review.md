@@ -2,7 +2,7 @@
 
 ## 3.0.6
 
-Adds space below the care meters, groups Settings into smaller sections and fixes touch scrolling. The homepage starts with the egg logo and lilgotchi name, shows the current version and updates automatically after merges. Includes the social preview artwork.
+Adds space below the care meters, groups Settings into smaller indented sections and fixes touch scrolling. The homepage starts with the egg logo and lilgotchi name, shows the current version and updates automatically after merges. Includes the social preview artwork.
 
 ## 3.0.5
 
