@@ -64,4 +64,5 @@ summary{list-style:none}summary::-webkit-details-marker{display:none}
 summary::before{content:'';display:inline-block;width:0;height:0;border-top:4px solid transparent;border-bottom:4px solid transparent;border-left:6px solid currentColor;margin-right:7px;vertical-align:middle}
 details[open]>summary::before{transform:rotate(90deg)}
 .save-help>summary{justify-content:flex-start}.save-help>summary::before{flex:none}.save-help>summary .status{margin-left:auto}
+.save-help details>summary{padding-inline-start:16px}
 .backup-help{font-size:11px;color:#aeb9ae}.settings-group>div,.settings-group>.backup-help{margin-inline:10px}
