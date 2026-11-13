@@ -48,7 +48,7 @@ Copy the whole `node_modules/lilgotchi/dist` folder into your site's public asse
 
 ## Eight games to play with your lilgotchi
 
-Catch notes, bump an opponent, head a ball, repeat arrows, follow flags, race and shoot hoops. Or play the original guessing game. [See the games](https://github.com/TaylorOD/lilgotchi/blob/main/design/games/README.md).
+Catch music notes, bump an opponent, head a ball, repeat arrows, follow flags, race and shoot hoops. Or play the original guessing game. [See the games](https://github.com/TaylorOD/lilgotchi/blob/main/design/games/README.md).
 
 ## Work on it
 
