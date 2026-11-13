@@ -1,7 +1,0 @@
-<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>lilgotchi separate origin</title>
-<style>body{font:16px system-ui;background:#ebe6db;color:#202b2c;margin:24px}</style><h1>A widget from another origin</h1><p>Serve this page on localhost:4176. Its module and frame come from 127.0.0.1:4176. Saves belong to localhost.</p>
-<script type="module">
-const moduleUrl=new URL('../lilgotchi.js',location.href);
-moduleUrl.hostname='127.0.0.1';
-await import(moduleUrl.href);
-</script><lil-gotchi mode="inline" character="cyberpunk" storage-key="cross-origin"></lil-gotchi></html>
