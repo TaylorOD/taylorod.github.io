@@ -1,8 +1,0 @@
-{
-  "repository": "https://github.com/plateaukao/tamagochi",
-  "commit": "74c7a45c8ef03ac43a500db18d19b8fa7cd4ec62",
-  "file": "upstream.html",
-  "sha256": "41352311394443d519155b13c44e5d1103c9b61cc647b028b43277069d4cf650",
-  "license": "MIT as declared in upstream README",
-  "note": "Exact local source copy used for the existing adaptation. Original bytes retained."
-}
