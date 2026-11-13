@@ -1,11 +1,9 @@
 # lilgotchi on this site
 
-Home and projects use the 0.3.1 widget in assets/lilgotchi/0.3.1. Both offer Original egg, Slice, Cypunk and Lilgotchi, with storage-key="taylor-pocket-pets" and explicit migrate-legacy.
+Home and projects use version 3.0.0 in assets/lilgotchi/3.0.0. Both offer Slice, Cypunk, Lilgotchi, Gen 1 and Gen 2. Each new pet waits for Start pet. Each family has its own colors, with controls to change or reset them.
 
-The migration copies valid older full game saves only when the new save is absent. Existing saved progress keeps its original storage key. Switching families keeps separate pets.
+Keep storage-key="taylor-pocket-pets" stable so saved progress stays available.
 
-The source is https://github.com/TaylorOD/lilgotchi. Build that project with npm run build, copy the complete distribution into a new versioned assets folder, and update both script paths together. Keep the storage key stable.
+Build https://github.com/TaylorOD/lilgotchi with npm run build, copy the complete distribution into a new versioned assets folder, and update both script paths together. Keep previously published versions unchanged.
 
-Version 0.3.1 passes 144 automated checks. Chrome review covers the four choice picker and game on home and projects at desktop and mobile sizes. Physical phone testing and human audio listening remain separate. File import validation is tested, but browser file picker verification remains blocked by extension file access settings.
-
-Screenshots are in pr-screenshots. There is no AI dialogue or provider connection.
+Version 3.0.0 passes 267 automated checks. Screenshots are in pr-screenshots.
