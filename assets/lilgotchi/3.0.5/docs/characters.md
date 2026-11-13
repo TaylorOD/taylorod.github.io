@@ -14,19 +14,19 @@ Each family has its own saved pet. Switching families doesn’t replace your pro
 
 ## The full lineups
 
-Each image shows the stages, adult branches and special elder. Open it to see the full size.
+Each image shows the stages, adult branches and special elder using the current sprites. Open it to see the full size.
 
 ### Slice
 
-![Slice stages and evolution paths](images/slice-family.jpg)
+![Slice stages and evolution paths](images/slice-family.png)
 
 ### Cypunk
 
-![Cypunk stages and evolution paths](images/cypunk-family.jpg)
+![Cypunk stages and evolution paths](images/cypunk-family.png)
 
 ### Lilgotchi
 
-![Lilgotchi stages and evolution paths](images/lilgotchi-family.jpg)
+![Lilgotchi stages and evolution paths](images/lilgotchi-family.png)
 
 ### Gen 1
 
@@ -37,6 +37,8 @@ Babytchi grows into Marutchi, then Tamatchi or Kuchitamatchi. Adults include Mam
 Shirobabytchi grows into Tonmarutchi, then Tongaritchi or Hashitamatchi. Adults include Mimitchi, Pochitchi, Nyatchi, Zuccitchi, Hashizoutchi, Kusatchi and Takotchi. Zuccitchi can become Sekitoritchi, Charitchi or Zatchi.
 
 Both generations use source pixels from [DemiumAjare's P1 and P2 sheets](https://www.spriters-resource.com/lcd_handhelds/tamagotchioriginalp1p2/). Regional variants are included together. These are adapted lilgotchi growth paths, not exact hardware emulation.
+
+The custom adults have more room for their shapes and details. Sizes vary on purpose. Quail Egg stays small, while Goose Egg and Jumbo Egg are larger. Gen 1 and Gen 2 keep their original source pixels.
 
 ## How they grow
 

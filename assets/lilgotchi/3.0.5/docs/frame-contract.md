@@ -6,11 +6,11 @@ The screen is 32 by 16 pixels. Keep the whole pet on it, including toppings, ant
 
 Sprites are rectangular arrays of palette numbers. Zero is transparent. Freeze the finished arrays and rows.
 
-Custom pets need an egg and all 11 character identities. Eggs use `idle1` and `idle2`. Hatched pets also need `happy`, `sad`, `eat` and `sleep`.
+Custom pets need an egg and all 11 character identities. Eggs use `idle1` and `idle2`. Hatched pets also need `happy`, `sad`, `eat`, `sleep`, `lookLeft`, `lookRight` and `lookUp`.
 
-Use a consistent canvas and foot position across expressions. Custom bodies are 12 by 12 pixels. Eggs are 12 by 10. The renderer allows bodies up to 16 by 12, but shared care effects need room too.
+Use a consistent canvas and foot position across expressions. Custom frames can vary by character. Slice uses up to 12 by 14 pixels, Cypunk up to 14 by 15, and Lilgotchi up to 14 by 14. Custom eggs are 12 by 10. Keep shared care effects visible too. Quail Egg stays intentionally small at eight visible pixels tall.
 
-The Gen 1 and Gen 2 source bodies may use up to 16 by 16 pixels. Keep their original pixels intact. Their full care scenes are covered by the same collision and clipping checks. Other families retain their existing size limits.
+The Gen 1 and Gen 2 source bodies may use up to 16 by 16 pixels. Keep their original pixels intact. Their full care scenes are covered by the same collision and clipping checks. The custom families have their own proportions rather than matching every original character in height.
 
 Never crop a row or column to make movement fit.
 
@@ -28,11 +28,14 @@ Then open `/qa/` and `/design/evolution/` in the browser. Look at the animation 
 
 ## Guessing game poses
 
-Every hatched character provides `lookLeft` and `lookRight`. Directions use the viewer's point of view. The face turns without flipping markings or moving the whole sprite. These frames fit within the 16 by 16 game canvas and work with reduced motion.
+Every hatched character provides `lookLeft` and `lookRight`. Directions use the viewer's point of view. The face turns without flipping markings or moving the whole sprite. The character frames fit within 16 by 16 pixels and work with reduced motion.
 
-## Small game portraits
+## Game fields
 
-`pets/arcade-sprites.js` has separate 8 by 6 portraits for every hatched identity. These use each family's existing palette. They are drawn for the playfield, not scaled down at runtime.
+Games draw the full current pet and its expression frames. The compact 8 by 6 drawings in `pets/arcade-sprites.js` remain fallback art, not the normal game characters.
 
-Get and Heading place the portrait at `x = center - 4`, `y = 10 - jump`. That leaves the top ten rows for falling objects. Keep collision coordinates aligned with those positions. `/qa/compact.html` shows all 44 portraits.
-The guessing game draws its full poses at eight screen pixels per sprite pixel. Other previews keep the default scale of four. The pet gets a 128 by 128 area, with smaller arrow buttons beside it so the layout fits narrow screens.
+All fields are 32 pixels wide. Get and Heading use 40 rows so even tall pets leave room for falling objects. Sprint uses 34 rows, with two 16 pixel lanes and a gap. Other games use 24 rows.
+
+Heading uses `headingPose()` for both drawing and head contact. Get places the catch point at the visible top of the pet and accounts for the falling object's height. Keep these calculations together when changing art.
+
+The guessing game centers full poses in a 32 by 24 field at eight screen pixels per sprite pixel. Other previews use a default scale of four. Canvas proportions follow the field dimensions.
