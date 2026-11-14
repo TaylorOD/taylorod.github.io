@@ -4,7 +4,7 @@ My personal site. It lives at [taylordorsett.com](https://www.taylordorsett.com/
 
 The home page is me, written as a JavaScript object. There is a pizza photo and a work photo, and a button to switch between them. The button in the corner opens [lilgotchi](https://github.com/TaylorOD/lilgotchi), a little pixel pet I built.
 
-![The home page of taylordorsett.com](screenshots/readme-home.jpg)
+![The projects page on desktop and the home page on a phone](screenshots/readme-home.jpg)
 
 ## What's here
 
@@ -26,13 +26,13 @@ Plain HTML, CSS and JavaScript. Tailwind from a CDN on the home page. No framewo
 
 ## Running it locally
 
-Serve the folder with anything that serves static files:
+Serve the folder with anything that serves static files, like http-server or VS Code's Live Server:
 
 ```sh
-python3 -m http.server
+npx http-server .
 ```
 
-Then open http://localhost:8000. The pets use JavaScript modules, so opening the file directly won't work.
+Then open http://localhost:8080. The pets use JavaScript modules, so opening the file directly won't work.
 
 Run the pet checks with:
 
