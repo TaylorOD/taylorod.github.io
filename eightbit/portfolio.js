@@ -16,7 +16,7 @@ root.innerHTML = `
     <canvas class="world-canvas" tabindex="0" aria-label="Explore the town. Arrow keys or WASD to walk. E or Enter to interact. Click a place to walk there, or use the map and projects menu."></canvas>
     <div class="scene-shade" aria-hidden="true"></div>
     <div class="place-label"><span class="place-dot"></span><div><h1 class="place-name">main street</h1><p class="place-subtitle">missoula, montana · just before sunset</p></div></div>
-    <div class="inventory-bar"><button data-ui="pets" class="companion-button" aria-label="Choose a pet companion"><canvas width="30" height="32" aria-hidden="true"></canvas><span class="pet-name">sprout</span></button><button data-ui="passport" class="stamp-count">0 / 8 stamps</button></div>
+    <div class="inventory-bar"><button data-ui="pets" class="companion-button" aria-label="Choose a pet companion"><canvas width="30" height="32" aria-hidden="true"></canvas><span class="pet-name">slice</span></button><button data-ui="passport" class="stamp-count">0 / 8 stamps</button></div>
     <section class="welcome"><p class="eyebrow">HEY, I'M TAYLOR.</p><h2>a few good<br>side quests.</h2><p>software engineer. recovering recruiter.<br>this is where my projects live.</p><button class="primary" data-ui="enter">come into the arcade <span>↗</span></button><button class="quiet" data-ui="dismiss">i'll take a look around</button><small>click to walk · arrow keys work too</small></section>
     <div class="room-toast" role="status"></div>
     <div class="quest-note" hidden><span>◈</span> pizza delivery <small>take it to the cabin</small></div>
@@ -207,6 +207,8 @@ dialog.addEventListener('click', event => { if (event.target === dialog) { const
 root.querySelector('.skip-link').addEventListener('click', event => { event.preventDefault(); directory(); });
 document.addEventListener('keydown', event => { if (!dialog.open && event.key.toLowerCase() === 'm' && !event.ctrlKey && !event.metaKey && !event.altKey) { event.preventDefault(); map(); } });
 root.querySelectorAll('[data-direction]').forEach(button => {
+  button.addEventListener('contextmenu', event => event.preventDefault());
+  button.addEventListener('selectstart', event => event.preventDefault());
   button.addEventListener('pointerdown', event => { event.preventDefault(); button.setPointerCapture(event.pointerId); world.walk(button.dataset.direction, true); dismissWelcome(); });
   for (const name of ['pointerup', 'pointercancel', 'lostpointercapture', 'blur']) button.addEventListener(name, () => world.walk(button.dataset.direction, false));
   button.addEventListener('keydown', event => { if (event.key === ' ' || event.key === 'Enter') { event.preventDefault(); world.walk(button.dataset.direction, true); } });
