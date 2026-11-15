@@ -1,3 +1,4 @@
+import { drawCompanion } from './companions.js';
 // Original pixel scenery and sprites. All geometry lands on whole pixels.
 export const palette = { ink: '#17292f', cream: '#f8e7bd', gold: '#f4bb72', mint: '#a8d6b7', pink: '#e3a5b6' };
 export function box(ctx, x, y, w, h, color) {
@@ -167,7 +168,7 @@ export function screen(ctx, kind, x, y, w, h, time = 0, active = false) {
   ctx.save(); ctx.beginPath(); ctx.rect(x, y, w, h); ctx.clip();
   const cx = x + w / 2, cy = y + h / 2;
   if (kind === 'pet') {
-    box(ctx, x, y + h * .72, w, h, '#5b8060'); pet(ctx, cx, y + h * .73, 'sprout', active ? time : 0, false, Math.max(1, w / 42));
+    box(ctx, x, y + h * .72, w, h, '#5b8060'); pet(ctx, cx, y + h * .73, 'lilgotchi', active ? time : 0, false, Math.max(1, w / 42));
   } else if (kind === 'pizza') {
     box(ctx, x, y, w, h, '#5b3539'); polygon(ctx, [[cx - w * .3, y + h * .2], [cx + w * .3, y + h * .2], [cx, y + h * .85]], '#ebbc75');
     box(ctx, cx - w * .3, y + h * .18, w * .6, 4, '#ce875c');
@@ -262,7 +263,7 @@ function cabin(ctx) {
   border(ctx, 132, 240, 152, 80, '#644e44', '#ad8a62', 4);
   for (let i = 0; i < 16; i++) box(ctx, 139 + i % 8 * 17, 246 + Math.floor(i / 8) * 36, 12, 26 - i % 3 * 4, ['#9e7669', '#7c9481', '#c2ab79', '#8c8796'][i % 4]);
   border(ctx, 472, 246, 142, 73, '#3e584e', '#b89e78', 4); box(ctx, 479, 292, 128, 20, '#8d9567');
-  pet(ctx, 506, 294, 'sprout', 0, false, 1.4); pet(ctx, 547, 294, 'slice', 0, false, 1.4); pet(ctx, 586, 294, 'pixel', 0, false, 1.4);
+  pet(ctx, 506, 294, 'lilgotchi', 0, false, 1.4); pet(ctx, 547, 294, 'slice', 0, false, 1.4); pet(ctx, 586, 294, 'cypunk', 0, false, 1.4);
   border(ctx, 136, 406, 112, 65, '#917166', '#574c45', 5); box(ctx, 143, 413, 41, 45, '#b58b76'); box(ctx, 190, 413, 49, 45, '#aa816d');
   table(ctx, 548, 457, 136); box(ctx, 520, 423, 31, 24, '#bdac81'); text(ctx, 'READ', 536, 435, 7, '#5f6350');
   border(ctx, 318, 378, 126, 102, '#9b8268', '#b99d78', 4); for (let y = 388; y < 475; y += 12) box(ctx, 326, y, 110, 3, '#b09a75');
@@ -302,23 +303,7 @@ export function person(ctx, x, y, direction = 'down', walking = false, time = 0,
   if (carrying) { border(ctx, 7, -24, 22, 10, '#e2bd85', '#80664a', 2); text(ctx, 'P', 18, -19, 7, '#9b5f4b'); }
   ctx.restore();
 }
-export function pet(ctx, x, y, kind = 'sprout', time = 0, asleep = false, scale = 1) {
-  ctx.save(); ctx.translate(Math.round(x), Math.round(y)); ctx.scale(scale, scale);
-  const bob = asleep ? 0 : Math.floor(time / 400) % 2;
-  box(ctx, -9, 0, 20, 4, '#192f3644');
-  if (kind === 'slice') {
-    polygon(ctx, [[-10, -18 + bob], [11, -18 + bob], [2, 0]], '#edc884'); box(ctx, -10, -21 + bob, 21, 4, '#c68c63'); box(ctx, 2, -14 + bob, 4, 3, '#bf6e59');
-  } else {
-    const color = kind === 'pixel' ? '#b7a0d0' : '#a3c693';
-    box(ctx, -10, -15 + bob, 21, 13, color); box(ctx, -7, -20 + bob, 15, 7, color);
-    box(ctx, -8, -1, 5, 3, color); box(ctx, 5, -1, 5, 3, color);
-    if (kind === 'pixel') { box(ctx, -10, -24 + bob, 5, 10, color); box(ctx, 6, -24 + bob, 5, 10, color); }
-    else { box(ctx, -1, -26 + bob, 3, 8, '#527e5a'); box(ctx, 2, -26 + bob, 6, 4, '#92bc7a'); }
-  }
-  box(ctx, -5, -11 + bob, 2, asleep ? 1 : 3, '#29474a'); box(ctx, 5, -11 + bob, 2, asleep ? 1 : 3, '#29474a'); box(ctx, 0, -6 + bob, 3, 1, '#6e7963');
-  if (asleep) text(ctx, 'z', 14, -20, 8, '#c6d1bc');
-  ctx.restore();
-}
+export const pet = drawCompanion;
 
 export function ambience(ctx, id, time, reduced = false) {
   const t = reduced ? 0 : time;

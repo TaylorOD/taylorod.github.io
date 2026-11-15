@@ -31,11 +31,16 @@ test('the river and buildings cannot be crossed, but the bridge can', () => {
 
 test('saved progress is validated and deduplicated', () => {
   const progress = loadProgress({ getItem: () => JSON.stringify({ pet: 'unknown', stamps: ['relay', 'relay', 'fake'], pizza: 'bad', adopted: true }) });
-  assert.equal(progress.pet, 'sprout'); assert.deepEqual(progress.stamps, ['relay']); assert.equal(progress.pizza, 'none'); assert.equal(progress.adopted, true);
+  assert.equal(progress.pet, 'slice'); assert.deepEqual(progress.stamps, ['relay']); assert.equal(progress.pizza, 'none'); assert.equal(progress.adopted, true);
 });
 
 test('blocked or corrupt storage does not stop the game', () => {
-  assert.equal(loadProgress({ getItem() { throw new Error('blocked'); } }).pet, 'sprout');
+  assert.equal(loadProgress({ getItem() { throw new Error('blocked'); } }).pet, 'slice');
   assert.deepEqual(loadProgress({ getItem: () => '{' }).stamps, []);
   assert.deepEqual(loadProgress({ getItem: () => 'null' }).stamps, []);
+});
+
+test("old companion choices migrate without losing progress", () => {
+  assert.equal(loadProgress({ getItem: () => JSON.stringify({ pet: "sprout" }) }).pet, "lilgotchi");
+  assert.equal(loadProgress({ getItem: () => JSON.stringify({ pet: "pixel" }) }).pet, "cypunk");
 });
