@@ -16,6 +16,12 @@ export class Sound {
     this.ambientGain.gain.setTargetAtTime(room === 'town' ? .014 : room === 'arcade' ? .004 : .002, this.context.currentTime, .4);
     this.ambientFilter.frequency.setTargetAtTime(room === 'town' ? 700 : 180, this.context.currentTime, .4);
   }
+  position(room, player) {
+    if (!this.enabled || !this.ambientGain) return;
+    const strength = room === 'town' ? Math.max(0, 1 - Math.abs(player.y - 640) / 320) : 0;
+    const volume = room === 'town' ? .003 + strength * .018 : room === 'arcade' ? .004 : .002;
+    this.ambientGain.gain.setTargetAtTime(volume, this.context.currentTime, .2);
+  }
   startAmbience() {
     if (this.ambientGain) return;
     const buffer = this.context.createBuffer(1, this.context.sampleRate * 3, this.context.sampleRate);

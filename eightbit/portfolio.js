@@ -35,6 +35,7 @@ const canvas = root.querySelector('.world-canvas'), dialog = root.querySelector(
 let postcardPose = 'hello';
 let activeDemo;
 let world, previewFrame, toastTimer, previousFocus, routeDialog = false;
+let closingAnimation;
 
 function toast(message) {
   const element = root.querySelector('.room-toast'); element.textContent = message; element.classList.add('visible');
@@ -66,6 +67,7 @@ function changeRoom(id, history = true) {
 }
 
 function openDialog(tag, title, html, route = false) {
+  closingAnimation?.cancel(); closingAnimation = null;
   cancelAnimationFrame(previewFrame);
   if (!dialog.open) previousFocus = document.activeElement;
   if (routeDialog && !route) setRoute(world.id, true);
@@ -81,11 +83,15 @@ function openDialog(tag, title, html, route = false) {
 }
 
 function closeDialog(updateRoute = true) {
-  cancelAnimationFrame(previewFrame); dialog.close(); world.pause(false);
+  cancelAnimationFrame(previewFrame);
   if (routeDialog && updateRoute) setRoute(world.id, true);
   routeDialog = false;
   const target = previousFocus?.isConnected ? previousFocus : canvas;
-  target.focus({ preventScroll: true });
+  const finish = () => { dialog.close(); world.pause(false); target.focus({ preventScroll: true }); };
+  if (world.reduced.matches || !dialog.open) { finish(); return; }
+  closingAnimation?.cancel();
+  closingAnimation = dialog.animate([{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(.45)' }], { duration: 130, easing: 'ease-in' });
+  closingAnimation.finished.then(finish).catch(() => {});
 }
 
 function openProject(id, history = true) {
@@ -207,7 +213,7 @@ function handleAction(action) {
 
 world = new World(canvas, {
   progress, onAction: handleAction,
-  onPosition: (id, player) => { const point = mapPosition(id, player), dot = root.querySelector('.map-player'); dot.setAttribute('cx', point.x); dot.setAttribute('cy', point.y); root.querySelector('.mini-map').setAttribute('aria-label', `Open the town map. You are in ${scenes[id].name}.`); },
+  onPosition: (id, player) => { sound.position(id, player); const point = mapPosition(id, player), dot = root.querySelector('.map-player'); dot.setAttribute('cx', point.x); dot.setAttribute('cy', point.y); root.querySelector('.mini-map').setAttribute('aria-label', `Open the town map. You are in ${scenes[id].name}.`); },
   onRoom: (id, scene) => { sound.setRoom(id); root.dataset.room = id; root.querySelector('.place-name').textContent = scene.name; root.querySelector('.place-subtitle').textContent = scene.subtitle; root.querySelector('.footer-location').textContent = id === 'town' ? 'a little visit to missoula.' : 'take your time. look around.'; root.querySelector('.interact').disabled = true; },
   onNearby: point => { const button = root.querySelector('.interact'); button.disabled = !point; button.querySelector('span').textContent = point?.label || 'walk up to something'; },
   onMove: (time, room) => { if (!root.querySelector('.welcome').hidden) dismissWelcome(); sound.step(time, room); },
