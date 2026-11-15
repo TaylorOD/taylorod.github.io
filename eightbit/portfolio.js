@@ -100,7 +100,9 @@ function openProject(id, history = true) {
 function paintDemo() {
   const element = root.querySelector('.project-demo');
   if (!element) return;
+  const restoreFocus = element.contains(document.activeElement);
   renderDemo(element, activeDemo);
+  if (restoreFocus) element.querySelector('button').focus({ preventScroll: true });
   const preview = element.querySelector('canvas');
   if (preview) pet(preview.getContext('2d'), 50, 70, 'slice', 0, false, 2, 'down', activeDemo.meals === 3);
 }
