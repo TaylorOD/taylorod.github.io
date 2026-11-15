@@ -1,0 +1,25 @@
+name: Check arcade
+
+on:
+  pull_request:
+    paths:
+      - 'eightbit/**'
+      - '.github/workflows/8bit-checks.yml'
+  push:
+    branches: [master]
+    paths:
+      - 'eightbit/**'
+      - '.github/workflows/8bit-checks.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test eightbit/tests/*.test.mjs
