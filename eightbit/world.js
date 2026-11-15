@@ -1,3 +1,4 @@
+import { scoutActors } from './scout.js';
 import { bikeActors } from './bikes.js';
 import { campusActors, campusScale } from './campus-life.js';
 import { animateArcade } from './arcade-art.js';
@@ -26,6 +27,7 @@ export class World {
     this.path = [];
     this.camera = { x: 0, y: 0 };
     this.paused = false;
+    this.lifeTime = 0;
     this.lastMove = 0;
     this.enter('town');
     this.resizeObserver = new ResizeObserver(() => this.resize());
@@ -145,6 +147,7 @@ export class World {
 
   tick(time) {
     const elapsed = Math.min((time - this.last) / 1000, .25); this.last = time; this.walking = false;
+    if (!this.paused && !this.reduced.matches) this.lifeTime += elapsed * 1000;
     // Substeps preserve real movement speed on slower devices without tunneling through walls.
     const steps = Math.max(1, Math.ceil(elapsed * 60)), delta = elapsed / steps;
     for (let step = 0; step < steps; step++) {
@@ -210,8 +213,9 @@ export class World {
       if (greeting || curious) text(ctx, greeting ? '♥' : this.nearby.id === 'snowcrust' || this.nearby.id === 'pizza' ? 'PIZZA?' : '?', this.companion.x, this.companion.y - 44, 8, '#edc389');
     };
     const actors = [
-      ...(this.id === 'town' ? bikeActors(ctx, time, this.reduced.matches || this.paused) : []),
-      ...(this.id === 'town' ? campusActors(ctx, time, this.reduced.matches || this.paused) : []),
+      ...scoutActors(ctx, this.id, this.lifeTime, this.reduced.matches),
+      ...(this.id === 'town' ? bikeActors(ctx, this.lifeTime, this.reduced.matches) : []),
+      ...(this.id === 'town' ? campusActors(ctx, this.lifeTime, this.reduced.matches) : []),
       ...(this.id === 'arcade' ? arcadeRegulars.map(resident => ({ y: resident.y, draw: () => drawArcadeRegular(ctx, resident, time, this.reduced.matches || this.paused) })) : []),
       { y: this.companion.y, draw: companion },
       { y: this.player.y, draw: () => person(ctx, this.player.x, this.player.y, this.direction, this.walking && !this.reduced.matches, time, this.progress.pizza === 'carrying', perspective(this.player)) },
