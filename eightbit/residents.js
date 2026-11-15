@@ -14,7 +14,7 @@ const looks = [
 ];
 const destinations = [{ x: 160, y: 464 }, { x: 512, y: 448, door: 'arcade' }, { x: 688, y: 576 }, { x: 512, y: 704 }, { x: 272, y: 560 }];
 const indoorStops = {
-  arcade: [{ x: 272, y: 496 }, { x: 416, y: 608 }, { x: 752, y: 496 }],
+  arcade: [{ x: 272, y: 496 }, { x: 416, y: 672 }, { x: 752, y: 496 }],
 };
 
 export function createResidents() {
@@ -92,5 +92,24 @@ export function drawResident(ctx, resident, time, reduced) {
     for (const x of [-15, 10]) { box(ctx, x, -14, 8, 19, '#b0cbd5'); box(ctx, x + 2, -11, 4, 13, '#283546'); box(ctx, x + 3, -7, 2, 5, '#8eafc1'); }
     box(ctx, -14, -20, 29, 3, '#9cbbc8'); box(ctx, 12, -26, 3, 30, '#9cbbc8');
   }
+  ctx.restore();
+}
+
+// Regulars stay at decorative machines, leaving every project cabinet available.
+export const arcadeRegulars = [
+  [180, 339, 0], [346, 339, 4], [595, 339, 5], [761, 339, 2],
+  [128, 463, 6], [888, 603, 1], [128, 743, 3], [888, 743, 7],
+].map(([x, y, look]) => ({ x, y, look: { ...looks[look], scale: 1.25 }, direction: 'up' }));
+
+export function drawArcadeRegular(ctx, resident, time, reduced) {
+  drawResident(ctx, resident, time, true);
+  const tap = reduced ? 0 : Math.floor(time / 230 + resident.x) % 2 * 2;
+  const { x, y, look } = resident;
+  ctx.save(); ctx.translate(x, y); ctx.scale(look.scale, look.scale);
+  // Bent elbows and alternating button presses face the controls.
+  box(ctx, -look.width / 2 - 3, -41, 5, 18, look.shirt);
+  box(ctx, look.width / 2 - 1, -41, 5, 18, look.shirt);
+  box(ctx, -15, -43, 9, 4, look.skin);
+  box(ctx, 6, -43 + tap, 9, 4, look.skin);
   ctx.restore();
 }
