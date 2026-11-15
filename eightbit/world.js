@@ -52,6 +52,10 @@ export class World {
     this.companion = { ...this.player, direction: 'down' };
     if (isWalkable(this.scene, this.player.x - 28, this.player.y)) this.companion.x -= 28;
     this.trail = [];
+    if (id === 'town' && !this.progress.visited && !this.reduced.matches) {
+      this.companion = { x: 512, y: 448, direction: 'down' };
+      this.trail = findPath(this.scene, this.companion, this.player);
+    }
     this.residents ||= createResidents();
     this.nearby = null; this.hovered = null; this.transition = this.reduced.matches ? 0 : 1;
     this.resize(); this.onRoom?.(id, this.scene);
@@ -187,6 +191,9 @@ export class World {
       const lit = this.reduced.matches ? 16 : Math.min(16, Math.floor((time - this.enteredAt) / 70));
       for (let i = 0; i < lit; i++) box(ctx, 354 + i * 20, 303, 4, 4, i % 2 ? '#f3b56c' : '#9bded5');
       box(ctx, 687, 421, 11, 9, this.progress.pizza === 'delivered' ? '#a5d7a0' : '#c29c5e');
+      // Small silhouettes pass behind the arcade windows without entering the street layer.
+      const offset = this.reduced.matches ? 12 : Math.floor(time / 180) % 30;
+      for (const x of [358, 614]) { box(ctx, x + offset, 375, 7, 7, '#765b4a'); box(ctx, x + offset - 2, 382, 11, 14, '#486a65'); }
     }
     if (this.id === 'arcade') {
       screen(ctx, 'fight', 722, 392, 43, 33, this.reduced.matches ? 0 : time, this.nearby?.id === 'fight');

@@ -37,7 +37,7 @@ The cabin art uses the supplied house photos as reference. The photos themselves
 | phone layout | 44 pixel direction buttons, wrapping labels, direct project menu and phone camera framing |
 | populated town | varied residents visit public buildings, no house visits, kayaker, fly fisher and Brennan's Wave |
 
-The implementation covers the functional review list. Some earlier cinematic ideas remain simpler: the pet greets beside the player instead of emerging from a doorway, room ambience is not positional audio, and the return from a dialog uses focus and proximity cues rather than a reverse cabinet animation. These are visual refinements, not claims of completed effects. A real iPhone long press check is still needed beyond the Chrome phone viewport check.
+First visits include a companion approaching from the arcade door and silhouettes moving behind the windows. River ambience gets louder near the water. Dialogs return toward their source with a short closing animation. Reduced motion skips these movements. A real iPhone long press check is still needed beyond the Chrome phone viewport check.
 
 ## checking changes
 
