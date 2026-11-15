@@ -4,13 +4,13 @@ export const scenes = {
   town: {
     name: 'main street', subtitle: 'missoula, montana · just before sunset', width: 1024, height: 768,
     spawn: { x: 512, y: 488 }, bounds: [32, 224, 992, 720],
-    obstacles: [[320, 216, 384, 216], [64, 304, 176, 144], [784, 240, 176, 176], [0, 608, 448, 64], [576, 608, 448, 64], [736, 480, 128, 64]],
+    obstacles: [[320, 216, 384, 216], [64, 304, 176, 144], [784, 160, 176, 176], [0, 608, 448, 64], [576, 608, 448, 64], [736, 480, 128, 64]],
     points: [
       point('arcade', 'enter the arcade', 512, 448, 'room:arcade', { sign: 'SIDE QUEST ARCADE', hint: 'eight projects. one room.' }),
       point('workshop', 'visit the workshop', 160, 464, 'room:workshop', { sign: 'THE WORKSHOP' }),
-      point('cabin', 'visit the cabin', 864, 432, 'room:cabin', { sign: 'HOME BASE' }),
+      point('cabin', 'visit the cabin', 864, 352, 'room:cabin', { sign: 'HOME BASE', hit: [784, 130, 176, 212] }),
       point('mailbox', 'say hello', 736, 560, 'contact', { sign: 'POST' }),
-      point('bench', 'take a little break', 256, 544, 'bench'),
+      point('bench', 'talk to the neighbor', 256, 544, 'delivery'),
       point('river', 'by the river', 512, 704, 'river'),
       point('roof', 'the rooftop', 688, 464, 'roof', { sign: '↑ ROOFTOP' }),
     ],
@@ -42,8 +42,8 @@ export const scenes = {
   cabin: {
     name: 'home base', subtitle: 'a few things beyond the keyboard', width: 768, height: 640,
     spawn: { x: 384, y: 528 }, bounds: [96, 224, 672, 560],
-    obstacles: [[128, 208, 160, 112], [464, 208, 160, 112], [128, 400, 128, 80], [480, 400, 144, 64]],
-    points: [point('about', 'a bit about taylor', 208, 352, 'about'), point('pets', 'choose your companion', 544, 352, 'pets'), point('delivery', 'someone ordered pizza', 192, 496, 'delivery'), point('books', 'on the bookshelf', 544, 496, 'books'), point('exit', 'back to main street', 384, 544, 'room:town')],
+    obstacles: [[128, 208, 160, 112], [304, 224, 168, 104], [496, 240, 176, 80], [128, 400, 144, 80], [496, 328, 128, 88], [480, 416, 160, 64]],
+    points: [point('about', 'a bit about taylor', 208, 352, 'about'), point('pets', 'choose your companion', 608, 528, 'pets', { hit: [570, 480, 96, 48] }), point('books', 'on the bookshelf', 480, 384, 'books', { hit: [496, 328, 128, 88] }), point('exit', 'back to main street', 384, 544, 'room:town')],
   },
   rooftop: {
     name: 'above it all', subtitle: 'a small reward for taking the long way', width: 768, height: 640,

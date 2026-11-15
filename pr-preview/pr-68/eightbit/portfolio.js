@@ -19,7 +19,7 @@ root.innerHTML = `
     <div class="inventory-bar"><button data-ui="pets" class="companion-button" aria-label="Choose a pet companion"><canvas width="30" height="32" aria-hidden="true"></canvas><span class="pet-name">slice</span></button><button data-ui="passport" class="stamp-count">0 / 8 stamps</button></div>
     <section class="welcome"><p class="eyebrow">HEY, I'M TAYLOR.</p><h2>a few good<br>side quests.</h2><p>software engineer. recovering recruiter.<br>this is where my projects live.</p><button class="primary" data-ui="enter">come into the arcade <span>↗</span></button><button class="quiet" data-ui="dismiss">i'll take a look around</button><small>click to walk · arrow keys work too</small></section>
     <div class="room-toast" role="status"></div>
-    <div class="quest-note" hidden><span>◈</span> pizza delivery <small>take it to the cabin</small></div>
+    <div class="quest-note" hidden><span>◈</span> pizza delivery <small>take it to the town bench</small></div>
     <button class="interact" disabled><kbd>E</kbd><span>walk up to something</span><b>↗</b></button>
     <div class="dpad" aria-label="Movement controls"><button data-direction="arrowup" aria-label="Walk up">↑</button><button data-direction="arrowleft" aria-label="Walk left">←</button><button data-direction="arrowdown" aria-label="Walk down">↓</button><button data-direction="arrowright" aria-label="Walk right">→</button></div>
     <button class="mini-map" data-ui="map" aria-label="Open the town map"><svg viewBox="0 0 140 96" aria-hidden="true"><rect width="140" height="96" fill="#42645b"/><path d="M8 61H132M70 30V90" stroke="#b9aa84" stroke-width="10"/><path d="M0 79H140" stroke="#76a3a1" stroke-width="7"/><rect x="50" y="25" width="40" height="24" fill="#c99b79"/><rect x="13" y="43" width="23" height="14" fill="#d1bc90"/><rect x="108" y="31" width="23" height="18" fill="#b9bb8b"/><circle cx="70" cy="60" r="4" fill="#f4d094"/></svg><span>TOWN MAP <kbd>M</kbd></span></button>
@@ -54,7 +54,7 @@ function dismissWelcome() { root.querySelector('.welcome').hidden = true; progre
 function changeRoom(id, history = true) {
   dismissWelcome();
   const previous = world.id;
-  const doors = { arcade: { x: 512, y: 464 }, workshop: { x: 160, y: 480 }, cabin: { x: 864, y: 448 }, rooftop: { x: 688, y: 480 } };
+  const doors = { arcade: { x: 512, y: 464 }, workshop: { x: 160, y: 480 }, cabin: { x: 864, y: 368 }, rooftop: { x: 688, y: 480 } };
   world.enter(id, id === 'town' ? doors[previous] : undefined);
   if (history) setRoute(id);
   sound.chime();
@@ -128,7 +128,7 @@ function contact() {
 
 function pizza() {
   const carrying = progress.pizza === 'carrying', delivered = progress.pizza === 'delivered';
-  openDialog('OPTIONAL SIDE QUEST / SPECIAL DELIVERY', delivered ? 'you’ve earned a slice.' : carrying ? 'one pizza. one short walk.' : 'got a minute?', `<p class="dialog-lead">${delivered ? 'the delivery is done. the rooftop is yours whenever you need a little break.' : carrying ? 'your pizza is still warm. take it to the cabin on the right side of town, then find the couch.' : 'someone at the cabin ordered a pizza. take it over and they’ll let you in on a little secret.'}</p><div class="dialog-actions">${delivered ? '<button class="primary" data-room="rooftop">head up to the rooftop ↑</button>' : carrying ? '<button class="primary" data-room="town">back to main street →</button>' : '<button class="primary" data-ui="take-pizza">i’m on it →</button>'}<button class="secondary" data-ui="close">maybe later</button></div>`);
+  openDialog('OPTIONAL SIDE QUEST / SPECIAL DELIVERY', delivered ? 'you’ve earned a slice.' : carrying ? 'one pizza. one short walk.' : 'got a minute?', `<p class="dialog-lead">${delivered ? 'the delivery is done. the rooftop is yours whenever you need a little break.' : carrying ? 'your pizza is still warm. take it to the neighbor on the bench to the left of the arcade.' : 'the neighbor on the town bench ordered a pizza. take it over and they’ll let you in on a little secret.'}</p><div class="dialog-actions">${delivered ? '<button class="primary" data-room="rooftop">head up to the rooftop ↑</button>' : carrying ? '<button class="primary" data-room="town">back to main street →</button>' : '<button class="primary" data-ui="take-pizza">i’m on it →</button>'}<button class="secondary" data-ui="close">maybe later</button></div>`);
 }
 
 function delivery() {
@@ -136,7 +136,7 @@ function delivery() {
     progress.pizza = 'delivered'; updateInventory(); sound.chime();
     openDialog('SIDE QUEST COMPLETE', 'pizza makes friends.', '<p class="dialog-lead">delivery complete. here’s the key to the arcade rooftop. there’s a pretty good view up there.</p><button class="primary" data-room="rooftop">let’s see the view ↑</button>');
   } else if (progress.pizza === 'delivered') pizza();
-  else openDialog('A NOTE ON THE COUCH', 'waiting on a pizza.', '<p class="dialog-lead">“if you’re heading to the arcade, could you pick up my order? it’s at the little pizza table.”</p><button class="secondary" data-room="arcade">head to the arcade →</button>');
+  else openDialog('A NEIGHBOR ON THE BENCH', 'waiting on a pizza.', '<p class="dialog-lead">“if you’re heading to the arcade, could you pick up my order? it’s at the little pizza table.”</p><button class="secondary" data-room="arcade">head to the arcade →</button>');
 }
 
 function photo() {
@@ -166,7 +166,7 @@ function handleAction(action) {
     legacy: () => openDialog('AN EARLIER SAVE FILE', 'where this started.', '<p class="dialog-lead">before this little town, there was an 8 bit portfolio built with html, css, bootstrap and javascript.</p><p>the old experiment is still on github.</p><a class="primary" href="https://github.com/TaylorOD/8_bit_portfolio">boot the original repo ↗</a>'),
     roof: () => progress.pizza === 'delivered' ? changeRoom('rooftop') : openDialog('A LOCKED ROOFTOP DOOR', 'someone has the key.', '<p class="dialog-lead">a note on the door: “ask the person waiting on a pizza. they know the way up.”</p><button class="secondary" data-room="arcade">check the pizza counter →</button>'),
     view: () => openDialog('ABOVE IT ALL', 'a pretty good place to pause.', '<p class="dialog-lead">thanks for taking the long way around. hope you found something you liked.</p><button class="secondary" data-ui="contact">say hello before you go ↗</button>'),
-    'take-pizza': () => { progress.pizza = 'carrying'; updateInventory(); closeDialog(); toast('pizza acquired. head to the cabin on main street.'); },
+    'take-pizza': () => { progress.pizza = 'carrying'; updateInventory(); closeDialog(); toast('pizza acquired. find the neighbor on the town bench.'); },
     download: () => { world.postcard().toBlob(blob => { if (!blob) return; const url = URL.createObjectURL(blob), link = document.createElement('a'); link.href = url; link.download = 'side-quest-postcard.png'; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); }); },
     sound: async () => {
       try { const enabled = await sound.toggle(); const button = root.querySelector('[data-ui="sound"]'); button.textContent = enabled ? 'sound on' : 'sound off'; button.setAttribute('aria-pressed', String(enabled)); if (!enabled && !sound.context) toast('sound isn’t available in this browser.'); }
