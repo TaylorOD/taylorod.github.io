@@ -1,3 +1,4 @@
+import { aFrame, cyberArcade, cabinDetails, workshopDetails } from './room-art.js';
 import { drawCompanion } from './companions.js';
 // Original pixel scenery and sprites. All geometry lands on whole pixels.
 export const palette = { ink: '#17292f', cream: '#f8e7bd', gold: '#f4bb72', mint: '#a8d6b7', pink: '#e3a5b6' };
@@ -151,7 +152,7 @@ function town(ctx) {
   for (const [x, y, s] of [[20, 259, 1.2], [88, 270, .9], [250, 282, 1.2], [742, 256, 1], [1001, 268, 1.3], [28, 444, 1.3], [984, 506, 1.4], [48, 597, 1], [342, 602, .9], [640, 602, .8], [934, 607, 1.1], [20, 754, 1.5], [134, 752, 1], [816, 752, 1.1], [986, 756, 1.5]]) tree(ctx, x, y, s);
   building(ctx, 320, 208, 384, 224, 'SIDE QUEST', 'arcade');
   building(ctx, 64, 292, 176, 156, 'THE WORKSHOP', 'workshop');
-  building(ctx, 784, 240, 176, 176, 'HOME BASE', 'cabin');
+  aFrame(ctx, 784, 240);
   // The arcade's exterior: ladder, bike, sandwich board and flower boxes.
   for (let y = 314; y < 430; y += 12) box(ctx, 683, y, 18, 3, '#bcad86');
   box(ctx, 682, 312, 3, 120, '#7b8975'); box(ctx, 700, 312, 3, 120, '#7b8975');
@@ -283,9 +284,9 @@ function rooftop(ctx) {
 
 export function paintScene(ctx, id, projects) {
   if (id === 'town') town(ctx);
-  else if (id === 'arcade') arcade(ctx, projects);
-  else if (id === 'workshop') workshop(ctx);
-  else if (id === 'cabin') cabin(ctx);
+  else if (id === 'arcade') cyberArcade(ctx, projects);
+  else if (id === 'workshop') { workshop(ctx); workshopDetails(ctx); }
+  else if (id === 'cabin') { cabin(ctx); cabinDetails(ctx); }
   else rooftop(ctx);
 }
 

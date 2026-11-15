@@ -18,11 +18,11 @@ test('click travel reaches a cabinet and triggers its action once', () => {
     let time = world.last;
     for (let i = 0; i < 1000; i++) { time += 16; world.tick(time); }
     assert.deepEqual(actions, ['project:lilgotchi']);
-    assert.deepEqual(world.player, { x: 192, y: 368 });
+    assert.deepEqual(world.player, { x: 272, y: 496 });
     world.walk('arrowdown', true); world.walk('arrowdown', false);
-    assert.equal(world.player.y, 376, 'a quick direction tap moves between frames');
-    world.player.y = 368;
+    assert.equal(world.player.y, 504, 'a quick direction tap moves between frames');
+    world.player.y = 496;
     world.pause(true); world.walk('arrowdown', true); world.tick(time + 16);
-    assert.deepEqual(world.player, { x: 192, y: 368 }, 'dialogs pause movement');
+    assert.deepEqual(world.player, { x: 272, y: 496 }, 'dialogs pause movement');
   } finally { for (const [key, value] of Object.entries(previous)) { if (value === undefined) delete globalThis[key]; else globalThis[key] = value; } }
 });
