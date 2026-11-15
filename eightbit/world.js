@@ -1,3 +1,5 @@
+import { drawRiverLife } from './river.js';
+import { createResidents, updateResidents, drawResident } from './residents.js';
 import { followTrail } from './companions.js';
 import { scenes, findPath, isWalkable } from './scenes.js';
 import { paintScene, ambience, person, pet, box, text, screen } from './art.js';
@@ -42,7 +44,9 @@ export class World {
     this.stop(); this.id = id; this.scene = scenes[id];
     this.player = { ...(returnPoint || this.scene.spawn) };
     this.companion = { ...this.player, direction: 'down' };
+    if (isWalkable(this.scene, this.player.x - 28, this.player.y)) this.companion.x -= 28;
     this.trail = [];
+    this.residents ||= createResidents();
     this.nearby = null; this.transition = this.reduced.matches ? 0 : 1;
     this.resize(); this.onRoom?.(id, this.scene);
   }
@@ -98,7 +102,10 @@ export class World {
     const bounds = this.canvas.getBoundingClientRect();
     const point = { x: (event.clientX - bounds.left) / bounds.width * this.canvas.width + this.camera.x, y: (event.clientY - bounds.top) / bounds.height * this.canvas.height + this.camera.y };
     // Hit areas include the face of an object, not only the spot on the floor.
-    const hit = this.scene.points.find(item => Math.abs(item.x - point.x) < (this.id === 'town' ? 55 : 38) && point.y > item.y - (this.id === 'town' ? 210 : 145) && point.y < item.y + 15);
+    const hit = this.scene.points.find(item => {
+      const [x, y, w, h] = item.hit || [item.x - 38, item.y - 100, 76, 115];
+      return point.x >= x && point.x <= x + w && point.y >= y && point.y <= y + h;
+    });
     this.canvas.dataset.destination = hit?.id || 'ground';
     if (hit) this.goTo(hit.id);
     else { this.destination = null; this.path = findPath(this.scene, this.player, point); this.target = this.path.at(-1); }
@@ -140,6 +147,7 @@ export class World {
         if (this.walking) { this.lastMove = time; this.onMove?.(time, this.id); }
       }
       followTrail(this.companion, this.trail, this.player, delta);
+      if (!this.reduced.matches) updateResidents(this.residents, this.scene, delta, this.player, this.id);
     }
     }
     const nearest = this.scene.points.filter(point => Math.hypot(point.x - this.player.x, point.y - this.player.y) < 53).sort((a, b) => Math.hypot(a.x - this.player.x, a.y - this.player.y) - Math.hypot(b.x - this.player.x, b.y - this.player.y))[0];
@@ -159,15 +167,19 @@ export class World {
     box(ctx, 0, 0, this.canvas.width, this.canvas.height, '#182b32');
     ctx.save(); ctx.translate(-Math.round(this.camera.x), -Math.round(this.camera.y)); ctx.drawImage(this.cache.get(this.id), 0, 0);
     ambience(ctx, this.id, time, this.reduced.matches || this.paused);
+    if (this.id === 'town') drawRiverLife(ctx, time, this.reduced.matches || this.paused);
     if (this.id === 'arcade') {
-      for (let i = 0; i < 4; i++) screen(ctx, projects[i].screen, 170 + i * 144, 261, 43, 33, this.reduced.matches ? 0 : time, this.nearby?.id === projects[i].id);
+      for (let i = 0; i < 4; i++) screen(ctx, projects[i].screen, 242 + i * 160, 392, 43, 33, this.reduced.matches ? 0 : time, this.nearby?.id === projects[i].id);
       if (this.progress.stamps.length === projects.length) text(ctx, 'PHOTO BOOTH UNLOCKED', 689, 516, 7, '#e9cb91');
     }
     if (this.target && this.path.length) { const { x, y } = this.target; box(ctx, x - 7, y - 1, 14, 2, '#e7cf9a'); box(ctx, x - 1, y - 7, 2, 14, '#e7cf9a'); }
     const companion = () => pet(ctx, this.companion.x, this.companion.y, this.progress.pet, this.reduced.matches ? 0 : time, this.paused || time - this.lastMove > 12000, 1, this.companion.direction, !!this.nearby);
-    if (this.companion.y < this.player.y) companion();
-    person(ctx, this.player.x, this.player.y, this.direction, this.walking && !this.reduced.matches, time, this.progress.pizza === 'carrying');
-    if (this.companion.y >= this.player.y) companion();
+    const actors = [
+      { y: this.companion.y, draw: companion },
+      { y: this.player.y, draw: () => person(ctx, this.player.x, this.player.y, this.direction, this.walking && !this.reduced.matches, time, this.progress.pizza === 'carrying') },
+      ...this.residents.filter(resident => resident.room === this.id && !resident.hidden).map(resident => ({ y: resident.y, draw: () => drawResident(ctx, resident, time, this.reduced.matches) })),
+    ];
+    actors.sort((a, b) => a.y - b.y).forEach(actor => actor.draw());
     for (const point of this.scene.points) {
       const near = point.id === this.nearby?.id;
       if (near || this.id === 'town' && point.id === 'arcade') {
