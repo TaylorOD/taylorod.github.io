@@ -7,10 +7,10 @@ const looks = [
   { skin: '#e4b08c', hair: '#d9d6c7', shirt: '#8aafbd', width: 20, cane: true },
   { skin: '#b7815b', hair: '#383043', shirt: '#d173ab', width: 25, chair: true },
   { skin: '#f0c8a1', hair: '#8c4738', shirt: '#789a71', width: 17, scale: .78 },
-  { skin: '#593d32', hair: '#212831', shirt: '#8d87c7', width: 27, long: true },
-  { skin: '#c79a72', hair: '#25272d', shirt: '#f08168', width: 20, hat: true },
+  { skin: '#edc4a4', hair: '#212831', shirt: '#8d87c7', width: 27, long: true },
+  { skin: '#e2b38f', hair: '#25272d', shirt: '#f08168', width: 20, hat: true },
   { skin: '#d3a17d', hair: '#cbb695', shirt: '#5a9b9e', width: 23, long: true },
-  { skin: '#8a624b', hair: '#392f2d', shirt: '#b8ba74', width: 18, scale: .85 },
+  { skin: '#e7bd9e', hair: '#392f2d', shirt: '#b8ba74', width: 18, scale: .85 },
 ];
 const destinations = [{ x: 160, y: 464 }, { x: 512, y: 448, door: 'arcade' }, { x: 688, y: 576 }, { x: 512, y: 704 }, { x: 272, y: 560 }];
 const indoorStops = {
@@ -24,7 +24,7 @@ export function createResidents() {
       stop: index * .7, next: (index + 2) % destinations.length, speed: 27 + index % 3 * 8,
       phase: 'street', hidden: 0,
     })),
-    { x: 256, y: 520, room: 'town', direction: 'down', look: looks[0], seated: true, walking: false },
+    { x: 256, y: 520, room: 'town', direction: 'down', look: looks[1], seated: true, walking: false },
   ];
 }
 
@@ -97,7 +97,7 @@ export function drawResident(ctx, resident, time, reduced) {
 
 // Regulars stay at decorative machines, leaving every project cabinet available.
 export const arcadeRegulars = [
-  [180, 339, 0], [346, 339, 4], [595, 339, 5], [761, 339, 2],
+  [180, 339, 0], [346, 339, 4], [595, 339, 5], [761, 339, 6],
   [128, 463, 6], [888, 603, 1], [128, 743, 3], [888, 743, 7],
 ].map(([x, y, look]) => ({ x, y, look: { ...looks[look], scale: 1.25 }, direction: 'up' }));
 
