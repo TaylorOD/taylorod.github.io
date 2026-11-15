@@ -245,3 +245,5 @@
 #eightbit .demo-pizza.stage-3 { background: #e8b65b; border-color: #b97943; }
 #eightbit .demo-pizza.stage-4 { border-radius: 0; border: 6px solid #b97943; color: #4b4637; }
 @media (max-width: 650px) { #eightbit .project-demo { grid-template-columns: 1fr; padding: 16px; } #eightbit .demo-pet { margin: auto; } #eightbit .project-screenshot { aspect-ratio: 1.6; } }
+
+#eightbit .legacy-computer { display: block; width: 100%; height: min(540px, 60dvh); border: 12px solid #333f3a; border-radius: 12px; background: #fff; margin: 20px 0; }
