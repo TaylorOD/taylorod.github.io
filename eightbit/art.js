@@ -242,17 +242,33 @@ export function paintScene(ctx, id, projects) {
 }
 
 export function person(ctx, x, y, direction = 'down', walking = false, time = 0, carrying = false) {
-  const step = walking ? Math.floor(time / 120) % 2 * 2 : 0;
+  const step = walking ? [0, 2, 0, -2][Math.floor(time / 110) % 4] : 0;
+  const side = direction === 'left' || direction === 'right';
+  const facing = direction === 'left' ? -1 : 1;
   ctx.save(); ctx.translate(Math.round(x), Math.round(y));
   box(ctx, -11, -2, 25, 6, '#192f3655');
+  // A side silhouette has a near arm, a nose and narrower shoulders.
+  const left = side ? -7 : -10, width = side ? 15 : 21;
   box(ctx, -7, -14, 6, 13 - step, '#364d60'); box(ctx, 2, -14, 6, 11 + step, '#364d60');
   box(ctx, -9, -3 - step, 9, 4, '#1d303a'); box(ctx, 2, -3 + step, 9, 4, '#1d303a');
-  box(ctx, -10, -29, 21, 18, '#bf7c78'); box(ctx, -10, -26, 9, 5, '#dfaf78'); box(ctx, 0, -23, 11, 6, '#83b1b1'); box(ctx, -5, -18, 11, 5, '#a5b98a'); box(ctx, -2, -26, 6, 4, '#a78fae');
-  box(ctx, -13, -26 + step, 4, 15, '#d2a282'); box(ctx, 11, -26 - step, 4, 15, '#d2a282');
-  box(ctx, -8, -42, 17, 15, '#d5aa86'); box(ctx, -9, -46, 18, 8, '#554b43'); box(ctx, -10, -40, 4, 7, '#554b43');
-  if (direction !== 'up') { box(ctx, direction === 'left' ? -7 : direction === 'right' ? 5 : -4, -35, 2, 2, '#253b3c'); if (direction === 'down') box(ctx, 4, -35, 2, 2, '#253b3c'); box(ctx, -4, -30, 10, 3, '#82634f'); }
-  else box(ctx, -7, -39, 15, 8, '#554b43');
-  if (carrying) { border(ctx, 7, -24, 22, 10, '#e2bd85', '#80664a', 2); text(ctx, 'P', 18, -19, 7, '#9b5f4b'); }
+  if (carrying && direction === 'up') border(ctx, 7, -30, 22, 10, '#e2bd85', '#80664a', 2);
+  box(ctx, left, -29, width, 18, '#bf7c78'); box(ctx, left, -26, 8, 5, '#dfaf78');
+  box(ctx, 0, -23, side ? 8 : 11, 6, '#83b1b1'); box(ctx, -5, -18, 11, 5, '#a5b98a'); box(ctx, -2, -26, 6, 4, '#a78fae');
+  if (!side) { box(ctx, -13, -26 + step, 4, 15, '#d2a282'); box(ctx, 11, carrying ? -22 : -26 - step, 4, carrying ? 7 : 15, '#d2a282'); }
+  else box(ctx, facing < 0 ? -8 : 5, carrying ? -23 : -26 + step, 5, carrying ? 8 : 15, '#d2a282');
+  box(ctx, -8, -42, 17, 15, '#d5aa86'); box(ctx, -9, -46, 18, 8, '#554b43');
+  box(ctx, direction === 'left' ? 6 : -10, -40, 4, 7, '#554b43');
+  if (direction !== 'up') {
+    box(ctx, direction === 'left' ? -7 : direction === 'right' ? 5 : -4, -35, 2, 2, '#253b3c');
+    if (direction === 'down') box(ctx, 4, -35, 2, 2, '#253b3c');
+    if (side) box(ctx, facing < 0 ? -11 : 8, -34, 3, 4, '#d5aa86');
+    box(ctx, side ? facing < 0 ? -8 : 1 : -4, -30, side ? 7 : 10, 3, '#82634f');
+  } else box(ctx, -7, -39, 15, 8, '#554b43');
+  if (carrying && direction !== 'up') {
+    const px = direction === 'left' ? -29 : direction === 'down' ? -10 : 7;
+    border(ctx, px, -24, 22, 10, '#e2bd85', '#80664a', 2); text(ctx, 'P', px + 11, -19, 7, '#9b5f4b');
+    box(ctx, px + 6, -15, 10, 3, '#d2a282');
+  }
   ctx.restore();
 }
 export const pet = drawCompanion;
