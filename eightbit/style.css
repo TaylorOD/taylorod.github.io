@@ -228,3 +228,20 @@
   #eightbit .game-footer { font-size: 10px; }
 }
 @media (prefers-reduced-motion: reduce) { #eightbit .game-dialog[open] { animation: none; } }
+
+#eightbit .project-screenshot { display: block; width: 100%; aspect-ratio: 1.1; object-fit: cover; object-position: top; image-rendering: auto; }
+#eightbit .project-demo { margin-top: 24px; padding: 20px; border: 1px solid #749b87; background: #102e30; display: grid; grid-template-columns: 140px 1fr; gap: 20px; align-items: center; }
+#eightbit .project-demo small { color: #e4c68f; font-size: 10px; letter-spacing: 1px; }
+#eightbit .project-demo h3 { margin: 10px 0; font-size: 16px; }
+#eightbit .project-demo p { font-size: 12px; line-height: 1.8; }
+#eightbit .project-demo meter { display: block; width: 100%; margin: 12px 0; accent-color: #a7dfaa; }
+#eightbit .demo-pet { width: 140px; image-rendering: pixelated; }
+#eightbit .demo-network { display: grid; gap: 8px; text-align: center; font-size: 12px; }
+#eightbit .demo-network span { padding: 10px; border: 2px solid #93d9e7; color: #93d9e7; }
+#eightbit .demo-network .offline { border-color: #f7ac75; color: #f7ac75; }
+#eightbit .demo-pizza { width: 100px; height: 100px; margin: auto; border: 12px solid #e8d3a6; background: #f2dfb5; border-radius: 50%; display: grid; place-items: center; color: #bd5544; font-size: 22px; }
+#eightbit .demo-pizza.stage-1, #eightbit .demo-pizza.stage-2 { background: #e8b65b; }
+#eightbit .demo-pizza.stage-2 { box-shadow: 0 0 0 8px #4d3434, 0 0 0 12px #dd7960; }
+#eightbit .demo-pizza.stage-3 { background: #e8b65b; border-color: #b97943; }
+#eightbit .demo-pizza.stage-4 { border-radius: 0; border: 6px solid #b97943; color: #4b4637; }
+@media (max-width: 650px) { #eightbit .project-demo { grid-template-columns: 1fr; padding: 16px; } #eightbit .demo-pet { margin: auto; } #eightbit .project-screenshot { aspect-ratio: 1.6; } }
