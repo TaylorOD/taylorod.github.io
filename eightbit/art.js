@@ -1,3 +1,4 @@
+import { mountSentinel, universityCampus } from './missoula-art.js';
 import { personalCabin } from './home-art.js';
 import { aFrame } from './room-art.js';
 import { cyberArcade } from './arcade-art.js';
@@ -127,7 +128,8 @@ function sky(ctx, width, height) {
   box(ctx, width * .75, 34, 32, 32, '#efcca0'); box(ctx, width * .75 - 4, 42, 40, 16, '#efcca0');
   for (const [x, y, w] of [[.12, 32, 83], [.37, 17, 60], [.68, 78, 110]]) { box(ctx, width * x, y, w, 4, '#d8b5a3'); box(ctx, width * x + 14, y - 4, w - 24, 4, '#d8b5a3'); }
   for (const [x, h] of [[0, 80], [.2, 110], [.46, 89], [.7, 123], [1, 104]]) mountain(ctx, width * x, 180, 300, h, '#6a7b80');
-  for (const [x, h] of [[.04, 60], [.32, 71], [.58, 64], [.9, 78]]) mountain(ctx, width * x, 214, 320, h, '#47666a');
+  for (const [x, h] of [[.58, 64], [.9, 78]]) mountain(ctx, width * x, 214, 320, h, '#47666a');
+  mountSentinel(ctx, width);
 }
 function ground(ctx, w, h) {
   box(ctx, 0, 208, w, h - 208, '#4f715b');
@@ -146,6 +148,7 @@ function cobbles(ctx, x, y, w, h) {
 }
 function town(ctx) {
   sky(ctx, 1024, 768); ground(ctx, 1024, 768);
+  universityCampus(ctx);
   cobbles(ctx, 32, 448, 960, 128); cobbles(ctx, 448, 416, 128, 320);
   box(ctx, 0, 604, 1024, 8, '#3e6154'); box(ctx, 0, 612, 1024, 56, '#315d65'); box(ctx, 0, 668, 1024, 5, '#779075');
   for (let x = 0; x < 1024; x += 14) { box(ctx, x, 603 + x % 5, 9, 3, '#809275'); box(ctx, x + 4, 667, 8, 3, '#93a080'); }
