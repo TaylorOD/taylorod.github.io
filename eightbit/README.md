@@ -37,6 +37,8 @@ The cabin art uses the supplied house photos as reference. The photos themselves
 | phone layout | 44 pixel direction buttons, wrapping labels, direct project menu and phone camera framing |
 | populated town | varied residents visit public buildings, no house visits, kayaker, fly fisher and Brennan's Wave |
 
+The backdrop includes Main Hall and the hillside M. The campus drawing uses [University of Montana reference photos](https://www.umt.edu/news/2023/06/060623fulb.php). It is distant scenery, with no new entry or walking obstruction.
+
 Eight arcade regulars play decorative machines while visitors come and go. The project machines remain available to the player.
 
 First visits include a companion approaching from the arcade door and silhouettes moving behind the windows. River ambience gets louder near the water. Dialogs return toward their source with a short closing animation. Reduced motion skips these movements. A real iPhone long press check is still needed beyond the Chrome phone viewport check.
