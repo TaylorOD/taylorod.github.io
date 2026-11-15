@@ -202,3 +202,29 @@
 
 /* Held touch controls must never select text or open the mobile callout. */
 #eightbit .dpad, #eightbit .dpad * { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
+
+/* Keep the useful shortcuts and text readable at phone size. */
+#eightbit .game-header nav { gap: 18px; font-size: 12px; }
+#eightbit .game-header nav button, #eightbit .game-header nav a { min-height: 44px; display: inline-flex; align-items: center; }
+#eightbit .place-subtitle, #eightbit .inventory-bar button, #eightbit .game-footer { font-size: 11px; }
+#eightbit .pet-choices small, #eightbit .pet-choices span, #eightbit .screen-caption { font-size: 12px; }
+#eightbit .game-dialog[open] { animation: cabinet-open .18s ease-out; }
+@keyframes cabinet-open { from { opacity: 0; transform: translateY(12px) scale(.97); } to { opacity: 1; transform: none; } }
+@media (max-width: 900px) {
+  #eightbit .brand small { display: none; }
+  #eightbit .game-header { gap: 12px; padding: 8px 16px; flex-wrap: wrap; }
+  #eightbit .game-header nav { gap: 15px; flex-wrap: wrap; }
+}
+@media (max-width: 650px) {
+  #eightbit .game-header { height: auto; min-height: 140px; }
+  #eightbit .game-header nav { display: grid; grid-template-columns: repeat(4, auto); width: 100%; gap: 0 15px; }
+  #eightbit .game-header nav button, #eightbit .game-header nav a { padding: 3px 0; font-size: 11px; min-height: 32px; }
+  #eightbit .normal-site { grid-column: span 2; border: 0; }
+  #eightbit .place-subtitle { max-width: 210px; font-size: 10px; }
+  #eightbit .place-label { top: 12px; }
+  #eightbit .inventory-bar { top: 12px; }
+  #eightbit .dpad { grid-template-columns: repeat(3, 44px); grid-template-rows: repeat(2, 44px); left: 12px; }
+  #eightbit .interact { font-size: 11px; max-width: calc(100% - 168px); white-space: normal; text-align: left; min-height: 50px; }
+  #eightbit .game-footer { font-size: 10px; }
+}
+@media (prefers-reduced-motion: reduce) { #eightbit .game-dialog[open] { animation: none; } }
