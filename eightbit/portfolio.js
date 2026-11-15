@@ -24,7 +24,7 @@ root.innerHTML = `
     <div class="quest-note" hidden><span>◈</span> pizza delivery <small>take it to the town bench</small></div>
     <button class="interact" disabled><kbd>E</kbd><span>walk up to something</span><b>↗</b></button>
     <div class="dpad" aria-label="Movement controls"><button data-direction="arrowup" aria-label="Walk up">↑</button><button data-direction="arrowleft" aria-label="Walk left">←</button><button data-direction="arrowdown" aria-label="Walk down">↓</button><button data-direction="arrowright" aria-label="Walk right">→</button></div>
-    <button class="mini-map" data-ui="map" aria-label="Open the town map"><svg viewBox="0 0 140 96" aria-hidden="true"><rect width="140" height="96" fill="#42645b"/><path d="M8 61H132M70 30V90" stroke="#b9aa84" stroke-width="10"/><path d="M0 79H140" stroke="#76a3a1" stroke-width="7"/><rect x="50" y="25" width="40" height="24" fill="#c99b79"/><rect x="13" y="43" width="23" height="14" fill="#d1bc90"/><rect x="108" y="31" width="23" height="18" fill="#b9bb8b"/><circle class="map-player" cx="70" cy="60" r="4" fill="#f4d094"/></svg><span>TOWN MAP <kbd>M</kbd></span></button>
+    <button class="mini-map" data-ui="map" aria-label="Open the town map"><svg viewBox="0 0 140 96" aria-hidden="true"><rect width="140" height="96" fill="#42645b"/><path d="M8 61H132M70 30V90" stroke="#b9aa84" stroke-width="10"/><path d="M0 79H140" stroke="#76a3a1" stroke-width="7"/><rect x="50" y="25" width="40" height="24" fill="#c99b79"/><rect x="108" y="31" width="23" height="18" fill="#b9bb8b"/><circle class="map-player" cx="70" cy="60" r="4" fill="#f4d094"/></svg><span>TOWN MAP <kbd>M</kbd></span></button>
   </main>
   <footer class="game-footer"><span class="footer-location">a little visit to missoula.</span><span class="desktop-help"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> move <i>·</i> <kbd>E</kbd> explore <i>·</i> click anywhere to walk</span><button data-ui="help">how to play <span>?</span></button></footer>
   <dialog class="game-dialog" aria-labelledby="dialog-title"><div class="dialog-top"><span class="dialog-tag"></span><button class="close-dialog" aria-label="Close dialog">✕</button></div><div class="dialog-content"></div></dialog>`;
@@ -60,7 +60,7 @@ function changeRoom(id, history = true) {
   if (!canEnter(id, progress)) { setRoute(world.id, true); handleAction('roof'); return; }
   dismissWelcome();
   const previous = world.id;
-  const doors = { arcade: { x: 512, y: 464 }, workshop: { x: 160, y: 480 }, cabin: { x: 864, y: 368 }, rooftop: { x: 688, y: 480 } };
+  const doors = { arcade: { x: 512, y: 464 }, cabin: { x: 864, y: 368 }, rooftop: { x: 688, y: 480 } };
   world.enter(id, id === 'town' ? doors[previous] : undefined);
   if (history) setRoute(id);
   sound.chime();
@@ -121,7 +121,7 @@ function directory() {
 }
 
 function map() {
-  openDialog('A VERY SMALL TOWN', 'where to?', `<p class="dialog-lead">take a shortcut. there’s no wrong way to explore.</p><div class="map-choices">${[['town','01','main street','the river, the mountains and a little fresh air.'],['arcade','02','side quest arcade','eight projects. find your next side quest.'],['workshop','03','the workshop','work history and an old computer.'],['cabin','04','home base','a bit about me. meet your companion.']].map(([id,n,title,copy]) => `<button data-room="${id}"><span>${n}</span><strong>${title}</strong><small>${copy}</small><b>${world.id === id ? 'YOU ARE HERE' : 'GO HERE ↗'}</b></button>`).join('')}</div>${progress.pizza === 'delivered' ? '<button class="secondary" data-room="rooftop">the rooftop is open ↑</button>' : '<p class="small-note">there might be a rooftop. ask about the pizza.</p>'}<div class="dialog-actions"><button class="secondary" data-ui="about">about taylor</button><button class="secondary" data-ui="work">work history</button><button class="secondary" data-ui="contact">say hello</button></div>`);
+  openDialog('A VERY SMALL TOWN', 'where to?', `<p class="dialog-lead">take a shortcut. there’s no wrong way to explore.</p><div class="map-choices">${[['town','01','main street','the river, the mountains and a little fresh air.'],['arcade','02','side quest arcade','eight projects. find your next side quest.'],['cabin','03','home base','a bit about me. meet your companion.']].map(([id,n,title,copy]) => `<button data-room="${id}"><span>${n}</span><strong>${title}</strong><small>${copy}</small><b>${world.id === id ? 'YOU ARE HERE' : 'GO HERE ↗'}</b></button>`).join('')}</div>${progress.pizza === 'delivered' ? '<button class="secondary" data-room="rooftop">the rooftop is open ↑</button>' : '<p class="small-note">there might be a rooftop. ask about the pizza.</p>'}<div class="dialog-actions"><button class="secondary" data-ui="about">about taylor</button><button class="secondary" data-ui="work">work history</button><button class="secondary" data-ui="contact">say hello</button></div>`);
 }
 
 function choosePet() {
@@ -148,7 +148,7 @@ function about() {
 }
 
 function work() {
-  openDialog('THE WORKSHOP / WORK HISTORY', 'the day job.', `<p class="dialog-lead">from finding engineers to being one.</p><div class="jobs">${jobs.map(job => `<article><small>${job.when}</small><h3>${job.title}</h3>${job.url ? `<a href="${job.url}">${job.company} ↗</a>` : `<p>${job.company}</p>`}</article>`).join('')}</div><button class="secondary" data-ui="contact">get in touch ↗</button>`);
+  openDialog('ABOUT / WORK HISTORY', 'the day job.', `<p class="dialog-lead">from finding engineers to being one.</p><div class="jobs">${jobs.map(job => `<article><small>${job.when}</small><h3>${job.title}</h3>${job.url ? `<a href="${job.url}">${job.company} ↗</a>` : `<p>${job.company}</p>`}</article>`).join('')}</div><button class="secondary" data-ui="contact">get in touch ↗</button>`);
 }
 
 function career(id) {
@@ -246,7 +246,7 @@ root.querySelectorAll('[data-direction]').forEach(button => {
 function applyRoute() {
   if (dialog.open) closeDialog(false);
   const [first, second] = location.hash.slice(1).split('/');
-  if (['about', 'work', 'contact'].includes(first)) { changeRoom(first === 'about' ? 'cabin' : first === 'work' ? 'workshop' : 'town', false); handleAction(first); return; }
+  if (['about', 'work', 'contact'].includes(first)) { changeRoom(first === 'about' ? 'cabin' : 'town', false); handleAction(first); return; }
   const id = first === 'projects' || first === 'directory' ? 'arcade' : scenes[first] ? first : location.pathname.endsWith('projects.html') ? 'arcade' : 'town';
   if (id !== world.id) changeRoom(id, false);
   if (second && projects.some(project => project.id === second)) openProject(second, false);

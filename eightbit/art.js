@@ -1,4 +1,4 @@
-import { personalCabin, personalWorkshop } from './home-art.js';
+import { personalCabin } from './home-art.js';
 import { aFrame, cyberArcade } from './room-art.js';
 import { drawCompanion } from './companions.js';
 // Original pixel scenery and sprites. All geometry lands on whole pixels.
@@ -152,7 +152,6 @@ function town(ctx) {
   for (const x of [442, 576]) { box(ctx, x, 586, 5, 95, '#514e40'); box(ctx, x - 2, 600, 9, 5, '#d5b684'); }
   for (const [x, y, s] of [[20, 259, 1.2], [88, 270, .9], [250, 282, 1.2], [742, 256, 1], [1001, 268, 1.3], [28, 444, 1.3], [984, 506, 1.4], [20, 754, 1.5], [134, 752, 1], [816, 752, 1.1], [986, 756, 1.5]]) tree(ctx, x, y, s);
   building(ctx, 320, 208, 384, 224, 'SIDE QUEST', 'arcade');
-  building(ctx, 64, 292, 176, 156, 'THE WORKSHOP', 'workshop');
   // A quiet uphill path separates the cabin from the public street.
   cobbles(ctx, 838, 331, 52, 117);
   for (const [x,y,s] of [[764,320,.9],[790,267,1.1],[980,305,1.2],[941,220,.8],[763,410,.8],[980,405,1]]) tree(ctx,x,y,s);
@@ -236,7 +235,6 @@ function rooftop(ctx) {
 export function paintScene(ctx, id, projects) {
   if (id === 'town') town(ctx);
   else if (id === 'arcade') cyberArcade(ctx, projects);
-  else if (id === 'workshop') personalWorkshop(ctx);
   else if (id === 'cabin') personalCabin(ctx);
   else rooftop(ctx);
 }

@@ -15,6 +15,7 @@ test('town residents keep to reachable routes for a full walk cycle', () => {
     for (const person of residents) assert.ok(person.seated || isWalkable(scenes[person.room], person.x, person.y));
   }
   assert.ok(visited.has('arcade'));
-  assert.ok(visited.has('workshop'));
+  assert.ok(!visited.has('workshop'));
+  assert.equal(scenes.workshop, undefined);
   assert.ok(!visited.has('cabin'));
 });

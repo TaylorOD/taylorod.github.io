@@ -12,10 +12,9 @@ const looks = [
   { skin: '#d3a17d', hair: '#cbb695', shirt: '#5a9b9e', width: 23, long: true },
   { skin: '#8a624b', hair: '#392f2d', shirt: '#b8ba74', width: 18, scale: .85 },
 ];
-const destinations = [{ x: 160, y: 464, door: 'workshop' }, { x: 512, y: 448, door: 'arcade' }, { x: 688, y: 576 }, { x: 512, y: 704 }, { x: 272, y: 560 }];
+const destinations = [{ x: 160, y: 464 }, { x: 512, y: 448, door: 'arcade' }, { x: 688, y: 576 }, { x: 512, y: 704 }, { x: 272, y: 560 }];
 const indoorStops = {
   arcade: [{ x: 272, y: 496 }, { x: 416, y: 608 }, { x: 752, y: 496 }],
-  workshop: [{ x: 224, y: 352 }, { x: 528, y: 352 }],
 };
 
 export function createResidents() {
