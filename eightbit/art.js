@@ -157,10 +157,11 @@ function town(ctx) {
   for (const [x, y, s] of [[20, 259, 1.2], [88, 270, .9], [250, 282, 1.2], [742, 256, 1], [1001, 268, 1.3], [28, 444, 1.3], [984, 506, 1.4], [20, 754, 1.5], [134, 752, 1], [816, 752, 1.1], [986, 756, 1.5]]) tree(ctx, x, y, s);
   building(ctx, 320, 208, 384, 224, 'SIDE QUEST', 'arcade');
   // A quiet uphill path separates the cabin from the public street.
-  cobbles(ctx, 838, 331, 52, 117);
+  cobbles(ctx, 854, 262, 44, 186);
   for (const [x,y,s] of [[764,320,.9],[790,267,1.1],[980,305,1.2],[941,220,.8],[763,410,.8],[980,405,1]]) tree(ctx,x,y,s);
-  aFrame(ctx, 784, 160);
-  text(ctx, 'UPPER RATTLESNAKE', 864, 374, 8, '#d5cc9f');
+  ctx.save(); ctx.translate(800, 112); ctx.scale(.85, .85); aFrame(ctx, 0, 0); ctx.restore();
+  tree(ctx, 802, 304, .85); tree(ctx, 964, 301, 1);
+  text(ctx, 'UPPER RATTLESNAKE', 876, 338, 8, '#d5cc9f');
   // The arcade's exterior: ladder, bike, sandwich board and flower boxes.
   for (let y = 314; y < 430; y += 12) box(ctx, 683, y, 18, 3, '#bcad86');
   box(ctx, 682, 312, 3, 120, '#7b8975'); box(ctx, 700, 312, 3, 120, '#7b8975');
