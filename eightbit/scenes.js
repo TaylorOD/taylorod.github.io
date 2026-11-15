@@ -4,10 +4,9 @@ export const scenes = {
   town: {
     name: 'main street', subtitle: 'missoula, montana · just before sunset', width: 1024, height: 768,
     spawn: { x: 512, y: 488 }, bounds: [32, 224, 992, 720],
-    obstacles: [[320, 216, 384, 216], [64, 304, 176, 144], [784, 160, 176, 176], [0, 608, 448, 64], [576, 608, 448, 64], [736, 480, 128, 64]],
+    obstacles: [[320, 216, 384, 216], [784, 160, 176, 176], [0, 608, 448, 64], [576, 608, 448, 64], [736, 480, 128, 64]],
     points: [
       point('arcade', 'enter the arcade', 512, 448, 'room:arcade', { sign: 'SIDE QUEST ARCADE', hint: 'eight projects. one room.', hit: [320, 208, 384, 224] }),
-      point('workshop', 'visit the workshop', 160, 464, 'room:workshop', { sign: 'THE WORKSHOP', hit: [64, 292, 176, 156] }),
       point('cabin', 'visit the cabin', 864, 352, 'room:cabin', { sign: 'HOME BASE', hit: [784, 130, 176, 212] }),
       point('mailbox', 'say hello', 736, 560, 'contact', { sign: 'POST', hit: [716, 501, 34, 48] }),
       point('bench', 'talk to the neighbor', 256, 544, 'delivery', { hit: [218, 475, 76, 60] }),
@@ -31,20 +30,6 @@ export const scenes = {
       point('pizza', 'pizza delivery', 288, 656, 'pizza', { hit: [184, 624, 80, 48] }),
       point('photo', 'the photo booth', 752, 656, 'photo', { hit: [776, 616, 72, 56] }),
       point('exit', 'back to main street', 512, 672, 'room:town', { hit: [450, 653, 125, 35] }),
-    ],
-  },
-  workshop: {
-    name: 'the workshop', subtitle: 'from finding engineers to being one', width: 768, height: 640,
-    spawn: { x: 384, y: 528 }, bounds: [96, 224, 672, 560],
-    obstacles: [[128, 208, 192, 112], [432, 208, 192, 112], [128, 400, 112, 80], [512, 400, 112, 64]],
-    points: [
-      point('chef', 'the home chef recipe', 160, 352, 'chef', { hit: [140, 290, 40, 26] }),
-      point('levels', 'the levels.fyi atlas', 288, 352, 'levels', { hit: [270, 290, 40, 26] }),
-      point('work', 'the day job', 224, 352, 'work', { hit: [140, 250, 160, 40] }),
-      point('legacy', 'boot the old computer', 528, 352, 'legacy', { hit: [480, 250, 96, 56] }),
-      point('recruiting', 'the first office notebook', 256, 432, 'recruiting', { hit: [209, 399, 27, 22] }),
-      point('notes', 'a note from taylor', 192, 496, 'about', { hit: [128, 422, 112, 58] }),
-      point('exit', 'back to main street', 384, 544, 'room:town', { hit: [350, 528, 68, 36] }),
     ],
   },
   cabin: {

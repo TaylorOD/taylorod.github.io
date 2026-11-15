@@ -81,34 +81,3 @@ export function personalCabin(ctx) {
   pet(ctx, 585, 510, 'slice'); pet(ctx, 616, 510, 'lilgotchi'); pet(ctx, 645, 510, 'cypunk');
   text(ctx, 'YOUR LITTLE CREW', 616, 523, 7, '#dfcba7');
 }
-
-export function personalWorkshop(ctx) {
-  shell(ctx); window(ctx, 144, 166, 158, 82); window(ctx, 484, 166, 148, 82);
-  // Framed number eight jersey, dual monitors and the bike from the office photo.
-  panel(ctx, 345, 161, 73, 74, '#b25d3e', '#26313a', 4);
-  polygon(ctx, [[354,180],[368,170],[393,170],[408,180],[401,193],[395,190],[395,220],[366,220],[366,190],[360,194]], '#ddd8c7'); text(ctx, '8', 381, 201, 18, '#ad4f36');
-  box(ctx, 128, 304, 199, 11, '#574a3c'); box(ctx, 135, 315, 5, 20, black); box(ctx, 313, 315, 5, 20, black);
-  for (let i = 0; i < 2; i++) { panel(ctx, 143 + i * 78, 255, 73, 45, '#1b303b', '#121d28', 4); box(ctx, 174 + i * 78, 300, 7, 7, black); for (let row = 0; row < 5; row++) box(ctx, 151 + i * 78, 266 + row * 5, 24 + row * 7 % 35, 2, row % 2 ? '#c7ae73' : '#78ab9b'); }
-  box(ctx, 172, 307, 81, 4, '#a6ada4'); panel(ctx, 208, 324, 32, 15, '#273a3c', '#14262b');
-  panel(ctx, 483, 252, 87, 52, '#273c3a', '#bdc0a7', 7); text(ctx, '> HELLO', 527, 273, 11, '#afd693'); text(ctx, '2020', 527, 290, 8, '#8eac76');
-  box(ctx, 461, 309, 164, 9, walnut); box(ctx, 467, 318, 6, 20, black); box(ctx, 612, 318, 6, 20, black); box(ctx, 491, 305, 70, 4, '#b7b9a2');
-  for (const x of [518, 595]) {
-    polygon(ctx, [[x-10,433],[x+10,433],[x+16,439],[x+16,453],[x+10,459],[x-10,459],[x-16,453],[x-16,439]], '#192932');
-    polygon(ctx, [[x-7,437],[x+7,437],[x+12,442],[x+12,450],[x+7,455],[x-7,455],[x-12,450],[x-12,442]], '#708084');
-    box(ctx, x-2, 440, 4, 12, '#28383c');
-  }
-  polygon(ctx, [[518,447],[552,407],[595,447]], '#212f36');
-  polygon(ctx, [[527,443],[552,417],[580,443]], '#a58059');
-  box(ctx, 551, 433, 5, 17, '#d16c48'); box(ctx, 544, 446, 17, 4, '#293b41'); box(ctx, 546, 397, 20, 6, '#37464a'); box(ctx, 588, 374, 4, 58, '#222e35');
-  panel(ctx, 564, 351, 61, 35, '#203445', '#111f28', 4); text(ctx, 'ONE MORE', 594, 365, 7, '#cbd7c5'); text(ctx, 'MILE', 594, 375, 7, '#cbd7c5');
-  books(ctx, 130, 389, 118); plant(ctx, 304, 300);
-  // Three keepsakes open specific stories rather than a generic career plaque.
-  panel(ctx, 140, 293, 39, 22, '#eee0ba', '#614d38', 2);
-  text(ctx, 'RECIPE', 160, 302, 5, '#674936'); box(ctx, 146, 307, 25, 1, '#9a7754');
-  panel(ctx, 272, 292, 31, 24, '#4e9294', '#243e47', 2);
-  box(ctx, 281, 296, 3, 14, '#b1cdab'); box(ctx, 278, 301, 18, 3, '#b1cdab');
-  panel(ctx, 209, 399, 27, 22, '#a56b48', '#302f29', 2);
-  box(ctx, 214, 402, 2, 16, '#d3b475'); text(ctx, '01', 225, 412, 7, '#f2dfb4');
-  text(ctx, 'THE DAY JOB', 224, 345, 9, '#eee0c0'); text(ctx, 'BOOT THE ORIGINAL', 528, 345, 9, '#eee0c0');
-  text(ctx, 'READ / BUILD / REPEAT', 384, 494, 11, '#e8d4ac');
-}
