@@ -50,30 +50,43 @@ export function cyberArcade(ctx, projects) {
   for (let i = 0; i < 11; i++) dummyCabinet(ctx, 136 + i * 75, 315, i);
   // Side banks create a crowded room while keeping the central walking lanes open.
   for (let i = 0; i < 3; i++) { dummyCabinet(ctx, 132, 437 + i * 72, i + 3); dummyCabinet(ctx, 892, 437 + i * 72, i + 1); }
-  text(ctx, 'THE PROJECT ROW', 512, 355, 12, '#f1c778');
   for (let i = 0; i < 4; i++) {
     const x = 264 + i * 160;
     box(ctx, x - 53, 466, 106, 8, projects[i].color);
-    cabinet(ctx, x, 463, projects[i]);
+    if (i === 3) cabinet(ctx, x, 463, projects[i]);
     text(ctx, `${String(i + 1).padStart(2, '0')}  PLAY`, x, 483, 9, projects[i].color);
     glow(ctx, x, 479, projects[i].color, 45, .03);
   }
   // Each featured station has a specific physical form.
-  frame(ctx, 227, 384, 74, 43, '#283d39', '#99ddad');
+  // A glass habitat, a brick pizza oven and a server rack have different silhouettes.
+  polygon(ctx, [[221,382],[238,362],[290,362],[307,382]], '#779b80');
+  frame(ctx, 221, 382, 86, 64, '#283d39', '#99ddad');
+  box(ctx, 226, 387, 3, 52, '#d8f2ce'); box(ctx, 232, 389, 18, 2, '#c2e3bd');
+  box(ctx, 224, 436, 80, 10, '#587b50');
+  for (const x of [232, 290]) { box(ctx, x, 418, 3, 19, '#81ac63'); box(ctx, x-5, 422, 12, 3, '#81ac63'); }
+  box(ctx, 218, 446, 92, 14, '#68886b');
+  text(ctx, 'LILGOTCHI', 264, 375, 7, '#18372e');
   pet(ctx, 264, 420, 'lilgotchi', 0, false, 1.1);
   box(ctx, 235, 420, 58, 5, '#6e9563');
-  frame(ctx, 390, 388, 68, 42, '#462b32', '#f3a469');
+  box(ctx, 442, 350, 17, 35, '#945c48'); box(ctx, 438, 347, 25, 5, '#ca9270');
+  polygon(ctx, [[381,407],[385,382],[401,366],[446,366],[462,382],[467,407]], '#ba7957');
+  for (let row = 0; row < 3; row++) for (let col = 0; col < 4; col++) box(ctx, 391 + col * 17, 377 + row * 9, 15, 7, '#d09168');
+  frame(ctx, 390, 395, 68, 35, '#462b32', '#f3a469');
   polygon(ctx, [[402, 420], [414, 400], [421, 416], [434, 397], [448, 421]], '#ec7647');
   box(ctx, 391, 431, 68, 5, '#b2a8ab');
-  frame(ctx, 548, 384, 72, 44, '#142c35', '#76d7df'); screen(ctx, 'network', 552, 388, 64, 36);
-  text(ctx, 'RETRY / RECOVER', 584, 435, 6, '#a2dce2');
+  box(ctx, 383, 439, 82, 23, '#845842'); text(ctx, 'SNOWCRUST', 424, 453, 7, '#f7d19a');
+  frame(ctx, 546, 358, 76, 105, '#162533', '#4e7685', 4);
+  for (let row = 0; row < 5; row++) { frame(ctx, 552, 366 + row*16, 64, 12, '#263b4a', '#618795', 1); box(ctx, 558, 370+row*16, 3, 3, '#93d9e7'); box(ctx, 565, 370+row*16, 3, 3, '#e9bc78'); for (let x = 580; x < 608; x+=5) box(ctx,x,369+row*16,2,5,'#12232e'); }
+  box(ctx, 539, 370, 4, 78, '#7cbcc6'); box(ctx, 626, 382, 4, 66, '#dbbb6c');
+  text(ctx, 'RELAY', 584, 453, 8, '#a2dce2');
   // Coffee and phone lounge, with an exercise station and a real card table.
   frame(ctx, 215, 552, 100, 47, '#625041', '#bd9869');
   frame(ctx, 236, 518, 58, 38, '#34464b', '#b8c3bc'); screen(ctx, 'coffee', 241, 521, 48, 31);
   text(ctx, '05 MOONBEAN', 264, 606, 9, '#e3c38f');
   frame(ctx, 361, 548, 110, 48, '#24574c', '#b99961', 6); screen(ctx, 'cards', 382, 551, 68, 38);
   text(ctx, '06 POKER', 416, 606, 9, '#a0d9b9');
-  cabinet(ctx, 584, 584, projects[4]);
+  frame(ctx, 560, 493, 52, 38, '#203445', '#b598cc', 4); screen(ctx, 'bike', 564, 497, 44, 30);
+  box(ctx, 583, 531, 4, 36, '#a28ab8'); box(ctx, 573, 550, 22, 4, '#d5b6e8');
   for (const x of [559, 609]) { frame(ctx, x - 10, 577, 21, 21, '#20283b', '#bdabd3', 3); }
   polygon(ctx, [[559, 586], [583, 565], [609, 586]], '#b88ed1'); box(ctx, 576, 560, 17, 4, '#d7bce7');
   text(ctx, '07 GAME & SWEAT', 584, 611, 9, '#d1c1fa');
@@ -83,5 +96,6 @@ export function cyberArcade(ctx, projects) {
   frame(ctx, 777, 618, 66, 53, '#3e294f', '#c578a8'); box(ctx, 790, 626, 40, 30, '#131e31'); text(ctx, 'PHOTO', 810, 665, 9, '#efacd2');
   box(ctx, 340, 650, 340, 2, '#526b79'); text(ctx, '↓ MAIN STREET', 512, 670, 10, '#b7c6d3');
   text(ctx, 'THE NUMBERED MACHINES ARE PLAYABLE', 512, 337, 9, '#c6bbd9');
+  frame(ctx, 90, 680, 95, 16, '#ad9265', '#514739', 1); text(ctx, 'FIX STICK / TUES', 138, 688, 6, '#312f2d');
 }
 
