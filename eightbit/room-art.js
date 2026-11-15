@@ -85,34 +85,3 @@ export function cyberArcade(ctx, projects) {
   text(ctx, 'THE NUMBERED MACHINES ARE PLAYABLE', 512, 337, 9, '#c6bbd9');
 }
 
-export function cabinDetails(ctx) {
-  box(ctx, 70, 80, 630, 176, '#182b32');
-  // Cedar rafters, a mountain window and a warm reading corner form one palette.
-  polygon(ctx, [[80, 253], [384, 91], [688, 253]], '#624a39');
-  polygon(ctx, [[145, 242], [384, 113], [623, 242]], '#303d42');
-  polygon(ctx, [[195, 236], [384, 135], [573, 236]], '#a0b9ad');
-  polygon(ctx, [[195, 236], [310, 173], [364, 219], [446, 172], [573, 236]], '#557c72');
-  box(ctx, 380, 130, 8, 116, '#b38b5f'); box(ctx, 242, 209, 284, 7, '#b38b5f');
-  polygon(ctx, [[80, 253], [384, 91], [384, 101], [92, 258]], '#bf9566');
-  polygon(ctx, [[384, 91], [688, 253], [676, 258], [384, 101]], '#8f6b49');
-  for (let y = 256; y < 330; y += 12) { box(ctx, 88, y, 36, 9, '#946a49'); box(ctx, 636, y, 42, 9, '#946a49'); }
-  // Low amber lamps and a woven diamond rug, not an arbitrary collection of props.
-  for (const x of [302, 642]) { box(ctx, x, 292, 3, 60, '#b99363'); polygon(ctx, [[x - 18, 301], [x - 10, 279], [x + 13, 279], [x + 21, 301]], '#e8c98e'); glow(ctx, x, 320, '#e8ab63', 45, .04); }
-  frame(ctx, 318, 378, 126, 102, '#955b50', '#d8bc8a', 5);
-  for (let y = 391; y < 470; y += 22) for (let x = 336; x < 437; x += 25) polygon(ctx, [[x, y - 7], [x + 8, y], [x, y + 7], [x - 8, y]], '#d6b17b');
-  frame(ctx, 143, 413, 41, 43, '#b66c43', '#cb8758'); frame(ctx, 190, 413, 49, 43, '#b66c43', '#cb8758');
-  box(ctx, 208, 420, 20, 26, '#7a9a83'); box(ctx, 211, 420, 3, 26, '#bed0ad');
-  text(ctx, 'READING CORNER', 208, 328, 8, '#e0c28e');
-}
-
-export function workshopDetails(ctx) {
-  box(ctx, 84, 136, 600, 104, '#243c42');
-  for (let x = 94; x < 680; x += 14) for (let y = 148; y < 230; y += 14) box(ctx, x, y, 2, 2, '#648079');
-  frame(ctx, 290, 151, 188, 51, '#192f34', '#ba9974'); text(ctx, 'BUILD / BREAK / REPEAT', 384, 175, 12, '#e5ca9e');
-  for (let i = 0; i < 5; i++) { box(ctx, 127 + i * 21, 170, 5, 40 - i % 2 * 10, '#b3b7a2'); box(ctx, 123 + i * 21, 164, 13, 9, '#d09c65'); }
-  frame(ctx, 548, 154, 87, 60, '#607a65', '#c6a37a'); text(ctx, 'SHIP SMALL.', 591, 178, 10, '#f3dfb6'); text(ctx, 'KEEP MAKING.', 591, 195, 9, '#f3dfb6');
-  box(ctx, 328, 266, 75, 45, '#263e43'); for (let i = 0; i < 6; i++) { box(ctx, 334, 273 + i * 5, 13 + i * 7 % 49, 2, i % 2 ? '#9bc594' : '#d9ad73'); }
-  box(ctx, 330, 314, 76, 6, '#9eaa9e');
-  for (let i = 0; i < 4; i++) { box(ctx, 281, 427 + i * 8, 47, 6, ['#b18d64', '#789b92', '#a47472', '#c9b58a'][i]); }
-  text(ctx, 'CURRENT WORK', 224, 330, 9, '#c5d5b7'); text(ctx, 'THE FIRST SAVE', 528, 330, 9, '#c5d5b7');
-}

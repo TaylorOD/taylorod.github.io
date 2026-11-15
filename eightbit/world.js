@@ -1,3 +1,4 @@
+import { drawRiverLife } from './river.js';
 import { createResidents, updateResidents, drawResident } from './residents.js';
 import { followTrail } from './companions.js';
 import { scenes, findPath, isWalkable } from './scenes.js';
@@ -45,7 +46,7 @@ export class World {
     this.companion = { ...this.player, direction: 'down' };
     if (isWalkable(this.scene, this.player.x - 28, this.player.y)) this.companion.x -= 28;
     this.trail = [];
-    this.residents = createResidents(this.scene, id);
+    this.residents ||= createResidents();
     this.nearby = null; this.transition = this.reduced.matches ? 0 : 1;
     this.resize(); this.onRoom?.(id, this.scene);
   }
@@ -146,7 +147,7 @@ export class World {
         if (this.walking) { this.lastMove = time; this.onMove?.(time, this.id); }
       }
       followTrail(this.companion, this.trail, this.player, delta);
-      if (!this.reduced.matches) updateResidents(this.residents, this.scene, delta, this.player);
+      if (!this.reduced.matches) updateResidents(this.residents, this.scene, delta, this.player, this.id);
     }
     }
     const nearest = this.scene.points.filter(point => Math.hypot(point.x - this.player.x, point.y - this.player.y) < 53).sort((a, b) => Math.hypot(a.x - this.player.x, a.y - this.player.y) - Math.hypot(b.x - this.player.x, b.y - this.player.y))[0];
@@ -166,6 +167,7 @@ export class World {
     box(ctx, 0, 0, this.canvas.width, this.canvas.height, '#182b32');
     ctx.save(); ctx.translate(-Math.round(this.camera.x), -Math.round(this.camera.y)); ctx.drawImage(this.cache.get(this.id), 0, 0);
     ambience(ctx, this.id, time, this.reduced.matches || this.paused);
+    if (this.id === 'town') drawRiverLife(ctx, time, this.reduced.matches || this.paused);
     if (this.id === 'arcade') {
       for (let i = 0; i < 4; i++) screen(ctx, projects[i].screen, 242 + i * 160, 392, 43, 33, this.reduced.matches ? 0 : time, this.nearby?.id === projects[i].id);
       if (this.progress.stamps.length === projects.length) text(ctx, 'PHOTO BOOTH UNLOCKED', 689, 516, 7, '#e9cb91');
@@ -175,7 +177,7 @@ export class World {
     const actors = [
       { y: this.companion.y, draw: companion },
       { y: this.player.y, draw: () => person(ctx, this.player.x, this.player.y, this.direction, this.walking && !this.reduced.matches, time, this.progress.pizza === 'carrying') },
-      ...this.residents.map(resident => ({ y: resident.y, draw: () => drawResident(ctx, resident, time, this.reduced.matches) })),
+      ...this.residents.filter(resident => resident.room === this.id && !resident.hidden).map(resident => ({ y: resident.y, draw: () => drawResident(ctx, resident, time, this.reduced.matches) })),
     ];
     actors.sort((a, b) => a.y - b.y).forEach(actor => actor.draw());
     for (const point of this.scene.points) {

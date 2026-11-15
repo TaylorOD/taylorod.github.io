@@ -1,4 +1,5 @@
-import { aFrame, cyberArcade, cabinDetails, workshopDetails } from './room-art.js';
+import { personalCabin, personalWorkshop } from './home-art.js';
+import { aFrame, cyberArcade } from './room-art.js';
 import { drawCompanion } from './companions.js';
 // Original pixel scenery and sprites. All geometry lands on whole pixels.
 export const palette = { ink: '#17292f', cream: '#f8e7bd', gold: '#f4bb72', mint: '#a8d6b7', pink: '#e3a5b6' };
@@ -152,7 +153,11 @@ function town(ctx) {
   for (const [x, y, s] of [[20, 259, 1.2], [88, 270, .9], [250, 282, 1.2], [742, 256, 1], [1001, 268, 1.3], [28, 444, 1.3], [984, 506, 1.4], [48, 597, 1], [342, 602, .9], [640, 602, .8], [934, 607, 1.1], [20, 754, 1.5], [134, 752, 1], [816, 752, 1.1], [986, 756, 1.5]]) tree(ctx, x, y, s);
   building(ctx, 320, 208, 384, 224, 'SIDE QUEST', 'arcade');
   building(ctx, 64, 292, 176, 156, 'THE WORKSHOP', 'workshop');
-  aFrame(ctx, 784, 240);
+  // A quiet uphill path separates the cabin from the public street.
+  cobbles(ctx, 838, 331, 52, 117);
+  for (const [x,y,s] of [[764,320,.9],[790,267,1.1],[980,305,1.2],[941,220,.8],[763,410,.8],[980,405,1]]) tree(ctx,x,y,s);
+  aFrame(ctx, 784, 160);
+  text(ctx, 'UPPER RATTLESNAKE', 864, 374, 8, '#d5cc9f');
   // The arcade's exterior: ladder, bike, sandwich board and flower boxes.
   for (let y = 314; y < 430; y += 12) box(ctx, 683, y, 18, 3, '#bcad86');
   box(ctx, 682, 312, 3, 120, '#7b8975'); box(ctx, 700, 312, 3, 120, '#7b8975');
@@ -212,63 +217,9 @@ export function cabinet(ctx, x, y, project, time = 0, active = false) {
   if (active) glow(ctx, 0, -40, color, 46, .035);
   ctx.restore();
 }
-function roomShell(ctx, w, h, title, subtitle, wood = false) {
-  box(ctx, 0, 0, w, h, '#182b32');
-  box(ctx, 66, 144, w - 120, h - 192, '#10252b');
-  brick(ctx, 80, 128, w - 160, 128, wood ? ['#3c4543', '#616050', '#5b5d4e', '#62604f'] : ['#242d3c', '#3e3b4c', '#3a3647', '#413c4e']);
-  box(ctx, 80, 246, w - 160, 10, '#b58c69'); box(ctx, 80, 256, w - 160, h - 336, wood ? '#786e56' : '#30334a');
-  for (let yy = 256; yy < h - 80; yy += 24) for (let xx = 80; xx < w - 80; xx += 32) {
-    if (wood) { box(ctx, xx, yy, 30, 22, (xx + yy) % 3 ? '#82755a' : '#8c7b5e'); box(ctx, xx + 3, yy + 4, 17, 1, '#9b8767'); }
-    else { box(ctx, xx + 1, yy + 1, 30, 22, (xx + yy) % 3 ? '#33364e' : '#37394f'); box(ctx, xx + 8, yy + 8, 3, 3, '#655268'); box(ctx, xx + 14, yy + 12, 5, 2, '#4a6971'); box(ctx, xx + 22, yy + 4, 2, 5, '#806254'); }
-  }
-  for (const x of [80, w - 88]) { box(ctx, x, 256, 8, h - 326, '#a58060'); box(ctx, x + 2, 256, 3, h - 326, '#c6a078'); }
-  box(ctx, 80, h - 80, w - 160, 12, '#b09271'); box(ctx, w / 2 - 38, h - 83, 76, 18, '#142b32');
-  border(ctx, w / 2 - 156, 155, 312, 62, '#202e3c', '#9f8473', 3);
-  text(ctx, title, w / 2, 178, 25, wood ? '#edcb96' : '#a5d7be'); text(ctx, subtitle, w / 2, 201, 9, '#d2a18e');
-  for (const x of [112, w - 126]) { box(ctx, x, 183, 14, 35, '#253540'); box(ctx, x + 3, 186, 8, 27, '#efc091'); glow(ctx, x + 7, 226, '#d0b68a', 65, .025); }
-  text(ctx, '↓ MAIN STREET', w / 2, h - 100, 9, '#d9c7a4');
-}
 function table(ctx, x, y, w = 100) {
   box(ctx, x - w / 2 + 8, y - 5, 7, 18, '#343d37'); box(ctx, x + w / 2 - 15, y - 5, 7, 18, '#343d37');
   border(ctx, x - w / 2, y - 25, w, 30, '#937552', '#483e38', 3); box(ctx, x - w / 2 + 4, y - 22, w - 8, 3, '#b89b6e');
-}
-function arcade(ctx, projects) {
-  roomShell(ctx, 1024, 768, 'SIDE QUEST ARCADE', 'BUILT BY TAYLOR DORSETT · GAMES, TOOLS & EXPERIMENTS');
-  for (let i = 0; i < 4; i++) cabinet(ctx, 192 + i * 144, 332, projects[i]);
-  // Bike cabinet, coffee counter, card table and payphone each have their own silhouette.
-  cabinet(ctx, 816, 328, projects[4]);
-  for (const x of [789, 841]) border(ctx, x - 13, 321, 26, 24, '#293343', '#9495a8', 4);
-  polygon(ctx, [[789, 334], [814, 309], [841, 334]], '#9b8fb1'); box(ctx, 809, 301, 13, 5, '#d4b3d0');
-  table(ctx, 192, 516, 128); border(ctx, 157, 438, 70, 59, '#485d5b', '#b39a78', 4); screen(ctx, 'coffee', 164, 444, 56, 45);
-  text(ctx, 'MOONBEAN', 192, 521, 9, '#e5d2ae');
-  border(ctx, 416, 453, 160, 57, '#3e6d62', '#a28e64', 6); screen(ctx, 'cards', 466, 456, 60, 45);
-  for (const x of [436, 536]) { box(ctx, x, 442, 22, 8, '#986855'); box(ctx, x, 514, 22, 8, '#986855'); }
-  border(ctx, 800, 429, 64, 82, '#b99a5a', '#242c38', 5); screen(ctx, 'phone', 807, 437, 50, 61); text(ctx, 'REACHOUTT', 832, 505, 8, '#253a3d');
-  table(ctx, 304, 573, 77); border(ctx, 283, 543, 43, 23, '#d1a476', '#674e42', 2); text(ctx, 'PIZZA', 304, 554, 9, '#704b3f');
-  border(ctx, 662, 520, 53, 60, '#644d64', '#ad8792', 4); box(ctx, 670, 530, 37, 32, '#283847'); box(ctx, 673, 533, 6, 26, '#9d6f82'); text(ctx, 'PHOTO', 689, 573, 8, '#e7c89a');
-  border(ctx, 352, 554, 100, 36, '#263440', '#897965', 2); text(ctx, 'ONE MORE TRY.', 402, 565, 7, '#cfb89c'); text(ctx, 'THEN SOME PIZZA.', 402, 579, 7, '#cfb89c');
-  for (const [x, label, color] of [[120, 'INSERT', '#d5b181'], [904, 'IDEAS', '#9bc1b1']]) { border(ctx, x - 22, 274, 44, 56, '#253c43', color, 2); text(ctx, label, x, 291, 8, color); text(ctx, '✦', x, 314, 18, color); }
-  // Worn entrance rug and a loose token under the card table.
-  border(ctx, 448, 602, 128, 42, '#77565b', '#b18877', 3); text(ctx, 'STAY A WHILE', 512, 623, 9, '#dbc298'); box(ctx, 584, 528, 5, 5, '#d4ae67');
-}
-function workshop(ctx) {
-  roomShell(ctx, 768, 640, 'THE WORKSHOP', 'A FEW THINGS I HAVE WORKED ON', true);
-  table(ctx, 224, 311, 192);
-  for (let i = 0; i < 3; i++) { border(ctx, 142 + i * 55, 242, 45, 53, '#354b4c', '#ba9c76', 3); text(ctx, ['HC', 'LF', 'TS'][i], 164 + i * 55, 262, 14, '#d8c7a3'); text(ctx, ['NOW', 'THEN', 'BEFORE'][i], 164 + i * 55, 282, 6, '#9cae99'); }
-  table(ctx, 528, 314, 192); border(ctx, 488, 244, 80, 56, '#223b3d', '#b4ac8a', 7); text(ctx, '> HELLO', 528, 267, 10, '#a8c78c'); text(ctx, '2020', 528, 283, 8, '#7fa377'); box(ctx, 493, 304, 70, 6, '#b6ac8d');
-  table(ctx, 184, 470, 100); box(ctx, 162, 438, 40, 25, '#dcc6a2'); text(ctx, 'TODO', 182, 449, 9, '#6e674f');
-  border(ctx, 516, 402, 104, 58, '#596b57', '#a08d6c', 4); text(ctx, 'MAKE THINGS.', 568, 421, 9, '#e6cf9c'); text(ctx, 'STAY CURIOUS.', 568, 440, 9, '#e6cf9c');
-}
-function cabin(ctx) {
-  roomShell(ctx, 768, 640, 'HOME BASE', 'BOOKS, PIZZA & A FEW SIDE QUESTS', true);
-  border(ctx, 132, 240, 152, 80, '#644e44', '#ad8a62', 4);
-  for (let i = 0; i < 16; i++) box(ctx, 139 + i % 8 * 17, 246 + Math.floor(i / 8) * 36, 12, 26 - i % 3 * 4, ['#9e7669', '#7c9481', '#c2ab79', '#8c8796'][i % 4]);
-  border(ctx, 472, 246, 142, 73, '#3e584e', '#b89e78', 4); box(ctx, 479, 292, 128, 20, '#8d9567');
-  pet(ctx, 506, 294, 'lilgotchi', 0, false, 1.4); pet(ctx, 547, 294, 'slice', 0, false, 1.4); pet(ctx, 586, 294, 'cypunk', 0, false, 1.4);
-  border(ctx, 136, 406, 112, 65, '#917166', '#574c45', 5); box(ctx, 143, 413, 41, 45, '#b58b76'); box(ctx, 190, 413, 49, 45, '#aa816d');
-  table(ctx, 548, 457, 136); box(ctx, 520, 423, 31, 24, '#bdac81'); text(ctx, 'READ', 536, 435, 7, '#5f6350');
-  border(ctx, 318, 378, 126, 102, '#9b8268', '#b99d78', 4); for (let y = 388; y < 475; y += 12) box(ctx, 326, y, 110, 3, '#b09a75');
-  text(ctx, 'BJJ', 366, 285, 10, '#e2d1ac'); polygon(ctx, [[348, 298], [360, 292], [372, 298], [381, 320], [370, 324], [370, 342], [350, 342], [350, 324], [339, 320]], '#d7c8a5'); box(ctx, 349, 322, 22, 4, '#53584f');
 }
 function rooftop(ctx) {
   sky(ctx, 768, 640);
@@ -285,8 +236,8 @@ function rooftop(ctx) {
 export function paintScene(ctx, id, projects) {
   if (id === 'town') town(ctx);
   else if (id === 'arcade') cyberArcade(ctx, projects);
-  else if (id === 'workshop') { workshop(ctx); workshopDetails(ctx); }
-  else if (id === 'cabin') { cabin(ctx); cabinDetails(ctx); }
+  else if (id === 'workshop') personalWorkshop(ctx);
+  else if (id === 'cabin') personalCabin(ctx);
   else rooftop(ctx);
 }
 
