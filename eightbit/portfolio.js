@@ -38,7 +38,7 @@ const projects = [
   ['fight terminal', 'the ufc schedule, right in your terminal.', 'TERMINAL / WEB', '/fight-terminal/', 'fight-terminal', 'fight'],
   ['moonbean coffee', 'a coffee handbook you can talk to.', 'LLM / RAG', '/moonbean_coffee/', 'moonbean_coffee', 'coffee'],
   ['poker seater', 'random seat assignments for poker night.', 'WEB TOOL', '/poker_seater/', 'poker_seater', 'cards'],
-  ['reachoutt', 'a little help remembering to keep in touch.', 'RAILS / VUE', null, 'reachOutt', 'mail'],
+  ['reachoutt', 'a little help remembering to keep in touch.', 'RAILS / VUE', 'https://reachoutt.onrender.com/', 'reachOutt', 'mail'],
 ];
 const icons = { pet: '♥', pizza: '◢', relay: '⌁', game: '✚', fight: '↑', coffee: '☕', cards: '♠', mail: '✉' };
 const views = {
