@@ -14,7 +14,8 @@ export function aFrame(ctx, x, y) {
     box(ctx, x + 89 - half, yy + 1, half * 2 - 2, 2, '#ba9263');
   }
   polygon(ctx, [[x + 61, y + 87], [x + 88, y + 27], [x + 115, y + 87]], '#e4ba77');
-  box(ctx, x + 86, y + 47, 4, 43, '#503d31'); box(ctx, x + 69, y + 72, 38, 4, '#503d31');
+  polygon(ctx, [[x + 68, y + 81], [x + 88, y + 37], [x + 91, y + 44], [x + 75, y + 81]], '#f4d79d');
+  box(ctx, x + 61, y + 86, 54, 4, '#503d31');
   frame(ctx, x + 66, y + 103, 44, 65, '#384d48', '#d0ad77', 5);
   box(ctx, x + 75, y + 112, 26, 29, '#e6ba76'); box(ctx, x + 99, y + 147, 4, 3, '#f5d49c');
   for (const xx of [x + 25, x + 123]) { frame(ctx, xx, y + 125, 29, 28, '#e5ac66', '#4c4234'); box(ctx, xx + 13, y + 127, 3, 25, '#4c4234'); }
