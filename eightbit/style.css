@@ -160,7 +160,7 @@
   #eightbit .mini-map { display: none; }
   #eightbit .dpad { display: grid; grid-template-columns: repeat(3, 42px); grid-template-rows: repeat(2, 42px); gap: 3px; position: absolute; left: 16px; bottom: 15px; }
   #eightbit .dpad button { background: #203c3be8; border: 1px solid #a2af8788; touch-action: none; font-size: 19px; padding: 0; }
-  #eightbit .dpad button:active { background: #d6b98a; color: #243e3d; }
+  #eightbit .dpad button:active { background: #203c3be8; color: inherit; }
   #eightbit .dpad button:first-child { grid-column: 2; }
   #eightbit .dpad button:nth-child(2) { grid-column: 1; }
   #eightbit .interact { left: auto; right: 14px; bottom: 27px; transform: none; padding: 9px 10px; gap: 7px; font-size: 9px; max-width: calc(100% - 175px); white-space: normal; text-align: left; min-height: 46px; }
@@ -199,3 +199,6 @@
 }
 @media (max-height: 600px) and (min-width: 651px) { #eightbit .game-header { min-height: 58px; padding-top: 7px; padding-bottom: 7px; } #eightbit .welcome { bottom: 77px; padding: 15px 20px; width: 300px; } #eightbit .welcome h2 { font-size: 17px; } #eightbit .welcome small { display: none; } }
 @media (prefers-reduced-motion: reduce) { #eightbit * { scroll-behavior: auto !important; transition: none !important; } }
+
+/* Held touch controls must never select text or open the mobile callout. */
+#eightbit .dpad, #eightbit .dpad * { user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }

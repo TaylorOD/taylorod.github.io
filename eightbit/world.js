@@ -1,3 +1,4 @@
+import { followTrail } from './companions.js';
 import { scenes, findPath, isWalkable } from './scenes.js';
 import { paintScene, ambience, person, pet, box, text, screen } from './art.js';
 import { projects } from './content.js';
@@ -40,7 +41,8 @@ export class World {
     if (!scenes[id]) id = 'town';
     this.stop(); this.id = id; this.scene = scenes[id];
     this.player = { ...(returnPoint || this.scene.spawn) };
-    this.companion = { x: this.player.x - 30, y: this.player.y + 12 };
+    this.companion = { ...this.player, direction: 'down' };
+    this.trail = [];
     this.nearby = null; this.transition = this.reduced.matches ? 0 : 1;
     this.resize(); this.onRoom?.(id, this.scene);
   }
@@ -137,11 +139,7 @@ export class World {
         this.direction = Math.abs(dx) > Math.abs(dy) ? dx > 0 ? 'right' : 'left' : dy > 0 ? 'down' : 'up';
         if (this.walking) { this.lastMove = time; this.onMove?.(time, this.id); }
       }
-      const distance = Math.hypot(this.player.x - this.companion.x, this.player.y - this.companion.y);
-      if (distance > 30) {
-        const amount = Math.min(1, delta * 4);
-        this.companion.x += (this.player.x - this.companion.x) * amount; this.companion.y += (this.player.y + 6 - this.companion.y) * amount;
-      }
+      followTrail(this.companion, this.trail, this.player, delta);
     }
     }
     const nearest = this.scene.points.filter(point => Math.hypot(point.x - this.player.x, point.y - this.player.y) < 53).sort((a, b) => Math.hypot(a.x - this.player.x, a.y - this.player.y) - Math.hypot(b.x - this.player.x, b.y - this.player.y))[0];
@@ -166,7 +164,7 @@ export class World {
       if (this.progress.stamps.length === projects.length) text(ctx, 'PHOTO BOOTH UNLOCKED', 689, 516, 7, '#e9cb91');
     }
     if (this.target && this.path.length) { const { x, y } = this.target; box(ctx, x - 7, y - 1, 14, 2, '#e7cf9a'); box(ctx, x - 1, y - 7, 2, 14, '#e7cf9a'); }
-    const companion = () => pet(ctx, this.companion.x, this.companion.y, this.progress.pet, this.reduced.matches ? 0 : time, this.paused || time - this.lastMove > 12000);
+    const companion = () => pet(ctx, this.companion.x, this.companion.y, this.progress.pet, this.reduced.matches ? 0 : time, this.paused || time - this.lastMove > 12000, 1, this.companion.direction, !!this.nearby);
     if (this.companion.y < this.player.y) companion();
     person(ctx, this.player.x, this.player.y, this.direction, this.walking && !this.reduced.matches, time, this.progress.pizza === 'carrying');
     if (this.companion.y >= this.player.y) companion();

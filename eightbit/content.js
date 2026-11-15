@@ -11,9 +11,9 @@ export const projects = [
 ];
 
 export const pets = [
-  { id: 'sprout', name: 'sprout', color: '#a7dfaa', description: 'small. curious. easily distracted.' },
+  { id: 'lilgotchi', name: 'lilgotchi', color: '#a7dfaa', description: 'small. curious. easily distracted.' },
   { id: 'slice', name: 'slice', color: '#f2bd76', description: 'a very good slice of company.' },
-  { id: 'pixel', name: 'pixel', color: '#c6a4ec', description: 'probably thinking about computers.' },
+  { id: 'cypunk', name: 'cypunk', color: '#c6a4ec', description: 'probably thinking about computers.' },
 ];
 
 export const jobs = [
@@ -28,13 +28,13 @@ export function loadProgress(storage) {
     storage ||= globalThis.localStorage;
     const saved = JSON.parse(storage.getItem(SAVE_KEY) || '{}');
     return {
-      pet: pets.some(pet => pet.id === saved.pet) ? saved.pet : 'sprout',
+      pet: pets.some(pet => pet.id === saved.pet) ? saved.pet : ({ sprout: 'lilgotchi', pixel: 'cypunk' }[saved.pet] || 'slice'),
       adopted: saved.adopted === true,
       stamps: Array.isArray(saved.stamps) ? [...new Set(saved.stamps.filter(id => projects.some(project => project.id === id)))] : [],
       pizza: ['carrying', 'delivered'].includes(saved.pizza) ? saved.pizza : 'none',
       visited: saved.visited === true,
     };
-  } catch { return { pet: 'sprout', adopted: false, stamps: [], pizza: 'none', visited: false }; }
+  } catch { return { pet: 'slice', adopted: false, stamps: [], pizza: 'none', visited: false }; }
 }
 
 export function saveProgress(progress) {
