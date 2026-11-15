@@ -3,7 +3,7 @@ import { canEnter, mapPosition } from './navigation.js';
 import { World } from './world.js';
 import { projects, pets, jobs, careerStories, loadProgress, saveProgress } from './content.js';
 import { scenes } from './scenes.js';
-import { pet } from './art.js';
+import { pet, screen } from './art.js';
 import { Sound } from './sound.js';
 
 const progress = loadProgress();
@@ -73,6 +73,9 @@ function openDialog(tag, title, html, route = false) {
   root.querySelector('.dialog-tag').textContent = tag;
   root.querySelector('.dialog-content').innerHTML = `<h2 id="dialog-title">${title}</h2>${html}`;
   if (!dialog.open) dialog.showModal();
+  const origin = world.interactionOrigin();
+  const bounds = dialog.getBoundingClientRect();
+  dialog.style.transformOrigin = origin ? `${origin.x - bounds.left}px ${origin.y - bounds.top}px` : '50% 50%';
   dialog.scrollTop = 0;
   root.querySelector('.close-dialog').focus();
 }
@@ -124,6 +127,16 @@ function passport() {
   openDialog('YOUR POCKET COLLECTION', 'a few good discoveries.', `<p class="dialog-lead">visit each project to collect its stamp. all eight unlock a photo booth keepsake.</p><div class="passport">${projects.map(item => `<button data-project="${item.id}" class="${progress.stamps.includes(item.id) ? 'collected' : ''}"><span>${progress.stamps.includes(item.id) ? ({ lilgotchi: '♥', snowcrust: '◭', relay: '⇄', fight: '⚔', sweat: '♜', moonbean: '☕', poker: '♠', reachoutt: '☎' }[item.id]) : '◇'}</span><strong>${item.name}</strong><small>${progress.stamps.includes(item.id) ? 'VISITED' : 'TAKE A LOOK'}</small></button>`).join('')}</div><p class="small-note">your companion and discoveries are saved in this browser.</p>${progress.stamps.length === 8 ? '<button class="primary" data-ui="photo">take your photo ↗</button>' : ''}`);
 }
 
+function paintStamps() {
+  root.querySelectorAll('.passport .collected').forEach(button => {
+    const project = projects.find(item => item.id === button.dataset.project);
+    const stamp = document.createElement('canvas'); stamp.width = 64; stamp.height = 48;
+    stamp.setAttribute('aria-hidden', 'true');
+    screen(stamp.getContext('2d'), project.screen, 0, 0, 64, 48, 0, true);
+    button.querySelector('span').replaceChildren(stamp);
+  });
+}
+
 function about() {
   openDialog('HOME BASE / TAYLOR DORSETT', 'hey, i’m taylor.', `<div class="about-panel"><img src="images/me.png" alt="Taylor in a tie dye shirt eating pizza"/><div><p class="project-description">software engineer in missoula, montana. former (recovering) tech recruiter.</p><p>i like making things for the web. sometimes useful things. sometimes a tiny pet or a pizza game.</p><p>away from the keyboard: reading, bjj, poker, video games and tie dye shirts.</p><div class="dialog-actions"><button class="primary" data-ui="directory">see the projects ↗</button><button class="secondary" data-ui="contact">say hello</button></div></div></div>`);
 }
@@ -149,7 +162,7 @@ function pizza() {
 function delivery() {
   if (progress.pizza === 'carrying') {
     progress.pizza = 'delivered'; updateInventory(); sound.chime();
-    openDialog('SIDE QUEST COMPLETE', 'pizza makes friends.', '<p class="dialog-lead">delivery complete. here’s the key to the arcade rooftop. there’s a pretty good view up there.</p><button class="primary" data-room="rooftop">let’s see the view ↑</button>');
+    openDialog('SIDE QUEST COMPLETE', 'pizza makes friends.', '<div class="quest-exchange" aria-label="Pizza delivered. Rooftop key received."><span>🍕</span><span>↔</span><span class="rooftop-key">⚿</span></div><p class="dialog-lead">“you made it! thanks for bringing dinner. here’s the rooftop key. head up whenever you like.”</p><button class="primary" data-room="rooftop">let’s see the view ↑</button>');
   } else if (progress.pizza === 'delivered') pizza();
   else openDialog('A NEIGHBOR ON THE BENCH', 'waiting on a pizza.', '<p class="dialog-lead">“if you’re heading to the arcade, could you pick up my order? it’s at the little pizza table.”</p><button class="secondary" data-room="arcade">head to the arcade →</button>');
 }
@@ -171,7 +184,7 @@ function handleAction(action) {
   if (action.startsWith('room:')) { changeRoom(action.slice(5)); return; }
   if (action.startsWith('project:')) { openProject(action.slice(8)); return; }
   const actions = {
-    directory, map, pets: choosePet, passport, about, work, contact, pizza, delivery, photo, help,
+    directory, map, pets: choosePet, passport: () => { passport(); paintStamps(); }, about, work, contact, pizza, delivery, photo, help,
     chef: () => career('chef'), levels: () => career('levels'), recruiting: () => career('recruiting'),
     enter: () => { dismissWelcome(); world.goTo('arcade'); canvas.focus(); },
     dismiss: () => { dismissWelcome(); canvas.focus(); },

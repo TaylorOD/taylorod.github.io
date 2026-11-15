@@ -46,6 +46,7 @@ export class World {
   enter(id, returnPoint) {
     if (!scenes[id] || !canEnter(id, this.progress)) id = 'town';
     this.enteredAt = performance.now();
+    this.lastMove = this.enteredAt;
     this.stop(); this.id = id; this.scene = scenes[id];
     this.player = { ...(returnPoint || this.scene.spawn) };
     this.companion = { ...this.player, direction: 'down' };
@@ -126,6 +127,15 @@ export class World {
 
   interact() { if (!this.paused && this.nearby) this.onAction(this.nearby.action); }
 
+  // UI panels grow from the object the visitor actually approached.
+  interactionOrigin() {
+    const point = this.nearby;
+    if (!point) return null;
+    const bounds = this.canvas.getBoundingClientRect();
+    return { x: bounds.left + (point.x - this.camera.x) / this.canvas.width * bounds.width,
+      y: bounds.top + ((point.hit ? point.hit[1] + point.hit[3] / 2 : point.y) - this.camera.y) / this.canvas.height * bounds.height };
+  }
+
   tick(time) {
     const elapsed = Math.min((time - this.last) / 1000, .25); this.last = time; this.walking = false;
     // Substeps preserve real movement speed on slower devices without tunneling through walls.
@@ -183,7 +193,14 @@ export class World {
       if (this.progress.stamps.length === projects.length) text(ctx, 'PHOTO BOOTH UNLOCKED', 689, 516, 7, '#e9cb91');
     }
     if (this.target && this.path.length) { const { x, y } = this.target; box(ctx, x - 7, y - 1, 14, 2, '#e7cf9a'); box(ctx, x - 1, y - 7, 2, 14, '#e7cf9a'); }
-    const companion = () => pet(ctx, this.companion.x, this.companion.y, this.progress.pet, this.reduced.matches ? 0 : time, this.paused || time - this.lastMove > 12000, 1, this.companion.direction, !!this.nearby);
+    const greeting = time - this.enteredAt < 2200;
+    const curious = !this.walking && ['pizza', 'snowcrust', 'lilgotchi', 'relay'].includes(this.nearby?.id);
+    const companion = () => {
+      const hop = greeting && !this.reduced.matches ? Math.max(0, Math.sin((time - this.enteredAt) / 150)) * 5 : 0;
+      const direction = curious ? this.nearby.x > this.companion.x ? 'right' : 'left' : this.companion.direction;
+      pet(ctx, this.companion.x, this.companion.y - hop, this.progress.pet, this.reduced.matches ? 0 : time, !greeting && !curious && time - this.lastMove > 12000, 1, direction, greeting);
+      if (greeting || curious) text(ctx, greeting ? '♥' : this.nearby.id === 'snowcrust' || this.nearby.id === 'pizza' ? 'PIZZA?' : '?', this.companion.x, this.companion.y - 44, 8, '#edc389');
+    };
     const actors = [
       { y: this.companion.y, draw: companion },
       { y: this.player.y, draw: () => person(ctx, this.player.x, this.player.y, this.direction, this.walking && !this.reduced.matches, time, this.progress.pizza === 'carrying') },
@@ -197,6 +214,10 @@ export class World {
       } });
     }
     actors.sort((a, b) => a.y - b.y).forEach(actor => actor.draw());
+    if (this.id === 'town' && this.progress.pizza === 'delivered') {
+      box(ctx, 245, 512, 24, 5, '#e9ba79'); box(ctx, 245, 517, 24, 2, '#a55c3e');
+      text(ctx, 'THANKS!', 256, 478, 7, '#f1d8a7');
+    }
     for (const point of this.scene.points) {
       const near = point.id === this.nearby?.id;
       if (near || point.id === this.hovered?.id || this.id === 'town' && point.id === 'arcade') {
@@ -214,7 +235,8 @@ export class World {
     const ctx = image.getContext('2d'); paintScene(ctx, 'rooftop', projects);
     box(ctx, 768, 0, 192, 640, '#f0dfba'); box(ctx, 0, 594, 768, 46, '#f0dfba');
     person(ctx, 364, 440, pose === 'view' ? 'up' : 'down', pose === 'dance', 120, pose === 'pizza'); pet(ctx, 410, 440, this.progress.pet, 0, false, 1.4, pose === 'view' ? 'up' : 'down', true);
-    text(ctx, pose === 'pizza' ? 'PIZZA BREAK' : pose === 'view' ? 'MOUNTAIN TIME' : 'HELLO FROM MISSOULA', 384, 560, 13, '#e5d7b0');
+    box(ctx, 150, 544, 468, 40, '#3e6057');
+    text(ctx, pose === 'pizza' ? 'PIZZA BREAK' : pose === 'view' ? 'MOUNTAIN TIME' : 'HELLO FROM MISSOULA', 384, 565, 13, '#e5d7b0');
     text(ctx, 'SIDE QUEST', 864, 91, 23, '#3d5c56'); text(ctx, 'ARCADE', 864, 123, 23, '#3d5c56');
     text(ctx, 'a little visit', 864, 212, 13, '#5c7262'); text(ctx, 'to missoula.', 864, 233, 13, '#5c7262');
     text(ctx, 'taylor dorsett', 864, 508, 13, '#5c7262'); text(ctx, 'taylordorsett.com', 864, 531, 11, '#5c7262');
