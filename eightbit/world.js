@@ -1,3 +1,4 @@
+import { campusActors, campusScale } from './campus-life.js';
 import { animateArcade } from './arcade-art.js';
 import { foreground, riverTrees, treeOpacity } from './depth.js';
 import { canEnter, hitTest, nearbyPath } from './navigation.js';
@@ -200,16 +201,18 @@ export class World {
     if (this.target && this.path.length) { const { x, y } = this.target; box(ctx, x - 7, y - 1, 14, 2, '#e7cf9a'); box(ctx, x - 1, y - 7, 2, 14, '#e7cf9a'); }
     const greeting = time - this.enteredAt < 2200;
     const curious = !this.walking && ['pizza', 'snowcrust', 'lilgotchi', 'relay'].includes(this.nearby?.id);
+    const perspective = actor => this.id === 'town' ? campusScale(actor.x, actor.y) : 1;
     const companion = () => {
       const hop = greeting && !this.reduced.matches ? Math.max(0, Math.sin((time - this.enteredAt) / 150)) * 5 : 0;
       const direction = curious ? this.nearby.x > this.companion.x ? 'right' : 'left' : this.companion.direction;
-      pet(ctx, this.companion.x, this.companion.y - hop, this.progress.pet, this.reduced.matches ? 0 : time, !greeting && !curious && time - this.lastMove > 12000, 1, direction, greeting);
+      pet(ctx, this.companion.x, this.companion.y - hop, this.progress.pet, this.reduced.matches ? 0 : time, !greeting && !curious && time - this.lastMove > 12000, perspective(this.companion), direction, greeting);
       if (greeting || curious) text(ctx, greeting ? '♥' : this.nearby.id === 'snowcrust' || this.nearby.id === 'pizza' ? 'PIZZA?' : '?', this.companion.x, this.companion.y - 44, 8, '#edc389');
     };
     const actors = [
+      ...(this.id === 'town' ? campusActors(ctx, time, this.reduced.matches || this.paused) : []),
       ...(this.id === 'arcade' ? arcadeRegulars.map(resident => ({ y: resident.y, draw: () => drawArcadeRegular(ctx, resident, time, this.reduced.matches || this.paused) })) : []),
       { y: this.companion.y, draw: companion },
-      { y: this.player.y, draw: () => person(ctx, this.player.x, this.player.y, this.direction, this.walking && !this.reduced.matches, time, this.progress.pizza === 'carrying') },
+      { y: this.player.y, draw: () => person(ctx, this.player.x, this.player.y, this.direction, this.walking && !this.reduced.matches, time, this.progress.pizza === 'carrying', perspective(this.player)) },
       ...this.residents.filter(resident => resident.room === this.id && !resident.hidden).map(resident => ({ y: resident.y + (resident.seated ? 16 : 0), draw: () => drawResident(ctx, resident, time, this.reduced.matches) })),
     ];
     for (const [x, y, w, h, depth] of foreground[this.id] || []) if ([this.player, this.companion, ...this.residents.filter(r => r.room === this.id && !r.seated)].some(actor => actor.x > x - 14 && actor.x < x + w + 14 && actor.y < depth && actor.y > y)) actors.push({ y: depth, draw: () => ctx.drawImage(this.cache.get(this.id), x, y, w, h, x, y, w, h) });

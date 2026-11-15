@@ -149,7 +149,7 @@ function cobbles(ctx, x, y, w, h) {
 function town(ctx) {
   sky(ctx, 1024, 768); ground(ctx, 1024, 768);
   universityCampus(ctx);
-  cobbles(ctx, 32, 448, 960, 128); cobbles(ctx, 448, 416, 128, 320);
+  cobbles(ctx, 0, 448, 1024, 128); cobbles(ctx, 448, 416, 128, 320);
   box(ctx, 0, 604, 1024, 8, '#3e6154'); box(ctx, 0, 612, 1024, 56, '#315d65'); box(ctx, 0, 668, 1024, 5, '#779075');
   for (let x = 0; x < 1024; x += 14) { box(ctx, x, 603 + x % 5, 9, 3, '#809275'); box(ctx, x + 4, 667, 8, 3, '#93a080'); }
   for (let y = 598; y < 685; y += 9) { box(ctx, 444, y, 136, 8, '#a88f6b'); box(ctx, 449, y + 1, 126, 1, '#c1a77b'); }
@@ -244,11 +244,11 @@ export function paintScene(ctx, id, projects) {
   else rooftop(ctx);
 }
 
-export function person(ctx, x, y, direction = 'down', walking = false, time = 0, carrying = false) {
+export function person(ctx, x, y, direction = 'down', walking = false, time = 0, carrying = false, scale = 1) {
   const step = walking ? [0, 2, 0, -2][Math.floor(time / 110) % 4] : 0;
   const side = direction === 'left' || direction === 'right';
   const facing = direction === 'left' ? -1 : 1;
-  ctx.save(); ctx.translate(Math.round(x), Math.round(y));
+  ctx.save(); ctx.translate(Math.round(x), Math.round(y)); ctx.scale(scale, scale);
   box(ctx, -11, -2, 25, 6, '#192f3655');
   // A side silhouette has a near arm, a nose and narrower shoulders.
   const left = side ? -7 : -10, width = side ? 15 : 21;
