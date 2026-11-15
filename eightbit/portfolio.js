@@ -1,8 +1,9 @@
+import { createDemo, advanceDemo, renderDemo } from './demos.js';
 import { canEnter, mapPosition } from './navigation.js';
 import { World } from './world.js';
 import { projects, pets, jobs, loadProgress, saveProgress } from './content.js';
 import { scenes } from './scenes.js';
-import { screen, pet, box, text } from './art.js';
+import { pet } from './art.js';
 import { Sound } from './sound.js';
 
 const progress = loadProgress();
@@ -32,6 +33,7 @@ document.body.replaceChildren(root); document.documentElement.classList.add('eig
 document.title = 'Side quest arcade | Taylor Dorsett';
 const canvas = root.querySelector('.world-canvas'), dialog = root.querySelector('dialog');
 let postcardPose = 'hello';
+let activeDemo;
 let world, previewFrame, toastTimer, previousFocus, routeDialog = false;
 
 function toast(message) {
@@ -86,18 +88,21 @@ function closeDialog(updateRoute = true) {
 function openProject(id, history = true) {
   const project = projects.find(item => item.id === id); if (!project) return;
   if (!progress.stamps.includes(id)) { progress.stamps.push(id); updateInventory(); sound.chime(); }
-  const special = id === 'lilgotchi' ? '<button class="secondary" data-ui="pets">choose a companion</button>' : id === 'relay' ? '<button class="secondary" data-demo="relay">trip a circuit</button>' : id === 'snowcrust' ? '<button class="secondary" data-ui="pizza">take a delivery</button>' : '';
+  const special = id === 'lilgotchi' ? '<button class="secondary" data-ui="pets">choose a companion</button>' : id === 'snowcrust' ? '<button class="secondary" data-ui="pizza">take a delivery</button>' : '';
   openDialog(`CARTRIDGE ${String(projects.indexOf(project) + 1).padStart(2, '0')} / ${project.category.toUpperCase()}`, project.name, `
-    <div class="project-layout"><div class="project-visual" style="--project-color:${project.color}"><canvas class="project-screen" width="320" height="224" role="img" aria-label="Animated pixel illustration of ${project.name}"></canvas><span class="screen-caption">${project.category}</span></div><div class="project-copy"><p class="project-description">${project.description}</p><p>${project.detail}</p><div class="tech-label">BUILT WITH</div><p class="tech">${project.stack}</p><div class="dialog-actions"><a class="primary" href="${project.url}">${project.action} ↗</a><a class="secondary" href="https://github.com/TaylorOD/${project.repo}">see the code ↗</a>${special}</div><p class="demo-feedback" role="status"></p></div></div><div class="project-bottom"><span>✦ stamp collected · ${progress.stamps.length} of 8</span><button data-ui="directory">all the machines →</button></div>`, true);
+    <div class="project-layout"><div class="project-visual" style="--project-color:${project.color}"><img class="project-screenshot" src="eightbit/previews/${project.id}.jpg" alt="${project.name} running in the browser" loading="lazy"/><span class="screen-caption">${project.category}</span></div><div class="project-copy"><p class="project-description">${project.description}</p><p>${project.detail}</p><div class="tech-label">BUILT WITH</div><p class="tech">${project.stack}</p><div class="dialog-actions"><a class="primary" href="${project.url}">${project.action} ↗</a><a class="secondary" href="https://github.com/TaylorOD/${project.repo}">see the code ↗</a>${special}</div></div></div>${['lilgotchi', 'snowcrust', 'relay'].includes(id) ? '<section class="project-demo" aria-live="polite"></section>' : ''}<div class="project-bottom"><span>✦ stamp collected · ${progress.stamps.length} of 8</span><button data-ui="directory">all the machines →</button></div>`, true);
   if (history) setRoute(`${world.id}/${project.id}`);
-  const preview = root.querySelector('.project-screen'), ctx = preview.getContext('2d');
-  const draw = time => {
-    const tripped = root.querySelector('[data-demo="relay"]')?.dataset.tripped === 'true';
-    screen(ctx, project.screen, 0, 0, 320, 224, world.reduced.matches || tripped ? 0 : time, !tripped);
-    if (tripped) { box(ctx, 0, 190, 320, 34, '#704b4c'); text(ctx, 'CIRCUIT OPEN · REQUESTS PAUSED', 160, 207, 12, '#f1d6b0'); }
-    if (!world.reduced.matches && dialog.open && preview.isConnected) previewFrame = requestAnimationFrame(draw);
-  };
-  draw(0);
+  activeDemo = createDemo(id);
+  paintDemo();
+}
+
+
+function paintDemo() {
+  const element = root.querySelector('.project-demo');
+  if (!element) return;
+  renderDemo(element, activeDemo);
+  const preview = element.querySelector('canvas');
+  if (preview) pet(preview.getContext('2d'), 50, 70, 'slice', 0, false, 2, 'down', activeDemo.meals === 3);
 }
 
 function directory() {
@@ -194,16 +199,7 @@ root.addEventListener('click', event => {
   if (button.dataset.room) { closeDialog(false); changeRoom(button.dataset.room); canvas.focus(); }
   if (button.dataset.project) openProject(button.dataset.project);
   if (button.dataset.pet) { progress.pet = button.dataset.pet; progress.adopted = true; updateInventory(); closeDialog(); toast(`${progress.pet} is coming with you. ♥`); }
-  if (button.dataset.demo) {
-    const tripped = button.dataset.tripped !== 'true'; button.dataset.tripped = String(tripped);
-    root.querySelector('.demo-feedback').textContent = tripped ? 'circuit open. requests paused. ready to recover.' : 'back online. requests are flowing again.';
-    button.textContent = tripped ? 'recover the circuit' : 'trip a circuit';
-    if (tripped) sound.note(165, .2, .02, 'triangle'); else sound.chime();
-    if (world.reduced.matches) {
-      const ctx = root.querySelector('.project-screen').getContext('2d'); screen(ctx, 'network', 0, 0, 320, 224, 0, !tripped);
-      if (tripped) { box(ctx, 0, 190, 320, 34, '#704b4c'); text(ctx, 'CIRCUIT OPEN · REQUESTS PAUSED', 160, 207, 12, '#f1d6b0'); }
-    }
-  }
+  if (button.dataset.demo) { activeDemo = advanceDemo(activeDemo); paintDemo(); sound.chime(); }
 });
 root.querySelector('.interact').addEventListener('click', () => world.interact());
 root.querySelector('.close-dialog').addEventListener('click', () => closeDialog());
