@@ -209,7 +209,7 @@
 #eightbit .place-subtitle, #eightbit .inventory-bar button, #eightbit .game-footer { font-size: 11px; }
 #eightbit .pet-choices small, #eightbit .pet-choices span, #eightbit .screen-caption { font-size: 12px; }
 #eightbit .game-dialog[open] { animation: cabinet-open .18s ease-out; }
-@keyframes cabinet-open { from { opacity: 0; transform: translateY(12px) scale(.97); } to { opacity: 1; transform: none; } }
+@keyframes cabinet-open { from { opacity: 0; transform: scale(.45); } to { opacity: 1; transform: none; } }
 @media (max-width: 900px) {
   #eightbit .brand small { display: none; }
   #eightbit .game-header { gap: 12px; padding: 8px 16px; flex-wrap: wrap; }
@@ -247,3 +247,13 @@
 @media (max-width: 650px) { #eightbit .project-demo { grid-template-columns: 1fr; padding: 16px; } #eightbit .demo-pet { margin: auto; } #eightbit .project-screenshot { aspect-ratio: 1.6; } }
 
 #eightbit .legacy-computer { display: block; width: 100%; height: min(540px, 60dvh); border: 12px solid #333f3a; border-radius: 12px; background: #fff; margin: 20px 0; }
+
+#eightbit .quest-exchange { display: flex; justify-content: center; gap: 36px; align-items: center; padding: 24px; background: #142d32; color: #edc389; font-size: 38px; margin-bottom: 24px; }
+#eightbit .passport canvas { width: 64px; height: 48px; image-rendering: pixelated; border: 2px solid currentColor; padding: 4px; transform: rotate(-5deg); }
+#eightbit .rooftop-key { display: inline-block; animation: receive-key .6s ease-out; }
+#eightbit .project-bottom > span { display: inline-block; border: 2px solid #a7c6a0; padding: 10px; transform: rotate(-3deg); animation: receive-stamp .3s ease-out; }
+#eightbit .postcard-preview { animation: photo-develop .65s ease-out; }
+@keyframes receive-key { from { transform: translateX(-40px) rotate(-30deg); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes receive-stamp { from { transform: scale(1.4) rotate(-12deg); opacity: 0; } to { transform: scale(1) rotate(-3deg); opacity: 1; } }
+@keyframes photo-develop { from { filter: brightness(2); opacity: .2; } to { filter: brightness(1); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { #eightbit .rooftop-key, #eightbit .project-bottom > span, #eightbit .postcard-preview { animation: none; } }
