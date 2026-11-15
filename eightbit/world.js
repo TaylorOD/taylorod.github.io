@@ -1,3 +1,4 @@
+import { bikeActors } from './bikes.js';
 import { campusActors, campusScale } from './campus-life.js';
 import { animateArcade } from './arcade-art.js';
 import { foreground, riverTrees, treeOpacity } from './depth.js';
@@ -209,6 +210,7 @@ export class World {
       if (greeting || curious) text(ctx, greeting ? '♥' : this.nearby.id === 'snowcrust' || this.nearby.id === 'pizza' ? 'PIZZA?' : '?', this.companion.x, this.companion.y - 44, 8, '#edc389');
     };
     const actors = [
+      ...(this.id === 'town' ? bikeActors(ctx, time, this.reduced.matches || this.paused) : []),
       ...(this.id === 'town' ? campusActors(ctx, time, this.reduced.matches || this.paused) : []),
       ...(this.id === 'arcade' ? arcadeRegulars.map(resident => ({ y: resident.y, draw: () => drawArcadeRegular(ctx, resident, time, this.reduced.matches || this.paused) })) : []),
       { y: this.companion.y, draw: companion },
