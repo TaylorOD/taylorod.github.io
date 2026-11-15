@@ -189,8 +189,11 @@ export class World {
       box(ctx, 687, 421, 11, 9, this.progress.pizza === 'delivered' ? '#a5d7a0' : '#c29c5e');
     }
     if (this.id === 'arcade') {
-      for (let i = 0; i < 4; i++) screen(ctx, projects[i].screen, 242 + i * 160, 392, 43, 33, this.reduced.matches ? 0 : time, this.nearby?.id === projects[i].id);
-      if (this.progress.stamps.length === projects.length) text(ctx, 'PHOTO BOOTH UNLOCKED', 689, 516, 7, '#e9cb91');
+      screen(ctx, 'fight', 722, 392, 43, 33, this.reduced.matches ? 0 : time, this.nearby?.id === 'fight');
+      if (this.nearby?.id === 'lilgotchi') pet(ctx, 264, 420, 'lilgotchi', this.reduced.matches ? 0 : time, false, 1.1, 'down', true);
+      if (this.nearby?.id === 'snowcrust') box(ctx, 399, 424, 50, 3, '#ffd07e');
+      if (this.nearby?.id === 'relay') for (let row = 0; row < 5; row++) box(ctx, 558, 370+row*16, 3, 3, this.reduced.matches || Math.floor(time/250)%5 === row ? '#e9f8ce' : '#64afac');
+      if (this.progress.stamps.length === projects.length) text(ctx, 'READY!', 810, 610, 7, '#e9cb91');
     }
     if (this.target && this.path.length) { const { x, y } = this.target; box(ctx, x - 7, y - 1, 14, 2, '#e7cf9a'); box(ctx, x - 1, y - 7, 2, 14, '#e7cf9a'); }
     const greeting = time - this.enteredAt < 2200;
