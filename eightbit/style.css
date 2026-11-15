@@ -257,3 +257,16 @@
 @keyframes receive-stamp { from { transform: scale(1.4) rotate(-12deg); opacity: 0; } to { transform: scale(1) rotate(-3deg); opacity: 1; } }
 @keyframes photo-develop { from { filter: brightness(2); opacity: .2; } to { filter: brightness(1); opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { #eightbit .rooftop-key, #eightbit .project-bottom > span, #eightbit .postcard-preview { animation: none; } }
+
+/* The room's chrome follows the light from the machines. */
+#eightbit[data-room="arcade"] { --ink: #10101b; --cream: #f2dfec; --gold: #ee9dc6; --muted: #aea4bc; --line: #88647c66; }
+#eightbit[data-room="arcade"] .game-header,
+#eightbit[data-room="arcade"] .game-footer { background: #10101a; border-color: #67445d; }
+#eightbit[data-room="arcade"] .brand { color: #f5b4d5; }
+#eightbit[data-room="arcade"] .brand-icon { border-color: #dc74ae; color: #69d9da; }
+#eightbit[data-room="arcade"] .scene-shade { background: linear-gradient(180deg, #07061188, transparent 20%, transparent 83%, #08071399); box-shadow: inset 0 0 120px #08081244; }
+#eightbit[data-room="arcade"] .inventory-bar button,
+#eightbit[data-room="arcade"] .interact,
+#eightbit[data-room="arcade"] .mini-map,
+#eightbit[data-room="arcade"] .dpad button { background: #191525eb; border-color: #78566c; color: #eac8df; }
+#eightbit[data-room="arcade"] .place-dot { background: #f582bd; box-shadow: 0 0 12px #ef58a1; }

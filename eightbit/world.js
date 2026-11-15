@@ -1,7 +1,8 @@
+import { animateArcade } from './arcade-art.js';
 import { foreground, riverTrees, treeOpacity } from './depth.js';
 import { canEnter, hitTest, nearbyPath } from './navigation.js';
 import { drawRiverLife } from './river.js';
-import { createResidents, updateResidents, drawResident } from './residents.js';
+import { createResidents, updateResidents, drawResident, arcadeRegulars, drawArcadeRegular } from './residents.js';
 import { followTrail } from './companions.js';
 import { scenes, findPath, isWalkable } from './scenes.js';
 import { paintScene, ambience, person, pet, box, text, screen, tree } from './art.js';
@@ -195,13 +196,7 @@ export class World {
       const offset = this.reduced.matches ? 12 : Math.floor(time / 180) % 30;
       for (const x of [358, 614]) { box(ctx, x + offset, 375, 7, 7, '#765b4a'); box(ctx, x + offset - 2, 382, 11, 14, '#486a65'); }
     }
-    if (this.id === 'arcade') {
-      screen(ctx, 'fight', 722, 392, 43, 33, this.reduced.matches ? 0 : time, this.nearby?.id === 'fight');
-      if (this.nearby?.id === 'lilgotchi') pet(ctx, 264, 420, 'lilgotchi', this.reduced.matches ? 0 : time, false, 1.1, 'down', true);
-      if (this.nearby?.id === 'snowcrust') box(ctx, 399, 424, 50, 3, '#ffd07e');
-      if (this.nearby?.id === 'relay') for (let row = 0; row < 5; row++) box(ctx, 558, 370+row*16, 3, 3, this.reduced.matches || Math.floor(time/250)%5 === row ? '#e9f8ce' : '#64afac');
-      if (this.progress.stamps.length === projects.length) text(ctx, 'READY!', 810, 610, 7, '#e9cb91');
-    }
+    if (this.id === 'arcade') animateArcade(ctx, time, this.reduced.matches || this.paused, this.nearby?.id);
     if (this.target && this.path.length) { const { x, y } = this.target; box(ctx, x - 7, y - 1, 14, 2, '#e7cf9a'); box(ctx, x - 1, y - 7, 2, 14, '#e7cf9a'); }
     const greeting = time - this.enteredAt < 2200;
     const curious = !this.walking && ['pizza', 'snowcrust', 'lilgotchi', 'relay'].includes(this.nearby?.id);
@@ -212,6 +207,7 @@ export class World {
       if (greeting || curious) text(ctx, greeting ? '♥' : this.nearby.id === 'snowcrust' || this.nearby.id === 'pizza' ? 'PIZZA?' : '?', this.companion.x, this.companion.y - 44, 8, '#edc389');
     };
     const actors = [
+      ...(this.id === 'arcade' ? arcadeRegulars.map(resident => ({ y: resident.y, draw: () => drawArcadeRegular(ctx, resident, time, this.reduced.matches || this.paused) })) : []),
       { y: this.companion.y, draw: companion },
       { y: this.player.y, draw: () => person(ctx, this.player.x, this.player.y, this.direction, this.walking && !this.reduced.matches, time, this.progress.pizza === 'carrying') },
       ...this.residents.filter(resident => resident.room === this.id && !resident.hidden).map(resident => ({ y: resident.y + (resident.seated ? 16 : 0), draw: () => drawResident(ctx, resident, time, this.reduced.matches) })),

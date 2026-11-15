@@ -1,5 +1,6 @@
 import { personalCabin } from './home-art.js';
-import { aFrame, cyberArcade } from './room-art.js';
+import { aFrame } from './room-art.js';
+import { cyberArcade } from './arcade-art.js';
 import { drawCompanion } from './companions.js';
 // Original pixel scenery and sprites. All geometry lands on whole pixels.
 export const palette = { ink: '#17292f', cream: '#f8e7bd', gold: '#f4bb72', mint: '#a8d6b7', pink: '#e3a5b6' };
@@ -279,8 +280,5 @@ export function ambience(ctx, id, time, reduced = false) {
     glow(ctx, 512, 454, '#ecc38f', 100, .022);
     for (let i = 0; i < 14; i++) { const x = 58 + i * 67, y = 590 + Math.sin(t / 1700 + i) * 9; if (Math.sin(t / 1000 + i) > .2) box(ctx, x, y, 2, 2, '#dfce94'); }
   }
-  if (id === 'arcade') {
-    for (let i = 0; i < 5; i++) glow(ctx, 192 + i * 144, 367, ['#97d4ae', '#e8aa79', '#8fc9d2', '#d89bb4', '#b2a4d2'][i], 53, .022);
-    for (let i = 0; i < 12; i++) box(ctx, 136 + i * 67, 267, 3, 3, Math.floor(t / 1200 + i) % 4 ? '#cba379' : '#796d65');
-  }
+
 }
