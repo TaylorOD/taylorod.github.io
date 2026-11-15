@@ -1,3 +1,4 @@
+import { drawWildlife } from './wildlife.js';
 import { scoutActors } from './scout.js';
 import { bikeActors } from './bikes.js';
 import { campusActors, campusScale } from './campus-life.js';
@@ -193,6 +194,7 @@ export class World {
     ctx.save(); ctx.translate(-Math.round(this.camera.x), -Math.round(this.camera.y)); ctx.drawImage(this.cache.get(this.id), 0, 0);
     ambience(ctx, this.id, time, this.reduced.matches || this.paused);
     if (this.id === 'town') {
+      drawWildlife(ctx, this.lifeTime, this.reduced.matches);
       drawRiverLife(ctx, time, this.reduced.matches || this.paused);
       const lit = this.reduced.matches ? 16 : Math.min(16, Math.floor((time - this.enteredAt) / 70));
       for (let i = 0; i < lit; i++) box(ctx, 354 + i * 20, 303, 4, 4, i % 2 ? '#f3b56c' : '#9bded5');
