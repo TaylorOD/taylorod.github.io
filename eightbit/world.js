@@ -1,10 +1,10 @@
-import { foreground } from './depth.js';
+import { foreground, riverTrees, treeOpacity } from './depth.js';
 import { canEnter, hitTest, nearbyPath } from './navigation.js';
 import { drawRiverLife } from './river.js';
 import { createResidents, updateResidents, drawResident } from './residents.js';
 import { followTrail } from './companions.js';
 import { scenes, findPath, isWalkable } from './scenes.js';
-import { paintScene, ambience, person, pet, box, text, screen } from './art.js';
+import { paintScene, ambience, person, pet, box, text, screen, tree } from './art.js';
 import { projects } from './content.js';
 
 export class World {
@@ -190,6 +190,12 @@ export class World {
       ...this.residents.filter(resident => resident.room === this.id && !resident.hidden).map(resident => ({ y: resident.y + (resident.seated ? 16 : 0), draw: () => drawResident(ctx, resident, time, this.reduced.matches) })),
     ];
     for (const [x, y, w, h, depth] of foreground[this.id] || []) if ([this.player, this.companion, ...this.residents.filter(r => r.room === this.id && !r.seated)].some(actor => actor.x > x - 14 && actor.x < x + w + 14 && actor.y < depth && actor.y > y)) actors.push({ y: depth, draw: () => ctx.drawImage(this.cache.get(this.id), x, y, w, h, x, y, w, h) });
+    if (this.id === 'town') {
+      const visibleActors = [this.player, this.companion, ...this.residents.filter(resident => resident.room === 'town' && !resident.hidden)];
+      for (const item of riverTrees) actors.push({ y: item[1], draw: () => {
+        ctx.save(); ctx.globalAlpha = treeOpacity(item, visibleActors); tree(ctx, ...item); ctx.restore();
+      } });
+    }
     actors.sort((a, b) => a.y - b.y).forEach(actor => actor.draw());
     for (const point of this.scene.points) {
       const near = point.id === this.nearby?.id;
