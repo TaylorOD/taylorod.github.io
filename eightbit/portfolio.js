@@ -1,3 +1,4 @@
+import { canEnter, mapPosition } from './navigation.js';
 import { World } from './world.js';
 import { projects, pets, jobs, loadProgress, saveProgress } from './content.js';
 import { scenes } from './scenes.js';
@@ -11,7 +12,7 @@ normalURL.searchParams.delete('mode'); normalURL.hash = '';
 const root = document.createElement('div'); root.id = 'eightbit';
 root.innerHTML = `
   <a class="skip-link" href="#directory">skip to the projects</a>
-  <header class="game-header"><a class="brand" href="?mode=8bit" aria-label="Side quest arcade home"><span class="brand-icon">✦</span><span>SIDE QUEST<small>TAYLOR DORSETT'S LITTLE CORNER OF THE INTERNET</small></span></a><nav aria-label="Quick navigation"><button data-ui="directory">projects <span>08</span></button><button data-ui="map">map <kbd>M</kbd></button><button data-ui="sound" aria-pressed="false">sound off</button><a class="normal-site">normal site ↗</a></nav></header>
+  <header class="game-header"><a class="brand" href="?mode=8bit" aria-label="Side quest arcade home"><span class="brand-icon">✦</span><span>SIDE QUEST<small>TAYLOR DORSETT'S LITTLE CORNER OF THE INTERNET</small></span></a><nav aria-label="Quick navigation"><button data-ui="directory">projects <span>08</span></button><button data-ui="map">map <kbd>M</kbd></button><button data-ui="about">about</button><button data-ui="contact">contact</button><button data-ui="sound" aria-pressed="false">sound off</button><a class="normal-site">normal site ↗</a></nav></header>
   <main class="game-stage" aria-label="Side quest arcade">
     <canvas class="world-canvas" tabindex="0" aria-label="Explore the town. Arrow keys or WASD to walk. E or Enter to interact. Click a place to walk there, or use the map and projects menu."></canvas>
     <div class="scene-shade" aria-hidden="true"></div>
@@ -22,7 +23,7 @@ root.innerHTML = `
     <div class="quest-note" hidden><span>◈</span> pizza delivery <small>take it to the town bench</small></div>
     <button class="interact" disabled><kbd>E</kbd><span>walk up to something</span><b>↗</b></button>
     <div class="dpad" aria-label="Movement controls"><button data-direction="arrowup" aria-label="Walk up">↑</button><button data-direction="arrowleft" aria-label="Walk left">←</button><button data-direction="arrowdown" aria-label="Walk down">↓</button><button data-direction="arrowright" aria-label="Walk right">→</button></div>
-    <button class="mini-map" data-ui="map" aria-label="Open the town map"><svg viewBox="0 0 140 96" aria-hidden="true"><rect width="140" height="96" fill="#42645b"/><path d="M8 61H132M70 30V90" stroke="#b9aa84" stroke-width="10"/><path d="M0 79H140" stroke="#76a3a1" stroke-width="7"/><rect x="50" y="25" width="40" height="24" fill="#c99b79"/><rect x="13" y="43" width="23" height="14" fill="#d1bc90"/><rect x="108" y="31" width="23" height="18" fill="#b9bb8b"/><circle cx="70" cy="60" r="4" fill="#f4d094"/></svg><span>TOWN MAP <kbd>M</kbd></span></button>
+    <button class="mini-map" data-ui="map" aria-label="Open the town map"><svg viewBox="0 0 140 96" aria-hidden="true"><rect width="140" height="96" fill="#42645b"/><path d="M8 61H132M70 30V90" stroke="#b9aa84" stroke-width="10"/><path d="M0 79H140" stroke="#76a3a1" stroke-width="7"/><rect x="50" y="25" width="40" height="24" fill="#c99b79"/><rect x="13" y="43" width="23" height="14" fill="#d1bc90"/><rect x="108" y="31" width="23" height="18" fill="#b9bb8b"/><circle class="map-player" cx="70" cy="60" r="4" fill="#f4d094"/></svg><span>TOWN MAP <kbd>M</kbd></span></button>
   </main>
   <footer class="game-footer"><span class="footer-location">a little visit to missoula.</span><span class="desktop-help"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> move <i>·</i> <kbd>E</kbd> explore <i>·</i> click anywhere to walk</span><button data-ui="help">how to play <span>?</span></button></footer>
   <dialog class="game-dialog" aria-labelledby="dialog-title"><div class="dialog-top"><span class="dialog-tag"></span><button class="close-dialog" aria-label="Close dialog">✕</button></div><div class="dialog-content"></div></dialog>`;
@@ -30,6 +31,7 @@ root.querySelector('.normal-site').href = normalURL.href;
 document.body.replaceChildren(root); document.documentElement.classList.add('eightbit-mode');
 document.title = 'Side quest arcade | Taylor Dorsett';
 const canvas = root.querySelector('.world-canvas'), dialog = root.querySelector('dialog');
+let postcardPose = 'hello';
 let world, previewFrame, toastTimer, previousFocus, routeDialog = false;
 
 function toast(message) {
@@ -52,6 +54,7 @@ function setRoute(value, replace = false) {
 function dismissWelcome() { root.querySelector('.welcome').hidden = true; progress.visited = true; saveProgress(progress); }
 
 function changeRoom(id, history = true) {
+  if (!canEnter(id, progress)) { setRoute(world.id, true); handleAction('roof'); return; }
   dismissWelcome();
   const previous = world.id;
   const doors = { arcade: { x: 512, y: 464 }, workshop: { x: 160, y: 480 }, cabin: { x: 864, y: 368 }, rooftop: { x: 688, y: 480 } };
@@ -106,12 +109,12 @@ function map() {
 }
 
 function choosePet() {
-  openDialog('LILGOTCHI / A LITTLE COMPANY', 'pick your walking buddy.', `<p class="dialog-lead">they’ll follow you around and remember you next time. these little town companions are inspired by lilgotchi.</p><div class="pet-choices">${pets.map(item => `<button data-pet="${item.id}" aria-pressed="${progress.pet === item.id}"><canvas width="100" height="90" data-pet-art="${item.id}" aria-hidden="true"></canvas><strong>${item.name}</strong><small>${item.description}</small><span>${progress.pet === item.id ? 'YOUR COMPANION ♥' : 'COME WITH ME →'}</span></button>`).join('')}</div><a class="text-link" href="/lilgotchi/">meet the full lilgotchi project ↗</a>`);
+  openDialog('LILGOTCHI / A LITTLE COMPANY', 'pick your walking buddy.', `<p class="dialog-lead">they’ll follow you around and remember you next time. lilgotchi, slice and cypunk. your little crew.</p><div class="pet-choices">${pets.map(item => `<button data-pet="${item.id}" aria-pressed="${progress.pet === item.id}"><canvas width="100" height="90" data-pet-art="${item.id}" aria-hidden="true"></canvas><strong>${item.name}</strong><small>${item.description}</small><span>${progress.pet === item.id ? 'YOUR COMPANION ♥' : 'COME WITH ME →'}</span></button>`).join('')}</div><a class="text-link" href="/lilgotchi/">meet the full lilgotchi project ↗</a>`);
   root.querySelectorAll('[data-pet-art]').forEach(element => { const ctx = element.getContext('2d'); ctx.imageSmoothingEnabled = false; pet(ctx, 50, 72, element.dataset.petArt, 0, false, 2.3); });
 }
 
 function passport() {
-  openDialog('YOUR POCKET COLLECTION', 'a few good discoveries.', `<p class="dialog-lead">visit each project to collect its stamp. all eight unlock a photo booth keepsake.</p><div class="passport">${projects.map(item => `<button data-project="${item.id}" class="${progress.stamps.includes(item.id) ? 'collected' : ''}"><span>${progress.stamps.includes(item.id) ? '✦' : '◇'}</span><strong>${item.name}</strong><small>${progress.stamps.includes(item.id) ? 'VISITED' : 'TAKE A LOOK'}</small></button>`).join('')}</div><p class="small-note">your companion and discoveries are saved in this browser.</p>${progress.stamps.length === 8 ? '<button class="primary" data-ui="photo">take your photo ↗</button>' : ''}`);
+  openDialog('YOUR POCKET COLLECTION', 'a few good discoveries.', `<p class="dialog-lead">visit each project to collect its stamp. all eight unlock a photo booth keepsake.</p><div class="passport">${projects.map(item => `<button data-project="${item.id}" class="${progress.stamps.includes(item.id) ? 'collected' : ''}"><span>${progress.stamps.includes(item.id) ? ({ lilgotchi: '♥', snowcrust: '◭', relay: '⇄', fight: '⚔', sweat: '♜', moonbean: '☕', poker: '♠', reachoutt: '☎' }[item.id]) : '◇'}</span><strong>${item.name}</strong><small>${progress.stamps.includes(item.id) ? 'VISITED' : 'TAKE A LOOK'}</small></button>`).join('')}</div><p class="small-note">your companion and discoveries are saved in this browser.</p>${progress.stamps.length === 8 ? '<button class="primary" data-ui="photo">take your photo ↗</button>' : ''}`);
 }
 
 function about() {
@@ -143,8 +146,8 @@ function photo() {
   if (progress.stamps.length !== 8) {
     openDialog('THE PHOTO BOOTH', 'a little souvenir.', `<p class="dialog-lead">collect all eight project stamps and the photo booth is yours. you’ve found ${progress.stamps.length} so far.</p><button class="primary" data-ui="directory">find the other machines →</button>`); return;
   }
-  openDialog('THANKS FOR STOPPING BY', 'you & your little buddy.', '<p class="dialog-lead">a postcard from side quest arcade. a little something to take home.</p><div class="postcard-preview"></div><button class="primary" data-ui="download">save your postcard ↓</button>');
-  const postcard = world.postcard(); postcard.setAttribute('role', 'img'); postcard.setAttribute('aria-label', 'Taylor and your pet on the rooftop, with the mountains behind them'); root.querySelector('.postcard-preview').append(postcard);
+  openDialog('THANKS FOR STOPPING BY', 'you & your little buddy.', '<p class="dialog-lead">a postcard from side quest arcade. a little something to take home.</p><div class="dialog-actions"><button class="secondary" data-pose="hello">hello</button><button class="secondary" data-pose="pizza">pizza break</button><button class="secondary" data-pose="view">mountain view</button></div><div class="postcard-preview"></div><button class="primary" data-ui="download">save your postcard ↓</button>');
+  const postcard = world.postcard(postcardPose); postcard.setAttribute('role', 'img'); postcard.setAttribute('aria-label', 'Taylor and your pet on the rooftop, with the mountains behind them'); root.querySelector('.postcard-preview').append(postcard);
 }
 
 function help() {
@@ -167,7 +170,7 @@ function handleAction(action) {
     roof: () => progress.pizza === 'delivered' ? changeRoom('rooftop') : openDialog('A LOCKED ROOFTOP DOOR', 'someone has the key.', '<p class="dialog-lead">a note on the door: “ask the person waiting on a pizza. they know the way up.”</p><button class="secondary" data-room="arcade">check the pizza counter →</button>'),
     view: () => openDialog('ABOVE IT ALL', 'a pretty good place to pause.', '<p class="dialog-lead">thanks for taking the long way around. hope you found something you liked.</p><button class="secondary" data-ui="contact">say hello before you go ↗</button>'),
     'take-pizza': () => { progress.pizza = 'carrying'; updateInventory(); closeDialog(); toast('pizza acquired. find the neighbor on the town bench.'); },
-    download: () => { world.postcard().toBlob(blob => { if (!blob) return; const url = URL.createObjectURL(blob), link = document.createElement('a'); link.href = url; link.download = 'side-quest-postcard.png'; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); }); },
+    download: () => { world.postcard(postcardPose).toBlob(blob => { if (!blob) return; const url = URL.createObjectURL(blob), link = document.createElement('a'); link.href = url; link.download = 'side-quest-postcard.png'; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); }); },
     sound: async () => {
       try { const enabled = await sound.toggle(); const button = root.querySelector('[data-ui="sound"]'); button.textContent = enabled ? 'sound on' : 'sound off'; button.setAttribute('aria-pressed', String(enabled)); if (!enabled && !sound.context) toast('sound isn’t available in this browser.'); }
       catch { toast('couldn’t start audio. you can keep exploring without it.'); }
@@ -178,13 +181,15 @@ function handleAction(action) {
 
 world = new World(canvas, {
   progress, onAction: handleAction,
+  onPosition: (id, player) => { const point = mapPosition(id, player), dot = root.querySelector('.map-player'); dot.setAttribute('cx', point.x); dot.setAttribute('cy', point.y); root.querySelector('.mini-map').setAttribute('aria-label', `Open the town map. You are in ${scenes[id].name}.`); },
   onRoom: (id, scene) => { root.dataset.room = id; root.querySelector('.place-name').textContent = scene.name; root.querySelector('.place-subtitle').textContent = scene.subtitle; root.querySelector('.footer-location').textContent = id === 'town' ? 'a little visit to missoula.' : 'take your time. look around.'; root.querySelector('.interact').disabled = true; },
   onNearby: point => { const button = root.querySelector('.interact'); button.disabled = !point; button.querySelector('span').textContent = point?.label || 'walk up to something'; },
   onMove: (time, room) => { if (!root.querySelector('.welcome').hidden) dismissWelcome(); sound.step(time, room); },
 });
 
 root.addEventListener('click', event => {
-  const button = event.target.closest('button[data-ui], button[data-room], button[data-project], button[data-pet], button[data-demo]'); if (!button) return;
+  const button = event.target.closest('button[data-ui], button[data-room], button[data-project], button[data-pet], button[data-demo], button[data-pose]'); if (!button) return;
+  if (button.dataset.pose) { postcardPose = button.dataset.pose; photo(); }
   if (button.dataset.ui) handleAction(button.dataset.ui);
   if (button.dataset.room) { closeDialog(false); changeRoom(button.dataset.room); canvas.focus(); }
   if (button.dataset.project) openProject(button.dataset.project);
