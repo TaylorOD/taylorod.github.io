@@ -23,7 +23,12 @@ export function mountSentinel(ctx, width) {
 export function universityCampus(ctx) {
   // The Oval and small neighboring roofs establish distance from the street.
   polygon(ctx,[[102,266],[128,256],[273,256],[298,266],[273,280],[128,280]],'#638365');
-  polygon(ctx,[[192,263],[205,263],[220,282],[177,282]],'#b09d81');
+  polygon(ctx,[[192,263],[205,263],[205,290],[189,448],[139,448],[190,290]],'#b09d81');
+  polygon(ctx,[[195,272],[202,272],[201,290],[185,448],[145,448],[194,290]],'#c0af8e');
+  for (let y=296; y<448; y+=18) {
+    const depth=(y-290)/158, center=198-34*depth, half=4+16*depth;
+    box(ctx,center-half,y,half*2,1,'#a4977c');
+  }
   for(const [x,w] of [[106,33],[272,31]]) {
     box(ctx,x,231,w,29,'#967b69'); polygon(ctx,[[x-3,231],[x+6,220],[x+w-6,220],[x+w+3,231]],'#637776');
     for(let xx=x+5;xx<x+w-3;xx+=9) box(ctx,xx,239,4,11,'#4a686b');
@@ -51,5 +56,21 @@ export function universityCampus(ctx) {
   for(const y of [224,238]) for(const x of [194,203]) { box(ctx,x,y,5,10,'#435b62'); box(ctx,x,y-1,5,2,'#d0a07d'); }
   box(ctx,189,251,24,14,'#c4b49a'); box(ctx,196,255,10,10,'#324f55'); box(ctx,198,253,6,3,'#324f55');
   box(ctx,192,265,18,2,'#d2bda0'); box(ctx,189,267,24,2,'#a69e85');
-  text(ctx,'UNIVERSITY OF MONTANA',201,291,7,'#d6c7a0');
+  grizzlyStatue(ctx, 133, 344);
+}
+
+// Rudy Autio's upright grizzly rests its forepaws on a rock at the Oval.
+function grizzlyStatue(ctx, x, y) {
+  ctx.save(); ctx.translate(x,y);
+  polygon(ctx,[[-29,1],[-17,-7],[18,-7],[31,1],[20,10],[-21,10]],'#48634e');
+  box(ctx,-24,-9,48,13,'#8a8975'); box(ctx,-20,-14,40,7,'#aaa28a');
+  polygon(ctx,[[1,-15],[0,-39],[9,-48],[20,-43],[25,-15]],'#5c665b');
+  polygon(ctx,[[-19,-17],[-20,-41],[-14,-59],[-5,-63],[3,-53],[1,-36],[-7,-16]],'#655c45');
+  box(ctx,-17,-65,17,17,'#756a4d'); box(ctx,-14,-69,5,6,'#655c45'); box(ctx,-2,-66,4,5,'#655c45');
+  box(ctx,-2,-59,11,7,'#81765a'); box(ctx,6,-59,4,4,'#3e4438'); box(ctx,-2,-62,2,2,'#303c34');
+  polygon(ctx,[[-4,-49],[5,-47],[15,-45],[16,-40],[4,-40],[-9,-42]],'#7c7152');
+  box(ctx,-20,-20,9,7,'#494c3b'); box(ctx,-8,-20,9,7,'#494c3b');
+  box(ctx,-16,-48,3,18,'#8a7b58');
+  box(ctx,-13,-7,27,10,'#6b353e'); text(ctx,'UM',0,-2,9,'#e6d5b5');
+  ctx.restore();
 }
