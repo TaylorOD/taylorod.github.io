@@ -1,7 +1,7 @@
 import { createDemo, advanceDemo, renderDemo } from './demos.js';
 import { canEnter, mapPosition } from './navigation.js';
 import { World } from './world.js';
-import { projects, pets, jobs, loadProgress, saveProgress } from './content.js';
+import { projects, pets, jobs, careerStories, loadProgress, saveProgress } from './content.js';
 import { scenes } from './scenes.js';
 import { pet } from './art.js';
 import { Sound } from './sound.js';
@@ -132,6 +132,11 @@ function work() {
   openDialog('THE WORKSHOP / WORK HISTORY', 'the day job.', `<p class="dialog-lead">from finding engineers to being one.</p><div class="jobs">${jobs.map(job => `<article><small>${job.when}</small><h3>${job.title}</h3>${job.url ? `<a href="${job.url}">${job.company} ↗</a>` : `<p>${job.company}</p>`}</article>`).join('')}</div><button class="secondary" data-ui="contact">get in touch ↗</button>`);
 }
 
+function career(id) {
+  const story = careerStories[id];
+  openDialog(`THE WORKSHOP / ${story.object.toUpperCase()}`, story.name, `<p class="dialog-lead">${story.text}</p><p>${story.detail}</p><button class="secondary" data-ui="work">work history ↗</button>`);
+}
+
 function contact() {
   openDialog('THE FRONT COUNTER / LEAVE A NOTE', 'say hello.', `<p class="dialog-lead">have something in mind? i'd love to hear about it.</p><a class="mail-link" href="mailto:dorsetttaylordev@gmail.com">dorsetttaylordev@gmail.com ↗</a><div class="dialog-actions"><a class="secondary" href="https://github.com/TaylorOD">github ↗</a><a class="secondary" href="https://www.youtube.com/TaylorDorsett">youtube ↗</a></div><div class="counter-note">out exploring? leave a note.<br>i'll find it when i'm back.</div>`);
 }
@@ -167,6 +172,7 @@ function handleAction(action) {
   if (action.startsWith('project:')) { openProject(action.slice(8)); return; }
   const actions = {
     directory, map, pets: choosePet, passport, about, work, contact, pizza, delivery, photo, help,
+    chef: () => career('chef'), levels: () => career('levels'), recruiting: () => career('recruiting'),
     enter: () => { dismissWelcome(); world.goTo('arcade'); canvas.focus(); },
     dismiss: () => { dismissWelcome(); canvas.focus(); },
     close: () => closeDialog(),

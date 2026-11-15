@@ -102,6 +102,13 @@ export function personalWorkshop(ctx) {
   box(ctx, 551, 433, 5, 17, '#d16c48'); box(ctx, 544, 446, 17, 4, '#293b41'); box(ctx, 546, 397, 20, 6, '#37464a'); box(ctx, 588, 374, 4, 58, '#222e35');
   panel(ctx, 564, 351, 61, 35, '#203445', '#111f28', 4); text(ctx, 'ONE MORE', 594, 365, 7, '#cbd7c5'); text(ctx, 'MILE', 594, 375, 7, '#cbd7c5');
   books(ctx, 130, 389, 118); plant(ctx, 304, 300);
+  // Three keepsakes open specific stories rather than a generic career plaque.
+  panel(ctx, 140, 293, 39, 22, '#eee0ba', '#614d38', 2);
+  text(ctx, 'RECIPE', 160, 302, 5, '#674936'); box(ctx, 146, 307, 25, 1, '#9a7754');
+  panel(ctx, 272, 292, 31, 24, '#4e9294', '#243e47', 2);
+  box(ctx, 281, 296, 3, 14, '#b1cdab'); box(ctx, 278, 301, 18, 3, '#b1cdab');
+  panel(ctx, 209, 399, 27, 22, '#a56b48', '#302f29', 2);
+  box(ctx, 214, 402, 2, 16, '#d3b475'); text(ctx, '01', 225, 412, 7, '#f2dfb4');
   text(ctx, 'THE DAY JOB', 224, 345, 9, '#eee0c0'); text(ctx, 'BOOT THE ORIGINAL', 528, 345, 9, '#eee0c0');
   text(ctx, 'READ / BUILD / REPEAT', 384, 494, 11, '#e8d4ac');
 }

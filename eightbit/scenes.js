@@ -37,7 +37,15 @@ export const scenes = {
     name: 'the workshop', subtitle: 'from finding engineers to being one', width: 768, height: 640,
     spawn: { x: 384, y: 528 }, bounds: [96, 224, 672, 560],
     obstacles: [[128, 208, 192, 112], [432, 208, 192, 112], [128, 400, 112, 80], [512, 400, 112, 64]],
-    points: [point('work', 'the day job', 224, 352, 'work'), point('legacy', 'boot the old computer', 528, 352, 'legacy'), point('notes', 'a note from taylor', 192, 496, 'about'), point('exit', 'back to main street', 384, 544, 'room:town')],
+    points: [
+      point('chef', 'the home chef recipe', 160, 352, 'chef', { hit: [140, 290, 40, 26] }),
+      point('levels', 'the levels.fyi atlas', 288, 352, 'levels', { hit: [270, 290, 40, 26] }),
+      point('work', 'the day job', 224, 352, 'work', { hit: [140, 250, 160, 40] }),
+      point('legacy', 'boot the old computer', 528, 352, 'legacy', { hit: [480, 250, 96, 56] }),
+      point('recruiting', 'the first office notebook', 256, 432, 'recruiting', { hit: [209, 399, 27, 22] }),
+      point('notes', 'a note from taylor', 192, 496, 'about', { hit: [128, 422, 112, 58] }),
+      point('exit', 'back to main street', 384, 544, 'room:town', { hit: [350, 528, 68, 36] }),
+    ],
   },
   cabin: {
     name: 'home base', subtitle: 'a few things beyond the keyboard', width: 768, height: 640,

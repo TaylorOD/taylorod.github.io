@@ -22,6 +22,13 @@ export const jobs = [
   { title: 'director of technical recruiting', company: 'talent solvers', when: 'before that' },
 ];
 
+// Career examples from Taylor's November 2024 resume. Keep contact details private.
+export const careerStories = {
+  chef: { name: 'the home chef recipe', object: 'a recipe card', text: 'i built a new mobile signup funnel with react and tailwind, then refactored the stripe payment flow with react and ruby on rails. i also rebuilt the homepage and worked on partnership pages.', detail: 'the recipe: make the next step clear, especially on a small screen.' },
+  levels: { name: 'the levels.fyi atlas', object: 'a company atlas', text: 'i built a homepage that suggested relevant companies based on a visitor’s location, using javascript, next.js and typescript.', detail: 'the idea: start with companies that are relevant to the person looking.' },
+  recruiting: { name: 'the first office notebook', object: 'a recruiting notebook', text: 'before engineering, i opened a recruiting office in a new market and built a profitable business in its first year. i hired and trained a team of five recruiters and helped bootcamp graduates find their first engineering roles.', detail: 'a lot of listening, a lot of introductions and eventually a move to building things myself.' },
+};
+
 const SAVE_KEY = 'taylor-side-quest-v1';
 export function loadProgress(storage) {
   try {
