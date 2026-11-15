@@ -1,3 +1,5 @@
+import { foreground } from './depth.js';
+import { canEnter, hitTest, nearbyPath } from './navigation.js';
 import { drawRiverLife } from './river.js';
 import { createResidents, updateResidents, drawResident } from './residents.js';
 import { followTrail } from './companions.js';
@@ -6,14 +8,14 @@ import { paintScene, ambience, person, pet, box, text, screen } from './art.js';
 import { projects } from './content.js';
 
 export class World {
-  constructor(canvas, { progress, onAction, onRoom, onNearby, onMove }) {
+  constructor(canvas, { progress, onAction, onRoom, onNearby, onMove, onPosition }) {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
     this.progress = progress;
     this.onAction = onAction;
     this.onRoom = onRoom;
     this.onNearby = onNearby;
-    this.onMove = onMove;
+    this.onMove = onMove; this.onPosition = onPosition;
     this.reduced = matchMedia('(prefers-reduced-motion: reduce)');
     this.keys = new Set();
     this.direction = 'down';
@@ -26,6 +28,8 @@ export class World {
     this.resizeObserver = new ResizeObserver(() => this.resize());
     this.resizeObserver.observe(canvas);
     canvas.addEventListener('pointerdown', event => this.click(event));
+    canvas.addEventListener('pointermove', event => { this.hovered = this.paused ? null : hitTest(this.scene, this.pointerPosition(event)); canvas.style.cursor = this.hovered ? 'pointer' : 'crosshair'; });
+    canvas.addEventListener('pointerleave', () => { this.hovered = null; });
     canvas.addEventListener('keydown', event => this.key(event, true));
     canvas.addEventListener('keyup', event => this.key(event, false));
     canvas.addEventListener('blur', () => this.keys.clear());
@@ -40,34 +44,35 @@ export class World {
   }
 
   enter(id, returnPoint) {
-    if (!scenes[id]) id = 'town';
+    if (!scenes[id] || !canEnter(id, this.progress)) id = 'town';
+    this.enteredAt = performance.now();
     this.stop(); this.id = id; this.scene = scenes[id];
     this.player = { ...(returnPoint || this.scene.spawn) };
     this.companion = { ...this.player, direction: 'down' };
     if (isWalkable(this.scene, this.player.x - 28, this.player.y)) this.companion.x -= 28;
     this.trail = [];
     this.residents ||= createResidents();
-    this.nearby = null; this.transition = this.reduced.matches ? 0 : 1;
+    this.nearby = null; this.hovered = null; this.transition = this.reduced.matches ? 0 : 1;
     this.resize(); this.onRoom?.(id, this.scene);
   }
 
   resize() {
     const bounds = this.canvas.getBoundingClientRect();
     if (!bounds.width || !bounds.height) return;
-    const scale = bounds.width < 600 ? 1.1 : Math.max(1.35, Math.min(bounds.width / 960, bounds.height / 620));
+    const scale = bounds.width < 600 ? .9 : Math.max(1.35, Math.min(bounds.width / 960, bounds.height / 620));
     this.canvas.width = Math.round(bounds.width / scale);
     this.canvas.height = Math.round(bounds.height / scale);
     this.ctx.imageSmoothingEnabled = false; this.updateCamera(true);
   }
 
-  updateCamera(snap = false) {
+  updateCamera(snap = false, elapsed = 1 / 60) {
     const target = {
       x: Math.max(0, Math.min(this.scene.width - this.canvas.width, this.player.x - this.canvas.width / 2)),
       y: Math.max(0, Math.min(this.scene.height - this.canvas.height, this.player.y - this.canvas.height * .62)),
     };
     if (this.canvas.width > this.scene.width) target.x = (this.scene.width - this.canvas.width) / 2;
     if (this.canvas.height > this.scene.height) target.y = (this.scene.height - this.canvas.height) / 2;
-    const factor = snap || this.reduced.matches ? 1 : .12;
+    const factor = snap || this.reduced.matches ? 1 : 1 - Math.exp(-9 * elapsed);
     this.camera.x += (target.x - this.camera.x) * factor; this.camera.y += (target.y - this.camera.y) * factor;
   }
 
@@ -96,19 +101,19 @@ export class World {
     this.keys.add(direction);
   }
 
+  pointerPosition(event) {
+    const bounds = this.canvas.getBoundingClientRect();
+    return { x: (event.clientX - bounds.left) / bounds.width * this.canvas.width + this.camera.x, y: (event.clientY - bounds.top) / bounds.height * this.canvas.height + this.camera.y };
+  }
+
   click(event) {
     if (this.paused || event.button !== 0) return;
     this.canvas.focus({ preventScroll: true });
-    const bounds = this.canvas.getBoundingClientRect();
-    const point = { x: (event.clientX - bounds.left) / bounds.width * this.canvas.width + this.camera.x, y: (event.clientY - bounds.top) / bounds.height * this.canvas.height + this.camera.y };
-    // Hit areas include the face of an object, not only the spot on the floor.
-    const hit = this.scene.points.find(item => {
-      const [x, y, w, h] = item.hit || [item.x - 38, item.y - 100, 76, 115];
-      return point.x >= x && point.x <= x + w && point.y >= y && point.y <= y + h;
-    });
+    const point = this.pointerPosition(event);
+    const hit = hitTest(this.scene, point);
     this.canvas.dataset.destination = hit?.id || 'ground';
     if (hit) this.goTo(hit.id);
-    else { this.destination = null; this.path = findPath(this.scene, this.player, point); this.target = this.path.at(-1); }
+    else { this.destination = null; this.path = nearbyPath(this.scene, this.player, point); this.target = this.path.at(-1); }
   }
 
   goTo(id) {
@@ -152,7 +157,7 @@ export class World {
     }
     const nearest = this.scene.points.filter(point => Math.hypot(point.x - this.player.x, point.y - this.player.y) < 53).sort((a, b) => Math.hypot(a.x - this.player.x, a.y - this.player.y) - Math.hypot(b.x - this.player.x, b.y - this.player.y))[0];
     if (nearest?.id !== this.nearby?.id) { this.nearby = nearest; this.onNearby?.(nearest); }
-    this.updateCamera(); this.transition = Math.max(0, this.transition - elapsed * 3); this.draw(time);
+    this.updateCamera(false, elapsed); this.onPosition?.(this.id, this.player); this.transition = Math.max(0, this.transition - elapsed * 3); this.draw(time);
     this.canvas.dataset.position = `${Math.round(this.player.x)},${Math.round(this.player.y)}`;
     this.canvas.dataset.room = this.id;
     if (!document.hidden) this.frame = requestAnimationFrame(next => this.tick(next));
@@ -167,7 +172,12 @@ export class World {
     box(ctx, 0, 0, this.canvas.width, this.canvas.height, '#182b32');
     ctx.save(); ctx.translate(-Math.round(this.camera.x), -Math.round(this.camera.y)); ctx.drawImage(this.cache.get(this.id), 0, 0);
     ambience(ctx, this.id, time, this.reduced.matches || this.paused);
-    if (this.id === 'town') drawRiverLife(ctx, time, this.reduced.matches || this.paused);
+    if (this.id === 'town') {
+      drawRiverLife(ctx, time, this.reduced.matches || this.paused);
+      const lit = this.reduced.matches ? 16 : Math.min(16, Math.floor((time - this.enteredAt) / 70));
+      for (let i = 0; i < lit; i++) box(ctx, 354 + i * 20, 303, 4, 4, i % 2 ? '#f3b56c' : '#9bded5');
+      box(ctx, 687, 421, 11, 9, this.progress.pizza === 'delivered' ? '#a5d7a0' : '#c29c5e');
+    }
     if (this.id === 'arcade') {
       for (let i = 0; i < 4; i++) screen(ctx, projects[i].screen, 242 + i * 160, 392, 43, 33, this.reduced.matches ? 0 : time, this.nearby?.id === projects[i].id);
       if (this.progress.stamps.length === projects.length) text(ctx, 'PHOTO BOOTH UNLOCKED', 689, 516, 7, '#e9cb91');
@@ -177,25 +187,28 @@ export class World {
     const actors = [
       { y: this.companion.y, draw: companion },
       { y: this.player.y, draw: () => person(ctx, this.player.x, this.player.y, this.direction, this.walking && !this.reduced.matches, time, this.progress.pizza === 'carrying') },
-      ...this.residents.filter(resident => resident.room === this.id && !resident.hidden).map(resident => ({ y: resident.y, draw: () => drawResident(ctx, resident, time, this.reduced.matches) })),
+      ...this.residents.filter(resident => resident.room === this.id && !resident.hidden).map(resident => ({ y: resident.y + (resident.seated ? 16 : 0), draw: () => drawResident(ctx, resident, time, this.reduced.matches) })),
     ];
+    for (const [x, y, w, h, depth] of foreground[this.id] || []) if ([this.player, this.companion, ...this.residents.filter(r => r.room === this.id && !r.seated)].some(actor => actor.x > x - 14 && actor.x < x + w + 14 && actor.y < depth && actor.y > y)) actors.push({ y: depth, draw: () => ctx.drawImage(this.cache.get(this.id), x, y, w, h, x, y, w, h) });
     actors.sort((a, b) => a.y - b.y).forEach(actor => actor.draw());
     for (const point of this.scene.points) {
       const near = point.id === this.nearby?.id;
-      if (near || this.id === 'town' && point.id === 'arcade') {
-        const y = point.y - (this.id === 'town' ? 110 : 128);
+      if (near || point.id === this.hovered?.id || this.id === 'town' && point.id === 'arcade') {
+        const y = point.hit ? point.hit[1] - 13 : point.y - 95;
         box(ctx, point.x - 10, y - 9, 20, 18, near ? '#edc389' : '#b1cead'); text(ctx, near ? 'E' : '↓', point.x, y, 11, '#293f41');
+        if (near || this.hovered?.id === point.id) { const w = point.label.length * 6 + 16; box(ctx, point.x - w / 2, y - 30, w, 18, '#152c34'); text(ctx, point.label, point.x, y - 21, 10, '#f4dfb3'); }
       }
     }
     ctx.restore();
     if (this.transition) { ctx.fillStyle = `rgba(18, 34, 40, ${this.transition})`; ctx.fillRect(0, 0, this.canvas.width, this.canvas.height); }
   }
 
-  postcard() {
+  postcard(pose = 'hello') {
     const image = document.createElement('canvas'); image.width = 960; image.height = 640;
     const ctx = image.getContext('2d'); paintScene(ctx, 'rooftop', projects);
     box(ctx, 768, 0, 192, 640, '#f0dfba'); box(ctx, 0, 594, 768, 46, '#f0dfba');
-    person(ctx, 364, 440, 'down', false, 0); pet(ctx, 410, 440, this.progress.pet, 0, false, 1.4);
+    person(ctx, 364, 440, pose === 'view' ? 'up' : 'down', pose === 'dance', 120, pose === 'pizza'); pet(ctx, 410, 440, this.progress.pet, 0, false, 1.4, pose === 'view' ? 'up' : 'down', true);
+    text(ctx, pose === 'pizza' ? 'PIZZA BREAK' : pose === 'view' ? 'MOUNTAIN TIME' : 'HELLO FROM MISSOULA', 384, 560, 13, '#e5d7b0');
     text(ctx, 'SIDE QUEST', 864, 91, 23, '#3d5c56'); text(ctx, 'ARCADE', 864, 123, 23, '#3d5c56');
     text(ctx, 'a little visit', 864, 212, 13, '#5c7262'); text(ctx, 'to missoula.', 864, 233, 13, '#5c7262');
     text(ctx, 'taylor dorsett', 864, 508, 13, '#5c7262'); text(ctx, 'taylordorsett.com', 864, 531, 11, '#5c7262');

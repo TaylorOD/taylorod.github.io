@@ -6,13 +6,13 @@ export const scenes = {
     spawn: { x: 512, y: 488 }, bounds: [32, 224, 992, 720],
     obstacles: [[320, 216, 384, 216], [64, 304, 176, 144], [784, 160, 176, 176], [0, 608, 448, 64], [576, 608, 448, 64], [736, 480, 128, 64]],
     points: [
-      point('arcade', 'enter the arcade', 512, 448, 'room:arcade', { sign: 'SIDE QUEST ARCADE', hint: 'eight projects. one room.' }),
-      point('workshop', 'visit the workshop', 160, 464, 'room:workshop', { sign: 'THE WORKSHOP' }),
+      point('arcade', 'enter the arcade', 512, 448, 'room:arcade', { sign: 'SIDE QUEST ARCADE', hint: 'eight projects. one room.', hit: [320, 208, 384, 224] }),
+      point('workshop', 'visit the workshop', 160, 464, 'room:workshop', { sign: 'THE WORKSHOP', hit: [64, 292, 176, 156] }),
       point('cabin', 'visit the cabin', 864, 352, 'room:cabin', { sign: 'HOME BASE', hit: [784, 130, 176, 212] }),
-      point('mailbox', 'say hello', 736, 560, 'contact', { sign: 'POST' }),
-      point('bench', 'talk to the neighbor', 256, 544, 'delivery'),
+      point('mailbox', 'say hello', 736, 560, 'contact', { sign: 'POST', hit: [716, 501, 34, 48] }),
+      point('bench', 'talk to the neighbor', 256, 544, 'delivery', { hit: [218, 475, 76, 60] }),
       point('river', 'by the river', 512, 704, 'river'),
-      point('roof', 'the rooftop', 688, 464, 'roof', { sign: '↑ ROOFTOP' }),
+      point('roof', 'the rooftop', 688, 464, 'roof', { sign: '↑ ROOFTOP', hit: [682, 312, 22, 120] }),
     ],
   },
   arcade: {
