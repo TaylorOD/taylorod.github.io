@@ -7,12 +7,12 @@ test('companion follows a turning route around a cabinet without cutting through
   const scene = scenes.arcade;
   const companion = { ...scene.spawn };
   const trail = [];
-  const route = findPath(scene, scene.spawn, { x: 192, y: 368 });
+  const route = findPath(scene, scene.spawn, { x: 272, y: 496 });
   for (const player of route) {
     for (let tick = 0; tick < 8; tick++) {
       followTrail(companion, trail, player, 1 / 60);
       assert.ok(isWalkable(scene, companion.x, companion.y));
     }
   }
-  assert.ok(Math.hypot(companion.x - 192, companion.y - 368) < 40);
+  assert.ok(Math.hypot(companion.x - 272, companion.y - 496) < 40);
 });
