@@ -60,7 +60,7 @@ function changeRoom(id, history = true) {
   if (!canEnter(id, progress)) { setRoute(world.id, true); handleAction('roof'); return; }
   dismissWelcome();
   const previous = world.id;
-  const doors = { arcade: { x: 512, y: 464 }, cabin: { x: 864, y: 368 }, rooftop: { x: 688, y: 480 } };
+  const doors = { arcade: { x: 512, y: 464 }, cabin: { x: 880, y: 304 }, rooftop: { x: 688, y: 480 } };
   world.enter(id, id === 'town' ? doors[previous] : undefined);
   if (history) setRoute(id);
   sound.chime();
