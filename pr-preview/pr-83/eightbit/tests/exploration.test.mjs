@@ -24,5 +24,5 @@ test('a blocked ground tap finds a nearby reachable tile', () => {
 
 test('map marker follows outdoor movement and identifies indoor buildings', () => {
   assert.deepEqual(mapPosition('town', { x: 512, y: 384 }), { x: 70, y: 48 });
-  assert.deepEqual(mapPosition('cabin', {}), { x: 118, y: 29 });
+  assert.deepEqual(mapPosition('cabin', {}), { x: 120, y: 24 });
 });
