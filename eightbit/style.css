@@ -137,6 +137,8 @@
   #eightbit .desktop-help { display: none; }
 }
 @media (max-width: 650px) {
+  /* Keep the riverside landmarks above the touch controls. */
+  #eightbit[data-room="town"] .world-canvas { height: calc(100% - 112px); }
   #eightbit .game-header { min-height: 102px; padding: 12px 16px 8px; flex-wrap: wrap; gap: 10px; }
   #eightbit .brand { font-size: 11px; }
   #eightbit .brand-icon { width: 28px; height: 28px; font-size: 22px; }

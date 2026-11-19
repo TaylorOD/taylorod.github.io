@@ -4,8 +4,9 @@ export const scenes = {
   town: {
     name: 'main street', subtitle: 'missoula, montana · just before sunset', width: 1024, height: 768,
     spawn: { x: 512, y: 488 }, bounds: [32, 224, 992, 720],
-    obstacles: [[7, 272, 91, 171], [100, 208, 208, 62], [109, 300, 48, 48], [320, 216, 384, 216], [800, 112, 160, 148], [0, 608, 448, 64], [576, 608, 448, 64], [736, 480, 128, 64]],
+    obstacles: [[174, 680, 172, 68], [7, 272, 91, 171], [100, 208, 208, 62], [109, 300, 48, 48], [320, 216, 384, 216], [800, 112, 160, 148], [0, 608, 448, 64], [576, 608, 448, 64], [736, 480, 128, 64]],
     points: [
+      point('carousel', 'the carousel', 384, 704, 'carousel', { hit: [174, 620, 172, 128] }),
       point('wilma', 'outside the Wilma', 64, 464, 'wilma', { hit: [7, 272, 91, 171] }),
       point('arcade', 'enter the arcade', 512, 448, 'room:arcade', { sign: 'SIDE QUEST ARCADE', hint: 'eight projects. one room.', hit: [320, 208, 384, 224] }),
       point('cabin', 'visit the cabin', 880, 288, 'room:cabin', { sign: 'HOME BASE', hit: [800, 82, 160, 185] }),
