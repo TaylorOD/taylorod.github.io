@@ -33,6 +33,6 @@ export function drawWildlife(ctx, time, reduced = false) {
   const t = reduced ? 0 : time;
   grazer(ctx,128,181,.48,true,1,t,0);
   grazer(ctx,167,193,.36,true,-1,t,2);
-  grazer(ctx,87,378,.82,false,1,t,1);
+  grazer(ctx,245,390,.82,false,1,t,1);
   grazer(ctx,732,358,.76,false,-1,t,3);
 }
