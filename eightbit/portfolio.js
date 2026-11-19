@@ -196,6 +196,7 @@ function handleAction(action) {
     dismiss: () => { dismissWelcome(); canvas.focus(); },
     close: () => closeDialog(),
     bench: () => openDialog('A MOMENT ON MAIN STREET', 'stay a while.', '<p class="dialog-lead">nothing to collect here. just a bench, a river and a little space between projects.</p><button class="secondary" data-ui="close">back to exploring</button>'),
+    wilma: () => openDialog('THE WILMA', 'a little downtown missoula.', '<p class="dialog-lead">a familiar marquee, a night of live music and the river just around the corner.</p><a class="text-link" href="https://logjampresents.com/venue/the-wilma/" target="_blank" rel="noopener noreferrer">see what is playing ↗</a>'),
     river: () => toast('the river isn’t going anywhere. neither is that side project.'),
     books: () => openDialog('ON THE BOOKSHELF', 'away from the keyboard.', '<p class="dialog-lead">reading, games, bjj and poker. a few ways to spend the time between making things.</p><button class="secondary" data-ui="about">a bit more about me →</button>'),
     legacy: () => openDialog('AN EARLIER SAVE FILE / 2020', 'booting the old computer.', '<p class="dialog-lead">the original portfolio, running right here. a little piece of where this started.</p><iframe class="legacy-computer" src="eightbit/legacy/index.html" title="Taylor’s original 2020 portfolio" sandbox="allow-scripts allow-popups" loading="lazy"></iframe><a class="text-link" href="https://github.com/TaylorOD/8_bit_portfolio">see the original source ↗</a>'),
