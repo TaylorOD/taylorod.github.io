@@ -1,3 +1,4 @@
+import { drawCarousel } from './carousel.js';
 import { drawWildlife } from './wildlife.js';
 import { scoutActors } from './scout.js';
 import { bikeActors } from './bikes.js';
@@ -215,6 +216,7 @@ export class World {
       if (greeting || curious) text(ctx, greeting ? '♥' : this.nearby.id === 'snowcrust' || this.nearby.id === 'pizza' ? 'PIZZA?' : '?', this.companion.x, this.companion.y - 44, 8, '#edc389');
     };
     const actors = [
+      ...(this.id === 'town' ? [{ y: 748, draw: () => drawCarousel(ctx, this.lifeTime, this.reduced.matches) }] : []),
       ...scoutActors(ctx, this.id, this.lifeTime, this.reduced.matches),
       ...(this.id === 'town' ? bikeActors(ctx, this.lifeTime, this.reduced.matches) : []),
       ...(this.id === 'town' ? campusActors(ctx, this.lifeTime, this.reduced.matches) : []),

@@ -173,6 +173,7 @@ function town(ctx) {
   bench(ctx, 800, 517); lamp(ctx, 288, 448); lamp(ctx, 738, 456); lamp(ctx, 398, 579); lamp(ctx, 620, 579);
   box(ctx, 728, 521, 9, 28, '#604f42'); border(ctx, 716, 501, 34, 25, '#b27b65', '#3e5148', 3); box(ctx, 722, 509, 22, 3, '#2c4541'); text(ctx, 'POST', 733, 519, 7);
   for (let i = 0; i < 42; i++) { const x = 50 + i * 67 % 922, y = 582 + i * 17 % 19; box(ctx, x, y, 2, 5, '#799365'); box(ctx, x - 1, y - 2, 4, 3, i % 3 ? '#c4b47e' : '#dca38b'); }
+  cobbles(ctx, 334, 692, 114, 32);
   border(ctx, 452, 717, 120, 20, '#294944', '#849373', 2); text(ctx, 'MISSOULA · MT', 512, 728, 9, '#bcccaa');
 }
 export function screen(ctx, kind, x, y, w, h, time = 0, active = false) {
