@@ -57,3 +57,20 @@ test('both river banks have continuous paths connected by the bridge', () => {
   assert.ok(crossing.length);
   assert.ok(crossing.filter(step => step.y > 700 && step.y < 780).every(step => step.x >= 832 && step.x <= 960));
 });
+
+test('carousel trips use the bridge and return to each town entrance', () => {
+  const scene = scenes.town, carousel = scene.points.find(p => p.id === 'carousel');
+  for (const id of ['arcade', 'cabin', 'wilma', 'campus']) {
+    const entrance = scene.points.find(p => p.id === id);
+    for (const [from, to] of [[entrance, carousel], [carousel, entrance]]) {
+      const path = findPath(scene, from, to);
+      assert.ok(path.some(p => p.y > 707 && p.y < 772 && p.x >= 831 && p.x <= 965), 'uses the bridge');
+      assert.deepEqual(path.at(-1), { x: to.x, y: to.y });
+      let previous = from;
+      for (const step of path) {
+        for (let t = 0; t <= 1; t += .1) assert.ok(isWalkable(scene, previous.x + (step.x - previous.x) * t, previous.y + (step.y - previous.y) * t));
+        previous = step;
+      }
+    }
+  }
+});

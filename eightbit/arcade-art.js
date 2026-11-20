@@ -96,7 +96,7 @@ export function cyberArcade(ctx) {
   for(const x of [192,832]) { box(ctx,x,130,3,47,'#55505b'); box(ctx,x-34,177,72,9,'#33303b'); box(ctx,x-29,185,62,3,'#f7a864'); light(ctx,x,210,'#ff963b',100,.13); }
   // A large neon wordmark, a score board and old tournament flyers anchor the room.
   ctx.save(); ctx.shadowColor='#e647a0'; ctx.shadowBlur=14;
-  text(ctx,'LAST LIGHT',512,172,36,'#ff6eb6'); ctx.restore();
+  text(ctx,'LAST BEST',512,172,36,'#ff6eb6'); ctx.restore();
   text(ctx,'A R C A D E',512,201,15,'#65e4e4');
   box(ctx,381,226,262,2,'#82335f'); text(ctx,'QUARTERS IN. REAL WORLD OUT.',512,218,7,'#9c8ba7');
   box(ctx,111,202,132,45,'#060a10'); text(ctx,'HIGH SCORES',177,212,9,'#e9a757');
