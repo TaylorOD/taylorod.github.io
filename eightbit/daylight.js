@@ -74,7 +74,7 @@ export function outdoorLight(ctx, room, width, height, light) {
   polygon(ctx,[[495,432],[529,432],[555,493],[469,493]],'#f4c488');
   for(const [x,w] of [[341,137],[546,121]]) polygon(ctx,[[x,432],[x+w,432],[x+w+12,464],[x-12,464]],'#dfb87c');
   ctx.restore();
-  text(ctx,'LAST LIGHT ARCADE',512,285,18,'#f0dcb0');
+  text(ctx,'LAST BEST ARCADE',512,285,18,'#f0dcb0');
   // The cabin windows stay warm while the surrounding hill settles into night.
   glow(ctx,875,221,'#f1b46e',48,.07);
   ctx.save(); ctx.translate(800,112); ctx.scale(.85,.85);

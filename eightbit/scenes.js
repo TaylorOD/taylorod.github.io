@@ -9,7 +9,7 @@ export const scenes = {
     points: [
       point('carousel', 'the carousel', 424, 944, 'carousel', { hit: [172,812,222,145] }),
       point('wilma', 'outside the Wilma', 144, 576, 'wilma', { hit: [52,174,211,386] }),
-      point('arcade', 'enter the arcade', 1304, 576, 'room:arcade', { sign: 'LAST LIGHT ARCADE', hint: 'eight projects. one room.', hit: [1154,410,280,150] }),
+      point('arcade', 'enter the arcade', 1304, 576, 'room:arcade', { sign: 'LAST BEST ARCADE', hint: 'eight projects. one room.', hit: [1154,410,280,150] }),
       point('cabin', 'visit the cabin', 1416, 264, 'room:cabin', { sign: 'HOME BASE', hit: [1356,92,122,162] }),
       point('mailbox', 'say hello', 1008, 656, 'contact', { hit: [998,612,28,34] }),
       point('bench', 'talk to the neighbor', 560, 656, 'delivery', { hit: [520,605,80,42] }),
@@ -19,7 +19,7 @@ export const scenes = {
     ],
   },
   arcade: {
-    name: 'last light arcade', subtitle: 'quarters in. real world out.', width: 1024, height: 832,
+    name: 'last best arcade', subtitle: 'quarters in. real world out.', width: 1024, height: 832,
     spawn: { x: 512, y: 736 }, bounds: [176, 336, 848, 784],
     obstacles: [[216, 344, 96, 128], [376, 344, 96, 128], [536, 344, 96, 128], [696, 344, 96, 128], [216, 520, 96, 128], [352, 584, 128, 64], [536, 520, 96, 128], [696, 520, 96, 128], [184, 704, 80, 64], [320, 704, 48, 48], [776, 704, 72, 64]],
     points: [
@@ -77,7 +77,9 @@ export function findPath(scene, from, to) {
     }
     for (const [dx, dy] of [[0, -1], [1, 0], [0, 1], [-1, 0]]) {
       const next = [current[0] + dx, current[1] + dy];
-      if (!parents.has(key(next)) && isWalkable(scene, next[0] * cell, next[1] * cell)) { parents.set(key(next), current); queue.push(next); }
+      const clear = [0, .25, .5, .75, 1].every(t => isWalkable(scene,
+        (current[0] + dx * t) * cell, (current[1] + dy * t) * cell));
+      if (!parents.has(key(next)) && clear) { parents.set(key(next), current); queue.push(next); }
     }
   }
   return [];

@@ -6,7 +6,7 @@ export const foreground = {
 };
 
 // River trees are drawn on their own layer, never as opaque background cutouts.
-export const riverTrees = [[48, 597, 1], [342, 602, .9], [640, 602, .8], [934, 607, 1.1]];
+export const riverTrees = [[336, 674, 1.25], [720, 674, 1.2], [1101, 674, 1.2], [1490, 674, 1.2]];
 export function treeOpacity([x, y, size], actors) {
   return actors.some(actor => !actor.hidden && actor.x + 17 > x - 27 * size && actor.x - 17 < x + 32 * size && actor.y < y && actor.y > y - 94 * size) ? .28 : 1;
 }
