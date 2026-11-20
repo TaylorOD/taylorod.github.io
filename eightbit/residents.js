@@ -111,9 +111,11 @@ export function drawResident(ctx, resident, time, reduced) {
   ctx.save();ctx.globalAlpha=.18;
   box(ctx,w/2-4,-25,4,14,'#152b33');box(ctx,-w/2+3,-29,w-7,2,'#fff4d8');
   box(ctx,-3,-16,9,2,'#152b33');ctx.restore();
+  if (!resident.playing) {
   box(ctx, -w / 2 - 3, -25 + stride, 4, 13, look.skin); box(ctx, w / 2, -25 - stride, 4, 13, look.skin);
   box(ctx,-w/2-3,-28+stride,5,8,look.shirt);box(ctx,w/2-1,-28-stride,5,8,look.shirt);
   box(ctx,-w/2-2,-13+stride,3,2,'#e4bc93');box(ctx,w/2,-13-stride,3,2,'#e4bc93');
+  }
   box(ctx,-3,-31,6,4,look.skin);
   polygon(ctx,[[-8,-41],[-5,-44],[5,-44],[8,-40],[8,-33],[4,-29],[-4,-29],[-8,-33]],look.skin);
   polygon(ctx,[[-9,-40],[-9,-44],[-5,-47],[5,-47],[9,-43],[9,-38],[6,-40],[4,-43],[-4,-42],[-6,-38]],look.hair);
@@ -136,18 +138,27 @@ export function drawResident(ctx, resident, time, reduced) {
 
 // Regulars stay at decorative machines, leaving every project cabinet available.
 export const arcadeRegulars = [
-  [160, 290, 0], [128, 350, 4], [594, 300, 5], [690, 290, 6],
-].map(([x, y, look]) => ({ x, y, look: { ...looks[look], scale: .85 }, direction: 'up' }));
+  [155, 280, 0, 'pinball'], [118, 337, 4, 'pinball'], [640, 286, 5, 'poker'],
+].map(([x, y, look, playing]) => ({ x, y, look: { ...looks[look], scale: .85 }, direction: playing === 'poker' ? 'down' : 'up', playing }));
 
 export function drawArcadeRegular(ctx, resident, time, reduced) {
+  ctx.save();
+  // The far chair is behind the table. Only the seated upper body is visible.
+  if (resident.playing === 'poker') {
+    ctx.beginPath(); ctx.rect(resident.x - 22, resident.y - 48, 44, 36); ctx.clip();
+  }
   drawResident(ctx, resident, time, true);
+  ctx.restore();
   const tap = reduced ? 0 : Math.floor(time / 230 + resident.x) % 2 * 2;
   const { x, y, look } = resident;
   ctx.save(); ctx.translate(x, y); ctx.scale(look.scale, look.scale);
-  // Bent elbows and alternating button presses face the controls.
-  box(ctx, -look.width / 2 - 3, -41, 5, 18, look.shirt);
-  box(ctx, look.width / 2 - 1, -41, 5, 18, look.shirt);
-  box(ctx, -15, -43, 9, 4, look.skin);
-  box(ctx, 6, -43 + tap, 9, 4, look.skin);
+  // Elbows stay below the shoulders, with hands resting at control height.
+  for (const side of [-1, 1]) {
+    const arm = side < 0 ? -look.width / 2 - 3 : look.width / 2 - 1;
+    box(ctx, arm, -28, 5, 9, look.shirt);
+    box(ctx, arm, -21, 5, 5, look.skin);
+    const hand = side < 0 ? arm - 3 : arm + 2;
+    box(ctx, hand, -24 + (side > 0 ? tap : 0), 6, 4, look.skin);
+  }
   ctx.restore();
 }
