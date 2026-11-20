@@ -77,8 +77,37 @@ export function arcadeStorefront(ctx) {
   box(ctx, 485, 429, 54, 5, '#cab793');
   box(ctx, 481, 434, 62, 5, '#999276');
   box(ctx, 334, 424, 146, 8, '#b09a77'); box(ctx, 542, 424, 133, 8, '#b09a77');
+  // Small wear marks collect where hands, feet and rain reach the building.
+  for(const [x,y,w] of [[487,430,12],[513,435,17],[342,425,15],[646,425,9],[329,263,5],[695,391,4]]) {
+    box(ctx,x,y,w,2,'#c3b18c'); box(ctx,x+2,y+2,Math.max(2,w-5),1,'#756951');
+  }
+  for(const [x,y,w] of [[349,316,19],[574,320,27],[636,313,11]]) box(ctx,x,y,w,2,'#71826a');
+  for(const [x,y] of [[339,404],[675,398],[331,422]]) { box(ctx,x,y,2,18,'#5c624b'); box(ctx,x+3,y+8,2,10,'#69704f'); }
+  // Two paper notices sit inside the glass, with tape and a curled corner.
+  for(const [x,y,color] of [[448,366,'#d8bb87'],[550,378,'#adbb9e']]) {
+    box(ctx,x+1,y+2,21,27,'#1a3033'); box(ctx,x,y,20,26,color);
+    box(ctx,x+6,y-1,8,3,'#d9ccb088'); box(ctx,x+3,y+17,13,1,'#647066');
+    box(ctx,x+3,y+20,10,1,'#647066'); polygon(ctx,[[x+14,y+26],[x+20,y+20],[x+20,y+26]],'#8e9177');
+  }
+  text(ctx,'LIVE',458,375,6,'#4c5149'); text(ctx,'FRI',560,387,6,'#4c5149');
+  parkedBike(ctx,364,441);
   // The fire escape stays on the narrow brick pier, clear of the glazing.
   box(ctx, 684, 224, 3, 208, '#43504b'); box(ctx, 699, 224, 3, 208, '#43504b');
   for (let y = 229; y < 430; y += 11) box(ctx, 687, y, 12, 2, '#a4a68a');
   box(ctx, 684, 221, 18, 3, '#8b947e');
+}
+
+
+function parkedBike(ctx,x,y) {
+  ctx.save(); ctx.translate(x,y);
+  for(const wheel of [-15,15]) {
+    box(ctx,wheel-10,-17,20,18,'#303d3d'); box(ctx,wheel-7,-14,14,12,'#9b9a7e');
+    box(ctx,wheel-1,-16,2,16,'#64766d'); box(ctx,wheel-8,-9,16,2,'#64766d');
+  }
+  ctx.strokeStyle='#a8b8ad'; ctx.lineWidth=2; ctx.beginPath();
+  ctx.moveTo(-15,-8); ctx.lineTo(-5,-25); ctx.lineTo(2,-8); ctx.lineTo(-15,-8);
+  ctx.moveTo(-5,-25); ctx.lineTo(11,-25); ctx.lineTo(2,-8);
+  ctx.moveTo(15,-8); ctx.lineTo(10,-31); ctx.lineTo(16,-32); ctx.stroke();
+  box(ctx,-8,-31,2,8,'#64766d'); box(ctx,-13,-32,13,3,'#38443e');
+  box(ctx,-18,0,39,2,'#203e3d55'); ctx.restore();
 }
