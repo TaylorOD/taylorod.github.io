@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Launcher review</title>
+<style>body{background:#101418;color:#eee;font:16px/1.6 system-ui;padding:100px 24px;max-width:650px;margin:auto}h1{font-size:26px}p{color:#bec9c6}</style>
+<h1>A little company</h1><p>Logo and pet launchers, with care counts across families. Open a button to see which pets need care. These sample pets have their own saves.</p>
+<script type="module">
+import '../lilgotchi.js';
+import { GameState } from '../pets/engine.js';
+import { SaveStore } from '../widget/save-store.js';
+for(const [index,placement] of ['bottom-right','bottom-left','top-right','top-left'].entries()){
+  const key=`launcher-review-${index}`;const store=new SaveStore(key);
+  for(const family of ['slice','cyberpunk']){
+    if(!store.raw(family)&&await store.acquire(family)){
+      const state=new GameState();Object.assign(state,{stage:'adult',character:'mametchi',hunger:family==='slice'?0:4,happiness:family==='slice'?4:0,poopCount:family==='slice'?2:0});
+      store.save(family,state);store.release(family);
+    }
+  }
+  store.preference('introduced',true);store.dispose();
+  const pet=document.createElement('lil-gotchi');pet.setAttribute('storage-key',key);pet.setAttribute('character','slice');pet.setAttribute('placement',placement);
+  pet.setAttribute('launcher',index%2?'shell':'brand');pet.setAttribute('notifications',index===2?'off':'on');document.body.append(pet);
+}
+</script></html>
