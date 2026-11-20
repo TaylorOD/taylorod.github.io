@@ -216,6 +216,7 @@ function handleAction(action) {
 world = new World(canvas, {
   progress, onAction: handleAction,
   onPosition: (id, player) => { sound.position(id, player); const point = mapPosition(id, player), dot = root.querySelector('.map-player'); dot.setAttribute('cx', point.x); dot.setAttribute('cy', point.y); root.querySelector('.mini-map').setAttribute('aria-label', `Open the town map. You are in ${scenes[id].name}.`); },
+  onDaylight: (id, label) => { if (id === 'town' || id === 'rooftop') root.querySelector('.place-subtitle').textContent = `missoula, montana · ${label}`; },
   onRoom: (id, scene) => { sound.setRoom(id); root.dataset.room = id; root.querySelector('.place-name').textContent = scene.name; root.querySelector('.place-subtitle').textContent = scene.subtitle; root.querySelector('.footer-location').textContent = id === 'town' ? 'a little visit to missoula.' : 'take your time. look around.'; root.querySelector('.interact').disabled = true; },
   onNearby: point => { const button = root.querySelector('.interact'); button.disabled = !point; button.querySelector('span').textContent = point?.label || 'walk up to something'; },
   onMove: (time, room) => { if (!root.querySelector('.welcome').hidden) dismissWelcome(); sound.step(time, room); },

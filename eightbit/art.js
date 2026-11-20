@@ -1,3 +1,4 @@
+import { daylight, paintSky } from './daylight.js';
 import { arcadeStorefront } from './storefront.js';
 import { wilma } from './wilma-art.js';
 import { mountSentinel, universityCampus } from './missoula-art.js';
@@ -23,7 +24,7 @@ function border(ctx, x, y, w, h, fill, stroke, thickness = 3) {
   box(ctx, x, y, w, h, stroke); box(ctx, x + thickness, y + thickness, w - thickness * 2, h - thickness * 2, fill);
 }
 export function glow(ctx, x, y, color, radius = 60, strength = .16) {
-  ctx.save(); ctx.globalAlpha = strength;
+  ctx.save(); ctx.globalAlpha *= strength;
   for (let i = 4; i >= 1; i--) {
     const r = radius * i / 4;
     box(ctx, x - r, y - r * .4, r * 2, r * .8, color);
@@ -85,11 +86,9 @@ function mountain(ctx, x, bottom, w, h, color) {
   polygon(ctx, [[x - w / 2, bottom], [x - 35, bottom - h + 29], [x, bottom - h], [x + 25, bottom - h + 30], [x + w / 2, bottom]], color);
   polygon(ctx, [[x - 35, bottom - h + 29], [x, bottom - h], [x + 34, bottom - h + 40], [x + 12, bottom - h + 30], [x - 2, bottom - h + 43], [x - 13, bottom - h + 29]], '#b3b8a5');
 }
-function sky(ctx, width, height) {
-  box(ctx, 0, 0, width, height, '#536c79');
-  ['#737986', '#a58e91', '#c6a397', '#d7b39a'].forEach((c, i) => box(ctx, 0, i * 28, width, 28, c));
-  box(ctx, width * .75, 34, 32, 32, '#efcca0'); box(ctx, width * .75 - 4, 42, 40, 16, '#efcca0');
-  for (const [x, y, w] of [[.12, 32, 83], [.37, 17, 60], [.68, 78, 110]]) { box(ctx, width * x, y, w, 4, '#d8b5a3'); box(ctx, width * x + 14, y - 4, w - 24, 4, '#d8b5a3'); }
+function sky(ctx, width, height, transparent = false) {
+  if (!transparent) paintSky(ctx, width, height, daylight(0));
+  box(ctx, 0, 180, width, height - 180, '#536c79');
   for (const [x, h] of [[0, 80], [.2, 110], [.46, 89], [.7, 123], [1, 104]]) mountain(ctx, width * x, 180, 300, h, '#6a7b80');
   for (const [x, h] of [[.58, 64], [.9, 78]]) mountain(ctx, width * x, 214, 320, h, '#47666a');
   mountSentinel(ctx, width);
@@ -109,8 +108,8 @@ function cobbles(ctx, x, y, w, h) {
     box(ctx, x + xx + 2, y + yy + 1, ww - 2, 1, '#a1a084');
   }
 }
-function town(ctx) {
-  sky(ctx, 1024, 864); ground(ctx, 1024, 864);
+function town(ctx, transparentSky) {
+  sky(ctx, 1024, 864, transparentSky); ground(ctx, 1024, 864);
   universityCampus(ctx);
   cobbles(ctx, 0, 448, 1024, 128); cobbles(ctx, 448, 416, 128, 416);
   // Continuous paths on both banks meet the bridge at either end.
@@ -189,8 +188,8 @@ function table(ctx, x, y, w = 100) {
   box(ctx, x - w / 2 + 8, y - 5, 7, 18, '#343d37'); box(ctx, x + w / 2 - 15, y - 5, 7, 18, '#343d37');
   border(ctx, x - w / 2, y - 25, w, 30, '#937552', '#483e38', 3); box(ctx, x - w / 2 + 4, y - 22, w - 8, 3, '#b89b6e');
 }
-function rooftop(ctx) {
-  sky(ctx, 768, 640);
+function rooftop(ctx, transparentSky) {
+  sky(ctx, 768, 640, transparentSky);
   for (let i = 0; i < 30; i++) tree(ctx, i * 30, 302 + i % 3 * 9, .5);
   box(ctx, 0, 294, 768, 346, '#42625e');
   for (let i = 0; i < 12; i++) { const x = i * 73 - 30, y = 362 + i % 3 * 42; box(ctx, x, y, 62, 130, '#36554f'); roof(ctx, x, y - 24, 62, 30); windowPane(ctx, x + 15, y + 15, 24, 24); }
@@ -201,11 +200,11 @@ function rooftop(ctx) {
   text(ctx, 'YOU TOOK THE LONG WAY. NICE.', 384, 566, 12, '#c8cfb4');
 }
 
-export function paintScene(ctx, id, projects) {
-  if (id === 'town') town(ctx);
+export function paintScene(ctx, id, projects, transparentSky = false) {
+  if (id === 'town') town(ctx, transparentSky);
   else if (id === 'arcade') cyberArcade(ctx, projects);
   else if (id === 'cabin') personalCabin(ctx);
-  else rooftop(ctx);
+  else rooftop(ctx, transparentSky);
 }
 
 export function person(ctx, x, y, direction = 'down', walking = false, time = 0, carrying = false, scale = 1) {

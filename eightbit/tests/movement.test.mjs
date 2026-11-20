@@ -22,7 +22,15 @@ test('click travel reaches a cabinet and triggers its action once', () => {
     world.walk('arrowdown', true); world.walk('arrowdown', false);
     assert.equal(world.player.y, 504, 'a quick direction tap moves between frames');
     world.player.y = 496;
+    const outdoorTime = world.lifeTime;
     world.pause(true); world.walk('arrowdown', true); world.tick(time + 16);
     assert.deepEqual(world.player, { x: 272, y: 496 }, 'dialogs pause movement');
+    assert.equal(world.lifeTime, outdoorTime, 'dialogs pause the outdoor clock');
+    world.enter('town');
+    assert.equal(world.lifeTime, outdoorTime, 'room changes preserve the clock');
+    world.pause(false); world.reduced.matches = true; world.tick(time + 32);
+    assert.equal(world.lifeTime, outdoorTime, 'reduced motion freezes the clock');
+    world.reduced.matches = false; world.tick(time + 48);
+    assert.ok(world.lifeTime > outdoorTime, 'the clock resumes with movement');
   } finally { for (const [key, value] of Object.entries(previous)) { if (value === undefined) delete globalThis[key]; else globalThis[key] = value; } }
 });
