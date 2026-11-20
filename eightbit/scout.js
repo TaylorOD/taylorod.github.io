@@ -5,8 +5,9 @@ const porch = { x: 875, y: 310 };
 const mix = (a,b,t) => ({ x: a.x+(b.x-a.x)*t, y: a.y+(b.y-a.y)*t });
 
 // Scout has one continuous trip, with the doorway shared by exit and return.
+export const scoutSpeed = 2.5;
 export function scoutMoment(time) {
-  const seconds = time / 1000, phase = seconds % 50;
+  const seconds = time * scoutSpeed / 1000, phase = seconds % 50;
   const right = Math.floor(seconds / 50) % 2 === 0;
   const tree = { x: right ? 980 : 763, y: right ? 405 : 410 };
   const clearing = { x: right ? 915 : 827, y: 350 };
@@ -84,7 +85,7 @@ function drawSquirrel(ctx, squirrel, time) {
 }
 
 export function scoutActors(ctx, room, time, reduced = false, layout = null) {
-  const scout = scoutMoment(reduced ? 17500 : time);
+  const scout = scoutMoment(reduced ? 17500 / scoutSpeed : time);
   if (room === 'cabin' && scout.indoors) return [{ y: 476, draw: () => drawScout(ctx,{ x: 208, y: 449, direction: 1 },0,true) }];
   if (room !== 'town' || scout.indoors) return [];
   if (layout) {
@@ -92,7 +93,7 @@ export function scoutActors(ctx, room, time, reduced = false, layout = null) {
     Object.assign(scout, project(scout));
     if (scout.squirrel) scout.squirrel = project(scout.squirrel);
   }
-  const actors = [{ y: scout.y, draw: () => drawScout(ctx,scout,reduced ? 0 : time) }];
+  const actors = [{ y: scout.y, draw: () => drawScout(ctx,scout,reduced ? 0 : time * 1.6) }];
   if (scout.squirrel) actors.push({ y: scout.squirrel.y, draw: () => drawSquirrel(ctx,scout.squirrel,time) });
   return actors;
 }
