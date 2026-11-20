@@ -53,7 +53,7 @@ export const scenes = {
   },
 };
 
-export function isWalkable(scene, x, y, radius = 7) {
+export function isWalkable(scene, x, y, radius = scene === scenes.arcade ? 16 : 7) {
   const [left, top, right, bottom] = scene.bounds;
   if (x < left + radius || y < top + radius || x > right - radius || y > bottom - radius) return false;
   if (scene.paths && ![[0,0],[radius,0],[-radius,0],[0,radius],[0,-radius]].every(([dx,dy]) => scene.paths.some(p => insidePolygon(x+dx,y+dy,p)))) return false;

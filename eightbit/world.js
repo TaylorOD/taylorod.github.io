@@ -5,7 +5,7 @@ import { scoutActors } from './scout.js';
 import { animateArcade } from './arcade-art.js';
 import { foreground } from './depth.js';
 import { canEnter, hitTest, nearbyPath } from './navigation.js';
-import { createResidents, updateResidents, drawResident, arcadeRegulars, drawArcadeRegular } from './residents.js';
+import { createResidents, updateResidents, drawResident, arcadePersonScale, arcadeRegulars, drawArcadeRegular } from './residents.js';
 import { followTrail } from './companions.js';
 import { scenes, findSmoothPath as findPath, isWalkable } from './scenes.js';
 import { paintScene, ambience, person, pet, box, text, screen } from './art.js';
@@ -211,8 +211,8 @@ export class World {
       ...scoutActors(ctx, this.id, this.lifeTime, this.reduced.matches),
       ...(this.id === 'arcade' ? arcadeRegulars.map(resident => ({ y: resident.y, draw: () => drawArcadeRegular(ctx, resident, time, this.reduced.matches || this.paused) })) : []),
       { y: this.companion.y, draw: companion },
-      { y: this.player.y, draw: () => person(ctx, this.player.x, this.player.y, this.direction, this.walking && !this.reduced.matches, time, this.progress.pizza === 'carrying', 1) },
-      ...this.residents.filter(resident => resident.room === this.id && !resident.hidden && !resident.home).map(resident => ({ y: resident.y + (resident.seated ? 16 : 0), draw: () => drawResident(ctx, resident, time, this.reduced.matches) })),
+      { y: this.player.y, draw: () => person(ctx, this.player.x, this.player.y, this.direction, this.walking && !this.reduced.matches, time, this.progress.pizza === 'carrying', this.id === 'arcade' ? arcadePersonScale : 1) },
+      ...this.residents.filter(resident => resident.room === this.id && !resident.hidden && !resident.home).map(resident => ({ y: resident.y + (resident.seated ? 16 : 0), draw: () => drawResident(ctx, resident, time, this.reduced.matches, this.id === 'arcade' ? arcadePersonScale : 1) })),
     ];
 
     actors.sort((a, b) => a.y - b.y).forEach(actor => actor.draw());
