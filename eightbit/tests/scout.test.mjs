@@ -24,3 +24,7 @@ test('elk sometimes flee and then return',()=>{
   assert.equal(elkMoment(153000).offset,0);
   assert.equal(elkMoment(194000).offset,0);
 });
+
+test('startup clock jitter cannot crash Scout',()=>{
+ for(const time of [-1,NaN,undefined]) assert.ok(scoutMoment(time).indoors);
+});

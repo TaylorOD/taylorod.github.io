@@ -17,7 +17,7 @@ function along(points, phase) {
 }
 
 export function scoutMoment(time) {
-  const seconds=time/1000, cycle=Math.floor(seconds/90), phase=seconds%90;
+  const seconds=Math.max(0,Number.isFinite(time)?time:0)/1000, cycle=Math.floor(seconds/90), phase=seconds%90;
   const [tx,ty]=chaseTrees[cycle%chaseTrees.length], tree={x:tx,y:ty};
   const watch={x:tx-23,y:ty+3};
   const turns=cycle%2 ? [[1320,369],[1380,410],[1270,400],[1310,342],[1420,375]] : [[1410,384],[1305,412],[1240,384],[1340,350],[1285,400]];

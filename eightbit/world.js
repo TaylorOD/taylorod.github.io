@@ -146,7 +146,7 @@ export class World {
   }
 
   tick(time) {
-    const elapsed = Math.min((time - this.last) / 1000, .25); this.last = time; this.walking = false;
+    const elapsed = Math.max(0, Math.min((time - this.last) / 1000, .25)); this.last = time; this.walking = false;
     if (!this.paused && !this.reduced.matches) this.lifeTime += elapsed * 1000;
     // Substeps preserve real movement speed on slower devices without tunneling through walls.
     const steps = Math.max(1, Math.ceil(elapsed * 60)), delta = elapsed / steps;
