@@ -1,4 +1,4 @@
-# side quest arcade
+# last light arcade
 
 Open `/?mode=8bit` for the alternate portfolio. `projects.html?mode=8bit` opens the arcade directly. The normal site and work mode remain separate.
 

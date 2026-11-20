@@ -251,7 +251,7 @@ export class World {
     person(ctx, 364, 440, pose === 'view' ? 'up' : 'down', pose === 'dance', 120, pose === 'pizza'); pet(ctx, 410, 440, this.progress.pet, 0, false, 1.4, pose === 'view' ? 'up' : 'down', true);
     box(ctx, 150, 544, 468, 40, '#3e6057');
     text(ctx, pose === 'pizza' ? 'PIZZA BREAK' : pose === 'view' ? 'MOUNTAIN TIME' : 'HELLO FROM MISSOULA', 384, 565, 13, '#e5d7b0');
-    text(ctx, 'SIDE QUEST', 864, 91, 23, '#3d5c56'); text(ctx, 'ARCADE', 864, 123, 23, '#3d5c56');
+    text(ctx, 'LAST LIGHT', 864, 91, 23, '#3d5c56'); text(ctx, 'ARCADE', 864, 123, 23, '#3d5c56');
     text(ctx, 'a little visit', 864, 212, 13, '#5c7262'); text(ctx, 'to missoula.', 864, 233, 13, '#5c7262');
     text(ctx, 'taylor dorsett', 864, 508, 13, '#5c7262'); text(ctx, 'taylordorsett.com', 864, 531, 11, '#5c7262');
     text(ctx, 'THANKS FOR STOPPING BY ♥', 384, 618, 16, '#3d5c56'); return image;
