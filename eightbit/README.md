@@ -31,7 +31,7 @@ The clock moves through sunset, blue hour, night, dawn and daytime. It continues
 
 Progress stays in local storage with a fallback when storage is unavailable. Old adopted companions and completed pizza deliveries become discoveries. Project visit stamps remain saved separately from the hunt.
 
-The source photos used for the house and Scout are private and are not published. The original 2020 portfolio is available through the arcade computer using local archive assets.
+The source photos used for the house and Scout are private and are not published.
 
 ## checking changes
 
@@ -40,5 +40,3 @@ Serve the repository with a static server. Run `node --test eightbit/tests/*.tes
 Look at the changed areas in a browser at desktop and phone widths before pushing. Check walking routes, interactions, collection hints, saved progress, the pizza delivery, rooftop lock, postcard and links. Keep screenshots in each PR.
 
 Phone checks use a Chrome viewport. A physical iPhone touch check remains separate.
-
-The original experiment is at https://github.com/TaylorOD/8_bit_portfolio.
