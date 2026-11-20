@@ -1,4 +1,4 @@
-import { findPath, isWalkable } from './scenes.js';
+import { findSmoothPath as findPath, isWalkable } from './scenes.js';
 
 export const canEnter = (id, progress) => id !== 'rooftop' || progress.pizza === 'delivered';
 

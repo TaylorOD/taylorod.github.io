@@ -119,3 +119,9 @@ Basal: https://www.basalhospitality.com/
 Shakespeare & Co.: https://www.shakespeareandco.com/
 
 SBG: https://sbgmontana.com/
+
+## November 20 delivery
+
+1. PR 108 merged: approved arcade, house and rooftop backgrounds, matching collision areas, real poker table, pinball and named cabinets. Characters stay separate. Desktop and phone views checked.
+2. Smooth walking: route smoothing preserves scenery clearance, clamps steps at turns and applies to residents and companions. Added full town return route coverage.
+3. All other unfinished sections above remain open.
