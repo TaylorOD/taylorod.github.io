@@ -13,8 +13,8 @@ normalURL.searchParams.delete('mode'); normalURL.hash = '';
 const root = document.createElement('div'); root.id = 'eightbit';
 root.innerHTML = `
   <a class="skip-link" href="#directory">skip to the projects</a>
-  <header class="game-header"><a class="brand" href="?mode=8bit" aria-label="Side quest arcade home"><span class="brand-icon">✦</span><span>SIDE QUEST<small>TAYLOR DORSETT'S LITTLE CORNER OF THE INTERNET</small></span></a><nav aria-label="Quick navigation"><button data-ui="directory">projects <span>08</span></button><button data-ui="map">map <kbd>M</kbd></button><button data-ui="about">about</button><button data-ui="contact">contact</button><button data-ui="sound" aria-pressed="false">sound off</button><a class="normal-site">normal site ↗</a></nav></header>
-  <main class="game-stage" aria-label="Side quest arcade">
+  <header class="game-header"><a class="brand" href="?mode=8bit" aria-label="Last light arcade home"><span class="brand-icon">✦</span><span>LAST LIGHT<small>TAYLOR DORSETT'S LITTLE CORNER OF THE INTERNET</small></span></a><nav aria-label="Quick navigation"><button data-ui="directory">projects <span>08</span></button><button data-ui="map">map <kbd>M</kbd></button><button data-ui="about">about</button><button data-ui="contact">contact</button><button data-ui="sound" aria-pressed="false">sound off</button><a class="normal-site">normal site ↗</a></nav></header>
+  <main class="game-stage" aria-label="Last light arcade">
     <canvas class="world-canvas" tabindex="0" aria-label="Explore the town. Arrow keys or WASD to walk. E or Enter to interact. Click a place to walk there, or use the map and projects menu."></canvas>
     <div class="scene-shade" aria-hidden="true"></div>
     <div class="place-label"><span class="place-dot"></span><div><h1 class="place-name">main street</h1><p class="place-subtitle">missoula, montana · just before sunset</p></div></div>
@@ -30,7 +30,7 @@ root.innerHTML = `
   <dialog class="game-dialog" aria-labelledby="dialog-title"><div class="dialog-top"><span class="dialog-tag"></span><button class="close-dialog" aria-label="Close dialog">✕</button></div><div class="dialog-content"></div></dialog>`;
 root.querySelector('.normal-site').href = normalURL.href;
 document.body.replaceChildren(root); document.documentElement.classList.add('eightbit-mode');
-document.title = 'Side quest arcade | Taylor Dorsett';
+document.title = 'Last light arcade | Taylor Dorsett';
 const canvas = root.querySelector('.world-canvas'), dialog = root.querySelector('dialog');
 let postcardPose = 'hello';
 let activeDemo;
@@ -121,7 +121,7 @@ function directory() {
 }
 
 function map() {
-  openDialog('A VERY SMALL TOWN', 'where to?', `<p class="dialog-lead">take a shortcut. there’s no wrong way to explore.</p><div class="map-choices">${[['town','01','main street','the river, the mountains and a little fresh air.'],['arcade','02','side quest arcade','eight projects. find your next side quest.'],['cabin','03','home base','a bit about me. meet your companion.']].map(([id,n,title,copy]) => `<button data-room="${id}"><span>${n}</span><strong>${title}</strong><small>${copy}</small><b>${world.id === id ? 'YOU ARE HERE' : 'GO HERE ↗'}</b></button>`).join('')}</div>${progress.pizza === 'delivered' ? '<button class="secondary" data-room="rooftop">the rooftop is open ↑</button>' : '<p class="small-note">there might be a rooftop. ask about the pizza.</p>'}<div class="dialog-actions"><button class="secondary" data-ui="about">about taylor</button><button class="secondary" data-ui="work">work history</button><button class="secondary" data-ui="contact">say hello</button></div>`);
+  openDialog('A VERY SMALL TOWN', 'where to?', `<p class="dialog-lead">take a shortcut. there’s no wrong way to explore.</p><div class="map-choices">${[['town','01','main street','the river, the mountains and a little fresh air.'],['arcade','02','last light arcade','eight projects. find your next side quest.'],['cabin','03','home base','a bit about me. meet your companion.']].map(([id,n,title,copy]) => `<button data-room="${id}"><span>${n}</span><strong>${title}</strong><small>${copy}</small><b>${world.id === id ? 'YOU ARE HERE' : 'GO HERE ↗'}</b></button>`).join('')}</div>${progress.pizza === 'delivered' ? '<button class="secondary" data-room="rooftop">the rooftop is open ↑</button>' : '<p class="small-note">there might be a rooftop. ask about the pizza.</p>'}<div class="dialog-actions"><button class="secondary" data-ui="about">about taylor</button><button class="secondary" data-ui="work">work history</button><button class="secondary" data-ui="contact">say hello</button></div>`);
 }
 
 function choosePet() {
@@ -177,7 +177,7 @@ function photo() {
   if (progress.stamps.length !== 8) {
     openDialog('THE PHOTO BOOTH', 'a little souvenir.', `<p class="dialog-lead">collect all eight project stamps and the photo booth is yours. you’ve found ${progress.stamps.length} so far.</p><button class="primary" data-ui="directory">find the other machines →</button>`); return;
   }
-  openDialog('THANKS FOR STOPPING BY', 'you & your little buddy.', '<p class="dialog-lead">a postcard from side quest arcade. a little something to take home.</p><div class="dialog-actions"><button class="secondary" data-pose="hello">hello</button><button class="secondary" data-pose="pizza">pizza break</button><button class="secondary" data-pose="view">mountain view</button></div><div class="postcard-preview"></div><button class="primary" data-ui="download">save your postcard ↓</button>');
+  openDialog('THANKS FOR STOPPING BY', 'you & your little buddy.', '<p class="dialog-lead">a postcard from last light arcade. a little something to take home.</p><div class="dialog-actions"><button class="secondary" data-pose="hello">hello</button><button class="secondary" data-pose="pizza">pizza break</button><button class="secondary" data-pose="view">mountain view</button></div><div class="postcard-preview"></div><button class="primary" data-ui="download">save your postcard ↓</button>');
   const postcard = world.postcard(postcardPose); postcard.setAttribute('role', 'img'); postcard.setAttribute('aria-label', 'Taylor and your pet on the rooftop, with the mountains behind them'); root.querySelector('.postcard-preview').append(postcard);
 }
 

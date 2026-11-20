@@ -53,7 +53,7 @@ export function arcadeStorefront(ctx) {
   box(ctx, 357, 266, 310, 39, '#634c3e');
   box(ctx, 359, 268, 306, 33, '#263e3c');
   box(ctx, 361, 270, 302, 2, '#64786a');
-  text(ctx, 'SIDE QUEST ARCADE', 512, 285, 18, '#e4d1a4');
+  text(ctx, 'LAST LIGHT ARCADE', 512, 285, 18, '#e4d1a4');
   for (const x of [395, 625]) {
     box(ctx, x - 1, 257, 3, 9, '#343e36');
     polygon(ctx, [[x-7,266],[x-3,262],[x+4,262],[x+8,266]], '#35483f');

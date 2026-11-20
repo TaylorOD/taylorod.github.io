@@ -8,7 +8,7 @@ export const scenes = {
     points: [
       point('carousel', 'the carousel', 384, 704, 'carousel', { hit: [174, 620, 172, 128] }),
       point('wilma', 'outside the Wilma', 64, 464, 'wilma', { hit: [7, 272, 91, 171] }),
-      point('arcade', 'enter the arcade', 512, 448, 'room:arcade', { sign: 'SIDE QUEST ARCADE', hint: 'eight projects. one room.', hit: [320, 208, 384, 224] }),
+      point('arcade', 'enter the arcade', 512, 448, 'room:arcade', { sign: 'LAST LIGHT ARCADE', hint: 'eight projects. one room.', hit: [320, 208, 384, 224] }),
       point('cabin', 'visit the cabin', 880, 288, 'room:cabin', { sign: 'HOME BASE', hit: [800, 82, 160, 185] }),
       point('mailbox', 'say hello', 736, 560, 'contact', { sign: 'POST', hit: [716, 501, 34, 48] }),
       point('bench', 'talk to the neighbor', 256, 544, 'delivery', { hit: [218, 475, 76, 60] }),
@@ -17,7 +17,7 @@ export const scenes = {
     ],
   },
   arcade: {
-    name: 'side quest arcade', subtitle: 'quarters in. real world out.', width: 1024, height: 832,
+    name: 'last light arcade', subtitle: 'quarters in. real world out.', width: 1024, height: 832,
     spawn: { x: 512, y: 736 }, bounds: [176, 336, 848, 784],
     obstacles: [[216, 344, 96, 128], [376, 344, 96, 128], [536, 344, 96, 128], [696, 344, 96, 128], [216, 520, 96, 128], [352, 584, 128, 64], [536, 520, 96, 128], [696, 520, 96, 128], [184, 704, 80, 64], [320, 704, 48, 48], [776, 704, 72, 64]],
     points: [
