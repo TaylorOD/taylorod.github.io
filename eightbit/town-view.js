@@ -85,6 +85,8 @@ export function drawTown(world,time) {
   ctx.save();ctx.translate(-Math.round(world.camera.x),-Math.round(world.camera.y));
   ctx.drawImage(painting,0,0,1536,1024);
   sky(ctx,light);
+  box(ctx,704,439,94,15,'#244a42');text(ctx,'BASAL',751,447,13,'#efd197');
+  box(ctx,1007,430,136,18,'#244a42');text(ctx,'SBG MISSOULA',1075,439,11,'#efd197');
   grazer(ctx,1260,374,.65,true,1,reduced?0:moment,0);
   grazer(ctx,1304,362,.48,true,-1,reduced?0:moment,2);
   river(ctx,moment,reduced);carousel(ctx,moment,reduced);

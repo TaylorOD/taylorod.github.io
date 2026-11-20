@@ -1,3 +1,4 @@
+import { places, carouselStory } from './places.js';
 import { createDemo, advanceDemo, renderDemo } from './demos.js';
 import { canEnter } from './navigation.js';
 import { World } from './world.js';
@@ -183,6 +184,7 @@ function help() {
 function handleAction(action) {
   dismissWelcome();
   if (action.startsWith('room:')) { changeRoom(action.slice(5)); return; }
+  if (action.startsWith('place:')) { const place = places[action.slice(6)]; if (place) openDialog('AROUND MISSOULA', place.name, `<p class="dialog-lead">${place.text}</p><a class="text-link" href="${place.url}" target="_blank" rel="noopener noreferrer">visit their website</a>`); return; }
   if (action.startsWith('project:')) { openProject(action.slice(8)); return; }
   const actions = {
     directory, pets: choosePet, passport: () => { passport(); paintStamps(); }, about, work, contact, pizza, delivery, photo, help,
@@ -191,10 +193,10 @@ function handleAction(action) {
     dismiss: () => { dismissWelcome(); canvas.focus(); },
     close: () => closeDialog(),
     bench: () => openDialog('A MOMENT ON MAIN STREET', 'stay a while.', '<p class="dialog-lead">nothing to collect here. just a bench, a river and a little space between projects.</p><button class="secondary" data-ui="close">back to exploring</button>'),
-    carousel: () => openDialog('A CAROUSEL FOR MISSOULA', 'one more spin.', '<p class="dialog-lead">hand carved horses, a dragon and a whole lot of volunteer work. a little piece of Caras Park beside the river.</p><a class="text-link" href="https://www.missoulacarousel.org/" target="_blank" rel="noopener noreferrer">visit the real carousel ↗</a>'),
+    carousel: () => openDialog('A CAROUSEL FOR MISSOULA', 'catch the brass ring.', carouselStory),
     wilma: () => openDialog('THE WILMA', 'a little downtown missoula.', '<p class="dialog-lead">a familiar marquee, a night of live music and the river just around the corner.</p><a class="text-link" href="https://logjampresents.com/venue/the-wilma/" target="_blank" rel="noopener noreferrer">see what is playing ↗</a>'),
     campus: () => openDialog('UNIVERSITY OF MONTANA', 'at the end of the street.', '<p class="dialog-lead">a little walk past the storefronts, with mount sentinel in the background.</p><button class="secondary" data-ui="close">back to exploring</button>'),
-    river: () => toast('the river isn’t going anywhere. neither is that side project.'),
+    river: () => openDialog('ON THE CLARK FORK', "Brennan's Wave", '<p class="dialog-lead">a standing wave in the middle of Missoula. stop along the riverwalk and watch surfers and paddlers take their turns.</p><a class="text-link" href="https://www.missouladowntown.com/caras-park/brennans-wave/" target="_blank" rel="noopener noreferrer">about the wave</a>'),
     books: () => openDialog('ON THE BOOKSHELF', 'away from the keyboard.', '<p class="dialog-lead">reading, games, bjj and poker. a few ways to spend the time between making things.</p><button class="secondary" data-ui="about">a bit more about me →</button>'),
     legacy: () => openDialog('AN EARLIER SAVE FILE / 2020', 'booting the old computer.', '<p class="dialog-lead">the original portfolio, running right here. a little piece of where this started.</p><iframe class="legacy-computer" src="eightbit/legacy/index.html" title="Taylor’s original 2020 portfolio" sandbox="allow-scripts allow-popups" loading="lazy"></iframe><a class="text-link" href="https://github.com/TaylorOD/8_bit_portfolio">see the original source ↗</a>'),
     roof: () => progress.pizza === 'delivered' ? changeRoom('rooftop') : openDialog('A LOCKED ROOFTOP DOOR', 'someone has the key.', '<p class="dialog-lead">a note on the door: “ask the person waiting on a pizza. they know the way up.”</p><button class="secondary" data-room="arcade">check the pizza counter →</button>'),
