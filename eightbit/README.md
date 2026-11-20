@@ -50,3 +50,5 @@ Serve the repository with a static server. Run `node --test eightbit/tests/*.tes
 Look at the actual town, interiors and dialogs in a browser at desktop and phone widths. Check walking into a machine, keyboard controls, pet persistence, pizza delivery, stamp collection, the postcard download, browser back and the return to the normal site. Check that all project links still match their destinations.
 
 The original experiment is at https://github.com/TaylorOD/8_bit_portfolio.
+
+The outdoor clock runs through sunset, blue hour, night, dawn and daytime in six minutes. It starts at sunset and continues between rooms. Dialogs and hidden tabs pause it. Reduced motion holds a warm sunset. Streetlights, cabin windows, stars, the moon and river reflections follow the same clock.
