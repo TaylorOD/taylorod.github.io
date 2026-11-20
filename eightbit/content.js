@@ -1,3 +1,4 @@
+import { restoreDiscoveries } from './hunt.js';
 // Portfolio copy lives here. Scene geometry and drawing stay in their own files.
 export const projects = [
   { id: 'lilgotchi', name: 'lilgotchi', category: 'a little company', color: '#a7dfaa', repo: 'lilgotchi', url: '/lilgotchi/', stack: 'javascript · web components · canvas', description: 'a little pixel pet that lives on your website. feed it, play games with it and watch it grow.', detail: 'a reusable web component, with pet care, games and saved progress. add it to a website with one line.', action: 'meet the pets', screen: 'pet' },
@@ -14,6 +15,7 @@ export const pets = [
   { id: 'lilgotchi', name: 'lilgotchi', color: '#a7dfaa', description: 'small. curious. easily distracted.' },
   { id: 'slice', name: 'slice', color: '#f2bd76', description: 'a very good slice of company.' },
   { id: 'cypunk', name: 'cypunk', color: '#c6a4ec', description: 'probably thinking about computers.' },
+  { id: 'original', name: 'original', color: '#d8d7b3', description: 'an old friend with a new hiding place.' },
 ];
 
 export const jobs = [
@@ -34,14 +36,16 @@ export function loadProgress(storage) {
   try {
     storage ||= globalThis.localStorage;
     const saved = JSON.parse(storage.getItem(SAVE_KEY) || '{}');
+    const pet = pets.some(pet => pet.id === saved.pet) ? saved.pet : ({ sprout: 'lilgotchi', pixel: 'cypunk' }[saved.pet] || 'slice');
+    const found = restoreDiscoveries(saved,pet);
     return {
-      pet: pets.some(pet => pet.id === saved.pet) ? saved.pet : ({ sprout: 'lilgotchi', pixel: 'cypunk' }[saved.pet] || 'slice'),
+      pet, found,
       adopted: saved.adopted === true,
       stamps: Array.isArray(saved.stamps) ? [...new Set(saved.stamps.filter(id => projects.some(project => project.id === id)))] : [],
       pizza: ['carrying', 'delivered'].includes(saved.pizza) ? saved.pizza : 'none',
       visited: saved.visited === true,
     };
-  } catch { return { pet: 'slice', adopted: false, stamps: [], pizza: 'none', visited: false }; }
+  } catch { return { pet: 'slice', found: [], adopted: false, stamps: [], pizza: 'none', visited: false }; }
 }
 
 export function saveProgress(progress) {

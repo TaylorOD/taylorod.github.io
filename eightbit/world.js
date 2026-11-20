@@ -1,3 +1,4 @@
+import { hiddenFriends } from './hunt-art.js';
 import { drawInterior } from './interior-view.js';
 import { daylight, paintSky, outdoorLight, mountainLight } from './daylight.js';
 import { scoutActors } from './scout.js';
@@ -202,12 +203,14 @@ export class World {
     const greeting = time - this.enteredAt < 2200;
     const curious = !this.walking && ['pizza', 'snowcrust', 'lilgotchi', 'relay'].includes(this.nearby?.id);
     const companion = () => {
+      if(!this.progress.adopted) return;
       const hop = greeting && !this.reduced.matches ? Math.max(0, Math.sin((time - this.enteredAt) / 150)) * 5 : 0;
       const direction = curious ? this.nearby.x > this.companion.x ? 'right' : 'left' : this.companion.direction;
       pet(ctx, this.companion.x, this.companion.y - hop, this.progress.pet, this.reduced.matches ? 0 : time, !greeting && !curious && time - this.lastMove > 12000, 1, direction, greeting);
       if (greeting || curious) text(ctx, greeting ? '♥' : this.nearby.id === 'snowcrust' || this.nearby.id === 'pizza' ? 'PIZZA?' : '?', this.companion.x, this.companion.y - 44, 8, '#edc389');
     };
     const actors = [
+      ...hiddenFriends(ctx,this.id,this.progress,this.reduced.matches?0:time),
       ...scoutActors(ctx, this.id, this.lifeTime, this.reduced.matches),
       ...(this.id === 'arcade' ? arcadeRegulars.map(resident => ({ y: resident.y, draw: () => drawArcadeRegular(ctx, resident, time, this.reduced.matches || this.paused) })) : []),
       { y: this.companion.y, draw: companion },
@@ -231,12 +234,12 @@ export class World {
 
   postcard(pose = 'hello') {
     const image = document.createElement('canvas'); image.width = 960; image.height = 640;
-    const ctx = image.getContext('2d'); drawInterior(ctx, 'rooftop');
+    const ctx = image.getContext('2d'); ctx.save();ctx.scale(1,594/512);drawInterior(ctx, 'rooftop');ctx.restore();
     box(ctx, 768, 0, 192, 640, '#f0dfba'); box(ctx, 0, 594, 768, 46, '#f0dfba');
     person(ctx, 364, 440, pose === 'view' ? 'up' : 'down', pose === 'dance', 120, pose === 'pizza'); pet(ctx, 410, 440, this.progress.pet, 0, false, 1.4, pose === 'view' ? 'up' : 'down', true);
     box(ctx, 150, 544, 468, 40, '#3e6057');
     text(ctx, pose === 'pizza' ? 'PIZZA BREAK' : pose === 'view' ? 'MOUNTAIN TIME' : 'HELLO FROM MISSOULA', 384, 565, 13, '#e5d7b0');
-    text(ctx, 'LAST BEST', 864, 91, 23, '#3d5c56'); text(ctx, 'ARCADE', 864, 123, 23, '#3d5c56');
+    text(ctx, '8 BIT', 864, 91, 23, '#3d5c56'); text(ctx, 'MISSOULA', 864, 123, 19, '#3d5c56');
     text(ctx, 'a little visit', 864, 212, 13, '#5c7262'); text(ctx, 'to missoula.', 864, 233, 13, '#5c7262');
     text(ctx, 'taylor dorsett', 864, 508, 13, '#5c7262'); text(ctx, 'taylordorsett.com', 864, 531, 11, '#5c7262');
     text(ctx, 'THANKS FOR STOPPING BY ♥', 384, 618, 16, '#3d5c56'); return image;

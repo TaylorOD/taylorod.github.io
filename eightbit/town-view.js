@@ -1,3 +1,4 @@
+import { hiddenFriends } from './hunt-art.js';
 import { drawRiverLife } from './river-life.js';
 import { box, polygon, person, pet, text, glow } from './art.js';
 import { daylight, paintSky } from './daylight.js';
@@ -78,6 +79,7 @@ export function drawTown(world,time) {
   box(ctx,1413,479,3,75,'#8b947f');box(ctx,1425,479,3,75,'#8b947f');
   for(let y=486;y<554;y+=10) box(ctx,1413,y,15,2,'#b2b79a');
   const actors=trailActors(ctx,moment,reduced,townLayout);
+  actors.push(...hiddenFriends(ctx,'town',progress,reduced?0:moment));
   for(let i=0;i<2;i++) {
     const travel=((reduced?6000:moment)/1000*(i?48:58)+i*730)%1664;
     const bike={x:i?1600-travel:travel-64,y:i?586:579,facing:i?-1:1};
@@ -85,7 +87,7 @@ export function drawTown(world,time) {
   }
   actors.push(...campusActors(ctx,moment,reduced), ...scoutActors(ctx,'town',moment,reduced,townLayout));
   for(const resident of world.residents.filter(r=>r.room==='town'&&!r.hidden&&!r.home)) actors.push({y:resident.y,draw:()=>drawResident(ctx,resident,moment,reduced)});
-  actors.push({y:companion.y,draw:()=>pet(ctx,companion.x,companion.y,progress.pet,reduced?0:moment,false,.75*campusScale(companion.x,companion.y),companion.direction)});
+  if(progress.adopted) actors.push({y:companion.y,draw:()=>pet(ctx,companion.x,companion.y,progress.pet,reduced?0:moment,false,.75*campusScale(companion.x,companion.y),companion.direction)});
   actors.push({y:player.y,draw:()=>person(ctx,player.x,player.y,world.direction,world.walking&&!reduced,moment,progress.pizza==='carrying',.9*campusScale(player.x,player.y))});
   const visible = [player, companion, ...trailVisitors(moment, reduced, townLayout), ...world.residents.filter(r => r.room === 'town' && !r.home)];
   for (const [x, y, size] of riverTrees) actors.push({ y, draw: () => {

@@ -1,8 +1,10 @@
+import { originalSprites } from '../assets/lilgotchi/3.0.7/pets/original-sprites.js';
 import { slicePalette, sliceSprites } from '../assets/lilgotchi/3.0.7/pets/slice-sprites.js';
 import { lilgotchiPalette, lilgotchiSprites } from '../assets/lilgotchi/3.0.7/pets/lilgotchi-sprites.js';
 import { cyberpunkPalette, cyberpunkSprites } from '../assets/lilgotchi/3.0.7/pets/cyberpunk-sprites.js';
 
 const companions = {
+  original: [[null,'#ece4c5','#283a35'], originalSprites.mametchi],
   slice: [slicePalette, sliceSprites.ginjirotchi],
   lilgotchi: [lilgotchiPalette, lilgotchiSprites.mametchi],
   cypunk: [cyberpunkPalette, cyberpunkSprites.mametchi],
