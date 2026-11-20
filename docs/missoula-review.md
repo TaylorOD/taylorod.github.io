@@ -39,10 +39,10 @@ reviewed november 20, 2026
 
 ## scope of the review
 
-the first timed pass covered sunset, blue hour, night, dawn, daytime and the return to sunset at normal speed. observations were periodic screenshots across the full cycle, not a frame by frame video review. the second pass repeats the cycle after the fixes.
+the first timed pass covered sunset, blue hour, night, dawn, daytime and the return to sunset at normal speed. observations were periodic screenshots across the full cycle, not a frame by frame video review. the second pass caught the double sun near the cycle wrap. a third full cycle after that fix showed no additional clipping or lighting issues in the observed frames.
 
 this is a checked result, not a promise that every possible screen size and animation frame is perfect. phone checks use a 390 by 844 browser viewport, not a physical phone.
 
 the carousel dialog gives its opening date, ring catching and speed with source links. it does not repeat the unverified oldest carousel claim.
 
-the latest arcade followup is separate work: align the new pinball with the row, extend the stairs through the ceiling and replace the pizza table with a coin counter.
+the arcade followup aligns all three pinballs, extends the spiral stairs through the ceiling, adds a matching rooftop opening and replaces the pizza table with a coin counter. the counter preserves the delivery quest. the poker table and interaction areas moved to keep the cabinet aisle open. desktop and phone views were inspected, and the stairs worked in both directions. all 50 automated tests pass.

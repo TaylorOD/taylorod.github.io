@@ -37,7 +37,7 @@ export function roofSky(ctx, light) {
   ctx.save(); ctx.scale(.5,.5); ctx.beginPath();
   edge.forEach(([x,y],index)=>index?ctx.lineTo(x,y ? y+3 : 0):ctx.moveTo(x,y));
   ctx.closePath(); ctx.clip();
-  ctx.globalAlpha=Math.max(0,Math.min(1,(light.phase-.06)/.08,(1-light.phase)/.06));
+  ctx.globalAlpha=1;
   paintSky(ctx,1536,210,light);
   ctx.restore();
 }

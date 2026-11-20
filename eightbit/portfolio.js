@@ -175,7 +175,7 @@ function delivery() {
     if(foundFriend('delivery')) return;
     openDialog('SIDE QUEST COMPLETE', 'pizza makes friends.', '<div class="quest-exchange" aria-label="Pizza delivered. Rooftop key received."><span>🍕</span><span>↔</span><span class="rooftop-key">⚿</span></div><p class="dialog-lead">“you made it! thanks for bringing dinner. here’s the rooftop key. head up whenever you like.”</p><button class="primary" data-room="rooftop">let’s see the view ↑</button>');
   } else if (progress.pizza === 'delivered') { if(!foundFriend('delivery')) pizza(); }
-  else openDialog('A NEIGHBOR ON THE BENCH', 'waiting on a pizza.', '<p class="dialog-lead">“if you’re heading to the arcade, could you pick up my order? it’s at the little pizza table.”</p><button class="secondary" data-room="arcade">head to the arcade →</button>');
+  else openDialog('A NEIGHBOR ON THE BENCH', 'waiting on a pizza.', '<p class="dialog-lead">“if you’re heading to the arcade, could you pick up my order? it’s at the coin counter.”</p><button class="secondary" data-room="arcade">head to the arcade →</button>');
 }
 
 async function photo() {
@@ -200,6 +200,7 @@ function handleAction(action) {
   if (action.startsWith('project:')) { openProject(action.slice(8)); return; }
   const actions = {
     directory, pets: choosePet, passport, about, work, contact, pizza, delivery, photo, help,
+    coins: () => openDialog('THE COIN COUNTER', 'a few quarters?', '<p class="dialog-lead">change for the machines, a place to leave a note, and the occasional pizza pickup for a neighbor.</p><div class="dialog-actions"><button class="primary" data-ui="pizza">ask about the delivery</button><button class="secondary" data-ui="contact">leave a note</button></div>'),
     chef: () => career('chef'), levels: () => career('levels'), recruiting: () => career('recruiting'),
     enter: () => { dismissWelcome(); toast('four friends are hiding. tap the found counter for hints.'); canvas.focus(); },
     dismiss: () => { dismissWelcome(); canvas.focus(); },
@@ -210,7 +211,7 @@ function handleAction(action) {
     campus: () => openDialog('UNIVERSITY OF MONTANA', 'at the end of the street.', '<p class="dialog-lead">a little walk past the storefronts, with mount sentinel in the background.</p><button class="secondary" data-ui="close">back to exploring</button>'),
     river: () => openDialog('ON THE CLARK FORK', "Brennan's Wave", '<p class="dialog-lead">a standing wave in the middle of Missoula. stop along the riverwalk and watch surfers and paddlers take their turns.</p><a class="text-link" href="https://www.missouladowntown.com/caras-park/brennans-wave/" target="_blank" rel="noopener noreferrer">about the wave</a>'),
     books: () => openDialog('ON THE BOOKSHELF', 'away from the keyboard.', '<p class="dialog-lead">reading, games, bjj and poker. a few ways to spend the time between making things.</p><button class="secondary" data-ui="about">a bit more about me →</button>'),
-    roof: () => progress.pizza === 'delivered' ? changeRoom('rooftop') : openDialog('A LOCKED ROOFTOP DOOR', 'someone has the key.', '<p class="dialog-lead">a note on the door: “ask the person waiting on a pizza. they know the way up.”</p><button class="secondary" data-room="arcade">check the pizza counter →</button>'),
+    roof: () => progress.pizza === 'delivered' ? changeRoom('rooftop') : openDialog('A LOCKED ROOFTOP DOOR', 'someone has the key.', '<p class="dialog-lead">a note on the door: “ask the person waiting on a pizza. they know the way up.”</p><button class="secondary" data-room="arcade">check the coin counter →</button>'),
     view: () => openDialog('ABOVE IT ALL', 'a pretty good place to pause.', '<p class="dialog-lead">thanks for taking the long way around. hope you found something you liked.</p><button class="secondary" data-ui="contact">say hello before you go ↗</button>'),
     'take-pizza': () => { progress.pizza = 'carrying'; updateInventory(); closeDialog(); toast('pizza acquired. find the neighbor on the town bench.'); },
     download: () => { world.postcard(postcardPose).toBlob(blob => { if (!blob) return; const url = URL.createObjectURL(blob), link = document.createElement('a'); link.href = url; link.download = '8-bit-missoula-postcard.png'; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000); }); },
