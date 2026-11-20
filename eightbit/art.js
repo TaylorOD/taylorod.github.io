@@ -1,3 +1,4 @@
+import { arcadeStorefront } from './storefront.js';
 import { wilma } from './wilma-art.js';
 import { mountSentinel, universityCampus } from './missoula-art.js';
 import { personalCabin } from './home-art.js';
@@ -57,14 +58,6 @@ function windowPane(ctx, x, y, w = 48, h = 44) {
   box(ctx, x + 3, y + h / 2, w - 6, 3, '#526b5d');
   box(ctx, x - 3, y + h, w + 6, 5, '#b2a184');
 }
-function brick(ctx, x, y, w, h, colors) {
-  box(ctx, x, y, w, h, colors[0]);
-  for (let yy = 0; yy < h; yy += 12) for (let xx = -12; xx < w; xx += 25) {
-    const left = Math.max(0, xx + (yy % 24 ? 12 : 0));
-    const width = Math.min(23, w - left);
-    if (width > 0) box(ctx, x + left, y + yy + 1, width, 10, colors[1 + ((xx + yy + 1000) % 3)]);
-  }
-}
 function roof(ctx, x, y, w, h, color = '#4c5961') {
   polygon(ctx, [[x - 12, y + h], [x + 16, y], [x + w - 16, y], [x + w + 12, y + h]], '#233a3b');
   polygon(ctx, [[x - 6, y + h - 6], [x + 20, y + 4], [x + w - 20, y + 4], [x + w + 6, y + h - 6]], color);
@@ -75,37 +68,6 @@ function roof(ctx, x, y, w, h, color = '#4c5961') {
   }
   box(ctx, x - 12, y + h - 4, w + 24, 7, '#1d3438');
   box(ctx, x - 8, y + h + 3, w + 16, 3, '#9b8874');
-}
-function building(ctx, x, y, w, h, label, type) {
-  box(ctx, x + 12, y + h - 6, w + 12, 24, '#304e46');
-  brick(ctx, x, y + 72, w, h - 72, type === 'cabin' ? ['#6b5c48', '#917454', '#8d6d4c', '#a17e56'] : ['#5b514c', '#9b6d59', '#a6755c', '#95664f']);
-  roof(ctx, x - 3, y, w + 6, 82, type === 'arcade' ? '#455960' : '#4b6260');
-  box(ctx, x + w - 45, y - 12, 25, 46, '#887965');
-  box(ctx, x + w - 48, y - 15, 31, 7, '#b3a187');
-  const doorX = x + w / 2 - 22;
-  border(ctx, doorX - 5, y + h - 68, 54, 68, '#203b3e', '#d4bc90', 4);
-  box(ctx, doorX + 3, y + h - 61, 38, 42, '#609087');
-  box(ctx, doorX + 6, y + h - 58, 8, 35, '#a8b9a1');
-  box(ctx, doorX + 27, y + h - 30, 6, 3, '#f4ce88');
-  box(ctx, doorX - 14, y + h, 72, 7, '#c2ad84'); box(ctx, doorX - 19, y + h + 7, 82, 5, '#8f8c6b');
-  windowPane(ctx, x + 16, y + h - 69, type === 'arcade' ? 92 : 36, 51);
-  windowPane(ctx, x + w - (type === 'arcade' ? 108 : 52), y + h - 69, type === 'arcade' ? 92 : 36, 51);
-  if (type === 'arcade') {
-    border(ctx, x + 36, y + 30, w - 72, 53, '#20383e', '#c9c399', 4);
-    border(ctx, x + 42, y + 36, w - 84, 41, '#20383e', '#70ada3', 1);
-    text(ctx, 'SIDE QUEST', x + w / 2, y + 48, 22, '#d9e6bc');
-    text(ctx, 'A R C A D E', x + w / 2, y + 68, 12, '#efa67e');
-    for (let i = 0; i < w; i += 16) box(ctx, x + i, y + h - 82, 16, 14, i % 32 ? '#bb725b' : '#e4c492');
-    box(ctx, x - 3, y + h - 85, w + 6, 4, '#efc68c');
-    for (const xx of [x + 32, x + 63, x + w - 88, x + w - 57]) {
-      box(ctx, xx, y + h - 51, 17, 29, '#354953'); box(ctx, xx + 3, y + h - 48, 11, 10, '#93b6aa');
-    }
-    border(ctx, x + 124, y + h - 16, 136, 14, '#253b3b', '#96876c', 1);
-    text(ctx, 'TAYLOR DORSETT · OWNER', x + 192, y + h - 9, 7, '#edd8b0');
-  } else {
-    border(ctx, x + 12, y + 56, w - 24, 25, '#2a4745', '#a19472', 3);
-    text(ctx, label, x + w / 2, y + 68, 10, '#f1dab0');
-  }
 }
 function lamp(ctx, x, y) {
   box(ctx, x - 6, y - 3, 16, 7, '#28463f'); box(ctx, x, y - 65, 5, 65, '#2a4240');
@@ -157,17 +119,13 @@ function town(ctx) {
   for (const x of [442, 576]) { box(ctx, x, 586, 5, 95, '#514e40'); box(ctx, x - 2, 600, 9, 5, '#d5b684'); }
   for (const [x, y, s] of [[20, 259, 1.2], [88, 270, .9], [250, 282, 1.2], [742, 256, 1], [1001, 268, 1.3], [984, 506, 1.4], [20, 754, 1.5], [134, 752, 1], [816, 752, 1.1], [986, 756, 1.5]]) tree(ctx, x, y, s);
   wilma(ctx);
-  building(ctx, 320, 208, 384, 224, 'SIDE QUEST', 'arcade');
+  arcadeStorefront(ctx);
   // A quiet uphill path separates the cabin from the public street.
   cobbles(ctx, 854, 262, 44, 186);
   for (const [x,y,s] of [[764,320,.9],[790,267,1.1],[980,305,1.2],[941,220,.8],[763,410,.8],[980,405,1]]) tree(ctx,x,y,s);
   ctx.save(); ctx.translate(800, 112); ctx.scale(.85, .85); aFrame(ctx, 0, 0); ctx.restore();
   tree(ctx, 802, 304, .85); tree(ctx, 964, 301, 1);
   text(ctx, 'UPPER RATTLESNAKE', 876, 338, 8, '#d5cc9f');
-  // The arcade's exterior: ladder, bike, sandwich board and flower boxes.
-  for (let y = 314; y < 430; y += 12) box(ctx, 683, y, 18, 3, '#bcad86');
-  box(ctx, 682, 312, 3, 120, '#7b8975'); box(ctx, 700, 312, 3, 120, '#7b8975');
-  border(ctx, 591, 437, 54, 44, '#2b4c45', '#c19e75', 3); text(ctx, 'OPEN', 618, 449, 10, '#e9d2a1'); text(ctx, 'COME IN', 618, 465, 7, '#b6c99c');
   for (const x of [299, 713]) { box(ctx, x, 418, 22, 17, '#997255'); box(ctx, x - 2, 417, 26, 4, '#c39b72'); for (let i = 0; i < 5; i++) { box(ctx, x + i * 4, 409 - i % 3 * 3, 3, 10, '#829663'); box(ctx, x + i * 4 - 1, 407 - i % 3 * 3, 5, 4, '#d4ac87'); } }
   bench(ctx, 256, 520); tree(ctx, 290, 494, .7, true);
   bench(ctx, 800, 517); lamp(ctx, 288, 448); lamp(ctx, 738, 456); lamp(ctx, 398, 579); lamp(ctx, 620, 579);
@@ -299,7 +257,6 @@ export function ambience(ctx, id, time, reduced = false) {
   const t = reduced ? 0 : time;
   if (id === 'town') {
     for (let i = 0; i < 35; i++) { const x = (i * 71 + t / 90) % 1024; if (x > 440 && x < 584) continue; box(ctx, x, 620 + i * 13 % 41, 14 + i % 4 * 5, 1, i % 3 ? '#628b87' : '#92a997'); }
-    for (let i = 0; i < 4; i++) { const age = (t / 80 + i * 12) % 48; box(ctx, 662 + Math.sin(age / 12) * 6, 199 - age, 8 + age / 5, 5, '#b8ad9b55'); }
     glow(ctx, 512, 454, '#ecc38f', 100, .022);
     for (let i = 0; i < 14; i++) { const x = 58 + i * 67, y = 590 + Math.sin(t / 1700 + i) * 9; if (Math.sin(t / 1000 + i) > .2) box(ctx, x, y, 2, 2, '#dfce94'); }
   }
