@@ -196,9 +196,6 @@ export class World {
     ctx.save(); ctx.translate(-Math.round(this.camera.x), -Math.round(this.camera.y));
     drawInterior(ctx, this.id);
     if (outdoors) roofSky(ctx, light);
-    if (this.id === 'arcade') {
-      box(ctx, 189, 372, 36, 7, '#d5a16b'); text(ctx, 'PIZZA', 207, 368, 6, '#f5dfb0');
-    }
     if (this.target && this.path.length) { const { x, y } = this.target; box(ctx, x - 7, y - 1, 14, 2, '#e7cf9a'); box(ctx, x - 1, y - 7, 2, 14, '#e7cf9a'); }
     const greeting = time - this.enteredAt < 2200;
     const curious = !this.walking && ['pizza', 'snowcrust', 'lilgotchi', 'relay'].includes(this.nearby?.id);
