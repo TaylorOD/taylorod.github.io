@@ -176,7 +176,7 @@ export class World {
         if (this.walking) { this.lastMove = time; this.onMove?.(time, this.id); }
       }
       followTrail(this.companion, this.trail, this.player, delta);
-      if (!this.reduced.matches) updateResidents(this.residents, this.scene, delta, this.player, this.id);
+      if (!this.reduced.matches) updateResidents(this.residents, this.scene, delta, this.player, this.id, this.lifeTime);
     }
     }
     const nearest = this.scene.points.filter(point => Math.hypot(point.x - this.player.x, point.y - this.player.y) < 53).sort((a, b) => Math.hypot(a.x - this.player.x, a.y - this.player.y) - Math.hypot(b.x - this.player.x, b.y - this.player.y))[0];
@@ -229,11 +229,11 @@ export class World {
       ...(this.id === 'arcade' ? arcadeRegulars.map(resident => ({ y: resident.y, draw: () => drawArcadeRegular(ctx, resident, time, this.reduced.matches || this.paused) })) : []),
       { y: this.companion.y, draw: companion },
       { y: this.player.y, draw: () => person(ctx, this.player.x, this.player.y, this.direction, this.walking && !this.reduced.matches, time, this.progress.pizza === 'carrying', perspective(this.player)) },
-      ...this.residents.filter(resident => resident.room === this.id && !resident.hidden).map(resident => ({ y: resident.y + (resident.seated ? 16 : 0), draw: () => drawResident(ctx, resident, time, this.reduced.matches) })),
+      ...this.residents.filter(resident => resident.room === this.id && !resident.hidden && !resident.home).map(resident => ({ y: resident.y + (resident.seated ? 16 : 0), draw: () => drawResident(ctx, resident, time, this.reduced.matches) })),
     ];
     for (const [x, y, w, h, depth] of foreground[this.id] || []) if ([this.player, this.companion, ...this.residents.filter(r => r.room === this.id && !r.seated)].some(actor => actor.x > x - 14 && actor.x < x + w + 14 && actor.y < depth && actor.y > y)) actors.push({ y: depth, draw: () => ctx.drawImage(this.cache.get(this.id), x, y, w, h, x, y, w, h) });
     if (this.id === 'town') {
-      const visibleActors = [this.player, this.companion, ...trailVisitors(this.lifeTime, this.reduced.matches), ...this.residents.filter(resident => resident.room === 'town' && !resident.hidden)];
+      const visibleActors = [this.player, this.companion, ...trailVisitors(this.lifeTime, this.reduced.matches), ...this.residents.filter(resident => resident.room === 'town' && !resident.hidden && !resident.home)];
       for (const item of riverTrees) actors.push({ y: item[1], draw: () => {
         ctx.save(); ctx.globalAlpha = treeOpacity(item, visibleActors); tree(ctx, ...item); ctx.restore();
       } });
