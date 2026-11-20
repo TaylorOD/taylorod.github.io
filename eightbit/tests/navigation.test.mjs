@@ -44,3 +44,16 @@ test("old companion choices migrate without losing progress", () => {
   assert.equal(loadProgress({ getItem: () => JSON.stringify({ pet: "sprout" }) }).pet, "lilgotchi");
   assert.equal(loadProgress({ getItem: () => JSON.stringify({ pet: "pixel" }) }).pet, "cypunk");
 });
+
+
+test('both river banks have continuous paths connected by the bridge', () => {
+  for (const y of [576, 704]) {
+    for (let x = 48; x <= 976; x += 8) assert.ok(isWalkable(scenes.town, x, y), `${x},${y}`);
+    const route = findPath(scenes.town, { x: 48, y }, { x: 976, y });
+    assert.ok(route.length);
+    assert.ok(route.every(step => step.y === y));
+  }
+  const crossing = findPath(scenes.town, { x: 48, y: 576 }, { x: 976, y: 704 });
+  assert.ok(crossing.length);
+  assert.ok(crossing.filter(step => step.y > 600 && step.y < 680).every(step => step.x >= 464 && step.x <= 560));
+});
