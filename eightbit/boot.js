@@ -1,8 +1,6 @@
-// Keep the alternate experience out of the normal site's download path.
+// Keep old bookmarks working while the town has its own home.
 if (new URLSearchParams(location.search).get('mode') === '8bit') {
-  const stylesheet = document.createElement('link');
-  stylesheet.rel = 'stylesheet';
-  stylesheet.href = new URL('./style.css', import.meta.url);
-  stylesheet.addEventListener('load', () => import('./portfolio.js'));
-  document.head.append(stylesheet);
+  const destination = new URL('../8-bit-missoula/', import.meta.url);
+  destination.hash = location.hash;
+  location.replace(destination.href);
 }
