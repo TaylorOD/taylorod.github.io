@@ -23,7 +23,7 @@ export const scenes = {
   arcade: {
     name: 'last best arcade', subtitle: 'quarters in. real world out.', width: 768, height: 512,
     spawn: { x: 384, y: 456 }, bounds: [16, 256, 752, 504], grid: 8,
-    obstacles: [[24,256,144,96], [560,256,180,104]],
+    obstacles: [[24,256,144,96], [560,256,180,104], [20,360,80,116], [572,384,176,88]],
     points: [
       ...[['lilgotchi','meet lilgotchi',240],['snowcrust','play snowcrust',288],['relay','try relay',336],['fight','fight terminal',384],['sweat','mr game and sweat',432],['moonbean','moonbean coffee',480],['reachoutt','reachoutt',528]].map(([id,label,x]) => point(id,label,x,280,`project:${id}`,{hit:[x-22,132,44,128]})),
       point('hidden-cypunk','look beside the pinball',184,320,'find:cypunk',{hit:[172,295,24,32]}),
