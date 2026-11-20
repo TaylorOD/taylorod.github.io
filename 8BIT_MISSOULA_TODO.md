@@ -31,11 +31,19 @@ Updated November 20, 2026.
 | Hints, saved collection and walking companions | PR 117. Found friends unlock as companions, old adopted pets and completed deliveries carry forward |
 | Completion reward | PR 117. Missoula postcard with three poses and PNG download, including loading the roof before first use |
 | Preserve the project arcade | Project dialogs, previews and demos remain available alongside the hunt |
-| No new sound | Existing optional sound kept unchanged |
+| Cozy music and occasional Scout woofs | Added after the later sound request. Optional toggle retained. Scheduling tested, audio not listened to in this review |
+| Faster Scout and squirrel, nub tail, changing direction and woodland clipping | Implemented with chase and depth tests, visually reviewed through the day cycle |
+| Bald player, neighbor hair, passing through the player | PRs 126, 128, 133 and 134 |
+| Five monitor desk, gaming pc and L through the window | PR 125 |
+| Arcade poses, legs, patio removal and small poker plaque | PRs 127 and 132, with front furniture superseded by the coin counter |
+| Arcade roof matches outside, wildlife stays behind buildings, header icon | PRs 129 through 131 |
+| Spiral stairs to the roof | PR 135, extended through the ceiling in the latest layout followup |
+| Aligned third pinball and coin counter | Latest layout followup, delivery interaction preserved, matching rooftop stair opening |
+| Full day visual review | PR 136 fixes lamps, labels, sky, raft clearance, room sizing and bench pose. See the review below |
 
 ## Verification
 
-1. 44 automated tests pass, including routes, scenery clearance, saved progress, discovery conditions, wildlife phases and reduced motion.
+1. 50 automated tests pass, including routes, scenery clearance, saved progress, discovery conditions, wildlife phases and reduced motion.
 2. Actual browser checks covered desktop and phone layouts, the arcade, house and rooftop, all four discoveries, hints, companion selection, saved progress after reload and the postcard reward.
 3. The carousel round trip was repeated after the town and movement changes. Both arrival and return to main street passed.
 4. Each change has its own branch and PR with browser screenshots.
@@ -60,3 +68,7 @@ Basal: https://www.basalhospitality.com/
 Shakespeare & Co.: https://www.shakespeareandco.com/
 
 SBG Missoula: https://sbgmissoula.com/
+
+## latest review
+
+[Full request audit and review limits](docs/missoula-review.md). The latest check repeated the carousel route, house, arcade, stairs in both directions, desktop and phone layouts, and periodic observations across a full day cycle after fixes. Earlier collection and postcard checks above were not all repeated in this pass.

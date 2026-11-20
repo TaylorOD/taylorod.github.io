@@ -1,7 +1,7 @@
 export const discoveries = [
   {id:'lilgotchi',event:'books',room:'cabin',x:410,y:255,hint:'someone small is reading in the house. look closely at the bookshelf.'},
   {id:'slice',event:'delivery',room:'town',x:552,y:622,hint:'the neighbor on the bench ordered dinner. bring the pizza from the arcade.'},
-  {id:'cypunk',event:'find:cypunk',room:'arcade',x:183,y:317,hint:'listen with your eyes. a tiny friend is hiding beside the pinball tables.'},
+  {id:'cypunk',event:'find:cypunk',room:'arcade',x:225,y:337,hint:'listen with your eyes. a tiny friend is hiding beside the pinball tables.'},
   {id:'original',event:'find:original',room:'town',x:336,y:644,hint:'take the upper river path west of the bridge. check behind the leafy tree.'},
 ];
 
