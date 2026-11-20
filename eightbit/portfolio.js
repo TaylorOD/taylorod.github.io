@@ -1,3 +1,4 @@
+import { loadInterior } from './interior-view.js';
 import { discoveries, discover } from './hunt.js';
 import { places, carouselStory } from './places.js';
 import { createDemo, advanceDemo, renderDemo } from './demos.js';
@@ -137,7 +138,7 @@ function foundFriend(event) {
   const item=discover(progress,event);
   if(!item) return false;
   updateInventory();
-  openDialog('FOUND A LILGOTCHI', `hello, ${item.id}.`, `<p class="dialog-lead">${progress.found.length===discoveries.length?'that is everyone! your Missoula postcard is ready.':`you found ${progress.found.length} of ${discoveries.length}. this friend can now walk with you.`}</p><button class="primary" data-pet="${item.id}">come with me</button><button class="secondary" data-ui="passport">see the collection</button>`);
+  openDialog('FOUND A LILGOTCHI', `hello, ${item.id}.`, `<p class="dialog-lead">${progress.found.length===discoveries.length?'that is everyone! your Missoula postcard is ready.':`you found ${progress.found.length} of ${discoveries.length}. this friend can now walk with you.`}</p>${item.id==='slice'?'<p>your neighbor also gave you the rooftop key. the ladder beside the arcade is yours to use.</p>':''}<button class="primary" data-pet="${item.id}">come with me</button><button class="secondary" data-ui="passport">see the collection</button>`);
   return true;
 }
 
@@ -176,10 +177,11 @@ function delivery() {
   else openDialog('A NEIGHBOR ON THE BENCH', 'waiting on a pizza.', '<p class="dialog-lead">“if you’re heading to the arcade, could you pick up my order? it’s at the little pizza table.”</p><button class="secondary" data-room="arcade">head to the arcade →</button>');
 }
 
-function photo() {
+async function photo() {
   if (progress.found.length !== discoveries.length) {
     openDialog('THE PHOTO BOOTH', 'a little souvenir.', `<p class="dialog-lead">find all four lilgotchi and the postcard is yours. you’ve found ${progress.found.length} so far.</p><button class="primary" data-ui="passport">find the other friends →</button>`); return;
   }
+  try { await loadInterior('rooftop'); } catch { toast('the postcard could not load. try again in a moment.'); return; }
   openDialog('THANKS FOR STOPPING BY', 'you & your little buddy.', '<p class="dialog-lead">a postcard from 8 bit missoula. a little something to take home.</p><div class="dialog-actions"><button class="secondary" data-pose="hello">hello</button><button class="secondary" data-pose="pizza">pizza break</button><button class="secondary" data-pose="view">mountain view</button></div><div class="postcard-preview"></div><button class="primary" data-ui="download">save your postcard ↓</button>');
   const postcard = world.postcard(postcardPose); postcard.setAttribute('role', 'img'); postcard.setAttribute('aria-label', 'Taylor and your pet on the rooftop, with the mountains behind them'); root.querySelector('.postcard-preview').append(postcard);
 }

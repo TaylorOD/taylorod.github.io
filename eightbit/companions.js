@@ -4,7 +4,7 @@ import { lilgotchiPalette, lilgotchiSprites } from '../assets/lilgotchi/3.0.7/pe
 import { cyberpunkPalette, cyberpunkSprites } from '../assets/lilgotchi/3.0.7/pets/cyberpunk-sprites.js';
 
 const companions = {
-  original: [[null,'#283a35','#ece4c5'], originalSprites.mametchi],
+  original: [[null,'#ece4c5','#283a35'], originalSprites.mametchi],
   slice: [slicePalette, sliceSprites.ginjirotchi],
   lilgotchi: [lilgotchiPalette, lilgotchiSprites.mametchi],
   cypunk: [cyberpunkPalette, cyberpunkSprites.mametchi],
