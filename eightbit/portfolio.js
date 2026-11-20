@@ -200,7 +200,8 @@ function handleAction(action) {
   if (action.startsWith('project:')) { openProject(action.slice(8)); return; }
   const actions = {
     directory, pets: choosePet, passport, about, work, contact, pizza, delivery, photo, help,
-    coins: () => openDialog('THE COIN COUNTER', 'a few quarters?', '<p class="dialog-lead">change for the machines, a place to leave a note, and the occasional pizza pickup for a neighbor.</p><div class="dialog-actions"><button class="primary" data-ui="pizza">ask about the delivery</button><button class="secondary" data-ui="contact">leave a note</button></div>'),
+    coins: () => openDialog('COINS & BEER', 'a pint and a few quarters?', '<p class="dialog-lead">beer on tap, change for the machines, and the occasional pizza pickup for a neighbor.</p><div class="dialog-actions"><button class="primary" data-ui="beer">grab a beer</button><button class="secondary" data-ui="pizza">ask about the delivery</button><button class="secondary" data-ui="contact">leave a note</button></div>'),
+    beer: () => { closeDialog(); toast('one cold pint. enjoy the arcade.'); },
     chef: () => career('chef'), levels: () => career('levels'), recruiting: () => career('recruiting'),
     enter: () => { dismissWelcome(); toast('four friends are hiding. tap the found counter for hints.'); canvas.focus(); },
     dismiss: () => { dismissWelcome(); canvas.focus(); },
