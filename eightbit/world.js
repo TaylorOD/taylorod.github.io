@@ -1,3 +1,4 @@
+import { drawInterior } from './interior-view.js';
 import { daylight, paintSky, outdoorLight, mountainLight } from './daylight.js';
 import { scoutActors } from './scout.js';
 import { animateArcade } from './arcade-art.js';
@@ -190,17 +191,13 @@ export class World {
     const skyLabel = `${this.id}:${light.label}`;
     if (skyLabel !== this.skyLabel) { this.skyLabel = skyLabel; this.onDaylight?.(this.id, light.label); }
     this.canvas.dataset.daylight = light.label;
-    if (!this.cache.has(this.id)) {
-      const background = document.createElement('canvas'); background.width = this.scene.width; background.height = this.scene.height;
-      paintScene(background.getContext('2d'), this.id, projects, true); this.cache.set(this.id, background);
-    }
     box(ctx, 0, 0, this.canvas.width, this.canvas.height, '#182b32');
     ctx.save(); ctx.translate(-Math.round(this.camera.x), -Math.round(this.camera.y));
-    if (outdoors) paintSky(ctx, this.scene.width, this.scene.height, light);
-    ctx.drawImage(this.cache.get(this.id), 0, 0);
-    if (outdoors) mountainLight(ctx, this.scene.width, light);
-    ambience(ctx, this.id, time, this.reduced.matches || this.paused);
-    if (this.id === 'arcade') animateArcade(ctx, time, this.reduced.matches || this.paused, this.nearby?.id);
+    drawInterior(ctx, this.id);
+    if (this.id === 'arcade') {
+      box(ctx, 189, 372, 36, 7, '#d5a16b'); text(ctx, 'PIZZA', 207, 368, 6, '#f5dfb0');
+      box(ctx, 548, 365, 26, 17, '#697d70'); box(ctx, 551, 367, 20, 11, '#1d3739');
+    }
     if (this.target && this.path.length) { const { x, y } = this.target; box(ctx, x - 7, y - 1, 14, 2, '#e7cf9a'); box(ctx, x - 1, y - 7, 2, 14, '#e7cf9a'); }
     const greeting = time - this.enteredAt < 2200;
     const curious = !this.walking && ['pizza', 'snowcrust', 'lilgotchi', 'relay'].includes(this.nearby?.id);
@@ -217,9 +214,9 @@ export class World {
       { y: this.player.y, draw: () => person(ctx, this.player.x, this.player.y, this.direction, this.walking && !this.reduced.matches, time, this.progress.pizza === 'carrying', 1) },
       ...this.residents.filter(resident => resident.room === this.id && !resident.hidden && !resident.home).map(resident => ({ y: resident.y + (resident.seated ? 16 : 0), draw: () => drawResident(ctx, resident, time, this.reduced.matches) })),
     ];
-    for (const [x, y, w, h, depth] of foreground[this.id] || []) if ([this.player, this.companion, ...this.residents.filter(r => r.room === this.id && !r.seated)].some(actor => actor.x > x - 14 && actor.x < x + w + 14 && actor.y < depth && actor.y > y)) actors.push({ y: depth, draw: () => ctx.drawImage(this.cache.get(this.id), x, y, w, h, x, y, w, h) });
+
     actors.sort((a, b) => a.y - b.y).forEach(actor => actor.draw());
-    if (outdoors) outdoorLight(ctx, this.id, this.scene.width, this.scene.height, light);
+    if (outdoors) { ctx.save(); ctx.globalAlpha = light.night; box(ctx,0,0,768,512,'#07162f'); ctx.restore(); }
     for (const point of this.scene.points) {
       const near = point.id === this.nearby?.id;
       if (point.id !== 'arcade' && (near || point.id === this.hovered?.id)) {
@@ -234,7 +231,7 @@ export class World {
 
   postcard(pose = 'hello') {
     const image = document.createElement('canvas'); image.width = 960; image.height = 640;
-    const ctx = image.getContext('2d'); paintScene(ctx, 'rooftop', projects);
+    const ctx = image.getContext('2d'); drawInterior(ctx, 'rooftop');
     box(ctx, 768, 0, 192, 640, '#f0dfba'); box(ctx, 0, 594, 768, 46, '#f0dfba');
     person(ctx, 364, 440, pose === 'view' ? 'up' : 'down', pose === 'dance', 120, pose === 'pizza'); pet(ctx, 410, 440, this.progress.pet, 0, false, 1.4, pose === 'view' ? 'up' : 'down', true);
     box(ctx, 150, 544, 468, 40, '#3e6057');

@@ -14,7 +14,7 @@ const looks = [
 ];
 const destinations = [{ x: 424, y: 576 }, { x: 1304, y: 576, door: 'arcade' }, { x: 1200, y: 656 }, { x: 896, y: 800 }, { x: 584, y: 656, activity: 'sit' }, { x: 640, y: 656, activity: 'talk' }, { x: 672, y: 656, activity: 'talk' }];
 const indoorStops = {
-  arcade: [{ x: 272, y: 496 }, { x: 416, y: 672 }, { x: 752, y: 496 }],
+  arcade: [{ x: 240, y: 280 }, { x: 544, y: 320 }, { x: 528, y: 280 }],
 };
 
 export function createResidents() {
@@ -126,9 +126,8 @@ export function drawResident(ctx, resident, time, reduced) {
 
 // Regulars stay at decorative machines, leaving every project cabinet available.
 export const arcadeRegulars = [
-  [180, 339, 0], [346, 339, 4], [595, 339, 5], [761, 339, 6],
-  [128, 463, 6], [888, 603, 1], [128, 743, 3], [888, 743, 7],
-].map(([x, y, look]) => ({ x, y, look: { ...looks[look], scale: 1.25 }, direction: 'up' }));
+  [160, 290, 0], [128, 350, 4], [594, 300, 5], [690, 290, 6],
+].map(([x, y, look]) => ({ x, y, look: { ...looks[look], scale: .85 }, direction: 'up' }));
 
 export function drawArcadeRegular(ctx, resident, time, reduced) {
   drawResident(ctx, resident, time, true);
