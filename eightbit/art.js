@@ -110,14 +110,17 @@ function cobbles(ctx, x, y, w, h) {
   }
 }
 function town(ctx) {
-  sky(ctx, 1024, 768); ground(ctx, 1024, 768);
+  sky(ctx, 1024, 864); ground(ctx, 1024, 864);
   universityCampus(ctx);
-  cobbles(ctx, 0, 448, 1024, 128); cobbles(ctx, 448, 416, 128, 320);
+  cobbles(ctx, 0, 448, 1024, 128); cobbles(ctx, 448, 416, 128, 416);
+  // Continuous paths on both banks meet the bridge at either end.
+  cobbles(ctx, 0, 560, 1024, 40); cobbles(ctx, 0, 680, 1024, 48);
+  box(ctx, 0, 558, 1024, 2, '#c1b38e'); box(ctx, 0, 728, 1024, 3, '#c1b38e');
   box(ctx, 0, 604, 1024, 8, '#3e6154'); box(ctx, 0, 612, 1024, 56, '#315d65'); box(ctx, 0, 668, 1024, 5, '#779075');
   for (let x = 0; x < 1024; x += 14) { box(ctx, x, 603 + x % 5, 9, 3, '#809275'); box(ctx, x + 4, 667, 8, 3, '#93a080'); }
   for (let y = 598; y < 685; y += 9) { box(ctx, 444, y, 136, 8, '#a88f6b'); box(ctx, 449, y + 1, 126, 1, '#c1a77b'); }
   for (const x of [442, 576]) { box(ctx, x, 586, 5, 95, '#514e40'); box(ctx, x - 2, 600, 9, 5, '#d5b684'); }
-  for (const [x, y, s] of [[20, 259, 1.2], [88, 270, .9], [250, 282, 1.2], [742, 256, 1], [1001, 268, 1.3], [984, 506, 1.4], [20, 754, 1.5], [134, 752, 1], [816, 752, 1.1], [986, 756, 1.5]]) tree(ctx, x, y, s);
+  for (const [x, y, s] of [[20, 259, 1.2], [88, 270, .9], [250, 282, 1.2], [742, 256, 1], [1001, 268, 1.3], [984, 506, 1.4], [20, 850, 1.5], [134, 848, 1], [816, 848, 1.1], [986, 852, 1.5]]) tree(ctx, x, y, s);
   wilma(ctx);
   arcadeStorefront(ctx);
   // A quiet uphill path separates the cabin from the public street.
@@ -130,9 +133,9 @@ function town(ctx) {
   bench(ctx, 256, 520); tree(ctx, 290, 494, .7, true);
   bench(ctx, 800, 517); lamp(ctx, 288, 448); lamp(ctx, 738, 456); lamp(ctx, 398, 579); lamp(ctx, 620, 579);
   box(ctx, 728, 521, 9, 28, '#604f42'); border(ctx, 716, 501, 34, 25, '#b27b65', '#3e5148', 3); box(ctx, 722, 509, 22, 3, '#2c4541'); text(ctx, 'POST', 733, 519, 7);
-  for (let i = 0; i < 42; i++) { const x = 50 + i * 67 % 922, y = 582 + i * 17 % 19; box(ctx, x, y, 2, 5, '#799365'); box(ctx, x - 1, y - 2, 4, 3, i % 3 ? '#c4b47e' : '#dca38b'); }
-  cobbles(ctx, 334, 692, 114, 32);
-  border(ctx, 452, 717, 120, 20, '#294944', '#849373', 2); text(ctx, 'MISSOULA · MT', 512, 728, 9, '#bcccaa');
+  for (let i = 0; i < 42; i++) { const x = 50 + i * 67 % 922, y = 597 + i % 3; box(ctx, x, y, 2, 5, '#799365'); box(ctx, x - 1, y - 2, 4, 3, i % 3 ? '#c4b47e' : '#dca38b'); }
+  cobbles(ctx, 368, 728, 80, 96);
+  border(ctx, 452, 813, 120, 20, '#294944', '#849373', 2); text(ctx, 'MISSOULA · MT', 512, 824, 9, '#bcccaa');
 }
 export function screen(ctx, kind, x, y, w, h, time = 0, active = false) {
   box(ctx, x, y, w, h, '#182e38');
