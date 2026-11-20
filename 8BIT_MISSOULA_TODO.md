@@ -78,3 +78,11 @@ The coin counter is now an L shaped coins and beer bar at the front. The poker t
 Arcade people now share a larger indoor scale so the player, visitors and regulars fit the cabinets, pinball controls and poker seating. Walking clearance is wider, pinball poses and the poker crop were adjusted, and visitor destinations follow the current furniture layout.
 
 Corrected the bar orientation to run up from the entrance and turn left. Lowered and widened the poker table, pushed the three pinballs against the left wall, and moved the regulars and walking areas to match.
+
+## arcade games and bar
+
+[x] Move the poker table up and widen it without taller legs.
+[x] Remove the bar lettering and add an animated bartender.
+[x] Give the pinballs mountain, space and racing artwork.
+[x] Add cabinet players and rotate visitors among open games.
+[x] Check desktop and phone views, navigation and resident activity.
