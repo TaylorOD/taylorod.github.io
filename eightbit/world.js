@@ -1,4 +1,4 @@
-import { daylight, paintSky, outdoorLight, riverReflection } from './daylight.js';
+import { daylight, paintSky, outdoorLight, riverReflection, groundShadows, mountainLight } from './daylight.js';
 import { trailActors, trailVisitors } from './trail-visitors.js';
 import { drawCarousel } from './carousel.js';
 import { drawWildlife } from './wildlife.js';
@@ -202,6 +202,13 @@ export class World {
     ctx.save(); ctx.translate(-Math.round(this.camera.x), -Math.round(this.camera.y));
     if (outdoors) paintSky(ctx, this.scene.width, this.scene.height, light);
     ctx.drawImage(this.cache.get(this.id), 0, 0);
+    if (outdoors) mountainLight(ctx, this.scene.width, light);
+    if (this.id === 'town') {
+      const shadows = [this.player, { ...this.companion, height: 22, width: 18 },
+        ...this.residents.filter(r=>r.room==='town' && !r.hidden && !r.home && !r.seated),
+        ...trailVisitors(this.lifeTime,this.reduced.matches)];
+      groundShadows(ctx,light,shadows,riverTrees);
+    }
     ambience(ctx, this.id, time, this.reduced.matches || this.paused);
     if (this.id === 'town') {
       drawWildlife(ctx, this.lifeTime, this.reduced.matches);
