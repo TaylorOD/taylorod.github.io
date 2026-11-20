@@ -28,8 +28,10 @@ test('neighbors rest, chat, go home through the Wilma and return after dawn', ()
     updateResidents(residents, scenes.town, 1 / 60, { x: -100, y: -100 }, 'town', time);
     for (const resident of residents) {
       if (resident.resting) activities.add(resident.resting);
+      if (resident.look.chair) assert.notEqual(resident.resting, 'sit');
       if (resident.home) { assert.equal(resident.x, 64); assert.equal(resident.y, 464); }
     }
+    assert.ok(residents.filter(r=>r.resting==='sit').length <= 1);
     if (tick === 13000) assert.ok(residents.filter(r => r.home).length >= 5);
     if (tick === 17000) assert.equal(residents.filter(r => r.home).length, 0);
   }
