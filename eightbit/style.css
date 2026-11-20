@@ -235,7 +235,6 @@
 #eightbit .demo-pizza.stage-4 { border-radius: 0; border: 6px solid #b97943; color: #4b4637; }
 @media (max-width: 650px) { #eightbit .project-demo { grid-template-columns: 1fr; padding: 16px; } #eightbit .demo-pet { margin: auto; } #eightbit .project-screenshot { aspect-ratio: 1.6; } }
 
-#eightbit .legacy-computer { display: block; width: 100%; height: min(540px, 60dvh); border: 12px solid #333f3a; border-radius: 12px; background: #fff; margin: 20px 0; }
 
 #eightbit .quest-exchange { display: flex; justify-content: center; gap: 36px; align-items: center; padding: 24px; background: #142d32; color: #edc389; font-size: 38px; margin-bottom: 24px; }
 #eightbit .passport canvas { width: 64px; height: 48px; image-rendering: pixelated; border: 2px solid currentColor; padding: 4px; transform: rotate(-5deg); }

@@ -29,7 +29,6 @@ export const scenes = {
       point('hidden-cypunk','look beside the pinball',184,320,'find:cypunk',{hit:[172,295,24,32]}),
       point('poker','poker seater',544,320,'project:poker',{hit:[560,256,180,104]}),
       point('pizza','pizza delivery',208,376,'pizza',{hit:[187,365,38,28]}),
-      point('computer','boot the old computer',560,384,'legacy',{hit:[546,365,32,24]}),
       point('photo','take a photo',480,376,'photo'),
       point('exit','back to main street',384,384,'room:town',{hit:[310,362,138,140]}),
     ],
