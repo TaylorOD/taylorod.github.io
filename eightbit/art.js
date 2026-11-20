@@ -258,9 +258,6 @@ export function person(ctx, x, y, direction = 'down', walking = false, time = 0,
   } else {
     box(ctx, -9, -29, 19, 6, '#b8d8e9'); box(ctx, -6, -24, 13, 3, '#7caace');
   }
-  // Close cropped hair follows the head, without a cap or brim.
-  polygon(ctx,[[-8,-40],[-8,-44],[-4,-47],[5,-47],[9,-43],[9,-40],[5,-43],[-4,-43]],'#684c3b');
-  if (direction === 'up') box(ctx,-7,-43,15,9,'#684c3b');
   if (carrying && direction !== 'up') {
     const px = direction === 'left' ? -29 : direction === 'down' ? -10 : 7;
     border(ctx, px, -24, 22, 10, '#e2bd85', '#80664a', 2); text(ctx, 'P', px + 11, -19, 7, '#9b5f4b');
