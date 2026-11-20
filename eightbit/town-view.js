@@ -1,3 +1,4 @@
+import { woodlandTrees, woodlandForeground } from './woodland.js';
 import { hiddenFriends } from './hunt-art.js';
 import { drawRiverLife } from './river-life.js';
 import { box, polygon, person, pet, text, glow } from './art.js';
@@ -72,13 +73,17 @@ export function drawTown(world,time) {
   box(ctx,704,439,94,15,'#244a42');text(ctx,'BASAL',751,447,13,'#efd197');
   box(ctx,1007,430,136,18,'#244a42');text(ctx,'SBG MISSOULA',1075,439,11,'#efd197');
   const elk=elkMoment(reduced?0:moment), bounce=elk.running?Math.sin(moment/80)*3:0;
-  grazer(ctx,1260-elk.offset,374+bounce,.65,true,elk.running?-1:1,reduced?0:moment,0);
-  grazer(ctx,1304-elk.offset,362-bounce,.48,true,-1,reduced?0:moment,2);
+
   drawRiverLife(ctx,moment,reduced);carousel(ctx,moment,reduced);
 
   box(ctx,1413,479,3,75,'#8b947f');box(ctx,1425,479,3,75,'#8b947f');
   for(let y=486;y<554;y+=10) box(ctx,1413,y,15,2,'#b2b79a');
   const actors=trailActors(ctx,moment,reduced,townLayout);
+  actors.push(
+    {y:374+bounce,draw:()=>grazer(ctx,1260-elk.offset,374+bounce,.65,true,elk.running?-1:1,reduced?0:moment,0)},
+    {y:362-bounce,draw:()=>grazer(ctx,1304-elk.offset,362-bounce,.48,true,-1,reduced?0:moment,2)},
+    ...woodlandTrees.map(tree=>({y:tree.y,draw:()=>woodlandForeground(ctx,painting,tree)})),
+  );
   actors.push(...hiddenFriends(ctx,'town',progress,reduced?0:moment));
   for(let i=0;i<2;i++) {
     const travel=((reduced?6000:moment)/1000*(i?48:58)+i*730)%1664;
