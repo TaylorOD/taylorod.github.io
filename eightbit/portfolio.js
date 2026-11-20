@@ -1,5 +1,5 @@
 import { createDemo, advanceDemo, renderDemo } from './demos.js';
-import { canEnter, mapPosition } from './navigation.js';
+import { canEnter } from './navigation.js';
 import { World } from './world.js';
 import { projects, pets, jobs, careerStories, loadProgress, saveProgress } from './content.js';
 import { scenes } from './scenes.js';
@@ -13,9 +13,9 @@ normalURL.searchParams.delete('mode'); normalURL.hash = '';
 const root = document.createElement('div'); root.id = 'eightbit';
 root.innerHTML = `
   <a class="skip-link" href="#directory">skip to the projects</a>
-  <header class="game-header"><a class="brand" href="?mode=8bit" aria-label="Last best arcade home"><span class="brand-icon">✦</span><span>LAST BEST<small>TAYLOR DORSETT'S LITTLE CORNER OF THE INTERNET</small></span></a><nav aria-label="Quick navigation"><button data-ui="directory">projects <span>08</span></button><button data-ui="map">map <kbd>M</kbd></button><button data-ui="about">about</button><button data-ui="contact">contact</button><button data-ui="sound" aria-pressed="false">sound off</button><a class="normal-site">normal site ↗</a></nav></header>
+  <header class="game-header"><a class="brand" href="?mode=8bit" aria-label="Last best arcade home"><span class="brand-icon">✦</span><span>LAST BEST<small>TAYLOR DORSETT'S LITTLE CORNER OF THE INTERNET</small></span></a><nav aria-label="Quick navigation"><button data-ui="directory">projects <span>08</span></button><button data-ui="about">about</button><button data-ui="contact">contact</button><button data-ui="sound" aria-pressed="false">sound off</button><a class="normal-site">normal site ↗</a></nav></header>
   <main class="game-stage" aria-label="Last best arcade">
-    <canvas class="world-canvas" tabindex="0" aria-label="Explore the town. Arrow keys or WASD to walk. E or Enter to interact. Click a place to walk there, or use the map and projects menu."></canvas>
+    <canvas class="world-canvas" tabindex="0" aria-label="Explore the town. Arrow keys or WASD to walk. E or Enter to interact. Click a place to walk there, or use the projects menu."></canvas>
     <div class="scene-shade" aria-hidden="true"></div>
     <div class="place-label"><span class="place-dot"></span><div><h1 class="place-name">main street</h1><p class="place-subtitle">missoula, montana · just before sunset</p></div></div>
     <div class="inventory-bar"><button data-ui="pets" class="companion-button" aria-label="Choose a pet companion"><canvas width="30" height="32" aria-hidden="true"></canvas><span class="pet-name">slice</span></button><button data-ui="passport" class="stamp-count">0 / 8 stamps</button></div>
@@ -24,7 +24,6 @@ root.innerHTML = `
     <div class="quest-note" hidden><span>◈</span> pizza delivery <small>take it to the town bench</small></div>
     <button class="interact" disabled><kbd>E</kbd><span>walk up to something</span><b>↗</b></button>
     <div class="dpad" aria-label="Movement controls"><button data-direction="arrowup" aria-label="Walk up">↑</button><button data-direction="arrowleft" aria-label="Walk left">←</button><button data-direction="arrowdown" aria-label="Walk down">↓</button><button data-direction="arrowright" aria-label="Walk right">→</button></div>
-    <button class="mini-map" data-ui="map" aria-label="Open the town map"><svg viewBox="0 0 140 96" aria-hidden="true"><rect width="140" height="96" fill="#42645b"/><path d="M0 54H140M82 54V75" stroke="#b9aa84" stroke-width="10"/><path d="M0 69H140" stroke="#76a3a1" stroke-width="7"/><rect x="48" y="29" width="82" height="23" fill="#c99b79"/><rect x="123" y="12" width="12" height="12" fill="#b9bb8b"/><circle class="map-player" cx="70" cy="60" r="4" fill="#f4d094"/></svg><span>TOWN MAP <kbd>M</kbd></span></button>
   </main>
   <footer class="game-footer"><span class="footer-location">a little visit to missoula.</span><span class="desktop-help"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> move <i>·</i> <kbd>E</kbd> explore <i>·</i> click anywhere to walk</span><button data-ui="help">how to play <span>?</span></button></footer>
   <dialog class="game-dialog" aria-labelledby="dialog-title"><div class="dialog-top"><span class="dialog-tag"></span><button class="close-dialog" aria-label="Close dialog">✕</button></div><div class="dialog-content"></div></dialog>`;
@@ -120,10 +119,6 @@ function directory() {
   openDialog('THE ARCADE / PICK A MACHINE', 'things i’ve built.', `<p class="dialog-lead">some games, some tools, a few experiments. you can open any of them right here.</p><div class="project-directory">${projects.map((project, i) => `<button data-project="${project.id}" style="--project-color:${project.color}"><span class="directory-number">${String(i + 1).padStart(2, '0')}</span><span><strong>${project.name}</strong><small>${project.category}</small></span><span>${progress.stamps.includes(project.id) ? '✦' : '↗'}</span></button>`).join('')}</div><button class="secondary" data-room="arcade">walk around the arcade →</button>`);
 }
 
-function map() {
-  openDialog('A VERY SMALL TOWN', 'where to?', `<p class="dialog-lead">take a shortcut. there’s no wrong way to explore.</p><div class="map-choices">${[['town','01','main street','the river, the mountains and a little fresh air.'],['arcade','02','last best arcade','eight projects. find your next side quest.'],['cabin','03','home base','a bit about me. meet your companion.']].map(([id,n,title,copy]) => `<button data-room="${id}"><span>${n}</span><strong>${title}</strong><small>${copy}</small><b>${world.id === id ? 'YOU ARE HERE' : 'GO HERE ↗'}</b></button>`).join('')}</div>${progress.pizza === 'delivered' ? '<button class="secondary" data-room="rooftop">the rooftop is open ↑</button>' : '<p class="small-note">there might be a rooftop. ask about the pizza.</p>'}<div class="dialog-actions"><button class="secondary" data-ui="about">about taylor</button><button class="secondary" data-ui="work">work history</button><button class="secondary" data-ui="contact">say hello</button></div>`);
-}
-
 function choosePet() {
   openDialog('LILGOTCHI / A LITTLE COMPANY', 'pick your walking buddy.', `<p class="dialog-lead">they’ll follow you around and remember you next time. lilgotchi, slice and cypunk. your little crew.</p><div class="pet-choices">${pets.map(item => `<button data-pet="${item.id}" aria-pressed="${progress.pet === item.id}"><canvas width="100" height="90" data-pet-art="${item.id}" aria-hidden="true"></canvas><strong>${item.name}</strong><small>${item.description}</small><span>${progress.pet === item.id ? 'YOUR COMPANION ♥' : 'COME WITH ME →'}</span></button>`).join('')}</div><a class="text-link" href="/lilgotchi/">meet the full lilgotchi project ↗</a>`);
   root.querySelectorAll('[data-pet-art]').forEach(element => { const ctx = element.getContext('2d'); ctx.imageSmoothingEnabled = false; pet(ctx, 50, 72, element.dataset.petArt, 0, false, 2.3); });
@@ -182,7 +177,7 @@ function photo() {
 }
 
 function help() {
-  openDialog('MAKE YOURSELF AT HOME', 'a quick tour.', `<div class="help-list"><p><kbd>W A S D</kbd> or <kbd>↑ ← ↓ →</kbd> to walk. click the world first to use the keyboard.</p><p><kbd>E</kbd> or <kbd>Enter</kbd> to interact with something nearby.</p><p>click or tap a building or machine to walk over and open it. tap the ground to go somewhere.</p><p>on a phone, use the direction buttons and the explore button.</p><p><kbd>M</kbd> opens the map. projects, about and contact are also available without walking.</p><p>sound is optional. your browser’s reduced motion setting is respected.</p></div><button class="primary" data-ui="close">got it. let’s explore →</button>`);
+  openDialog('MAKE YOURSELF AT HOME', 'a quick tour.', `<div class="help-list"><p><kbd>W A S D</kbd> or <kbd>↑ ← ↓ →</kbd> to walk. click the world first to use the keyboard.</p><p><kbd>E</kbd> or <kbd>Enter</kbd> to interact with something nearby.</p><p>click or tap a building or machine to walk over and open it. tap the ground to go somewhere.</p><p>on a phone, use the direction buttons and the explore button.</p><p>projects, about and contact are also available without walking.</p><p>sound is optional. your browser’s reduced motion setting is respected.</p></div><button class="primary" data-ui="close">got it. let’s explore →</button>`);
 }
 
 function handleAction(action) {
@@ -190,7 +185,7 @@ function handleAction(action) {
   if (action.startsWith('room:')) { changeRoom(action.slice(5)); return; }
   if (action.startsWith('project:')) { openProject(action.slice(8)); return; }
   const actions = {
-    directory, map, pets: choosePet, passport: () => { passport(); paintStamps(); }, about, work, contact, pizza, delivery, photo, help,
+    directory, pets: choosePet, passport: () => { passport(); paintStamps(); }, about, work, contact, pizza, delivery, photo, help,
     chef: () => career('chef'), levels: () => career('levels'), recruiting: () => career('recruiting'),
     enter: () => { dismissWelcome(); world.goTo('arcade'); canvas.focus(); },
     dismiss: () => { dismissWelcome(); canvas.focus(); },
@@ -216,7 +211,7 @@ function handleAction(action) {
 
 world = new World(canvas, {
   progress, onAction: handleAction,
-  onPosition: (id, player) => { sound.position(id, player); const point = mapPosition(id, player), dot = root.querySelector('.map-player'); dot.setAttribute('cx', point.x); dot.setAttribute('cy', point.y); root.querySelector('.mini-map').setAttribute('aria-label', `Open the town map. You are in ${scenes[id].name}.`); },
+  onPosition: (id, player) => sound.position(id, player),
   onDaylight: (id, label) => { if (id === 'town' || id === 'rooftop') root.querySelector('.place-subtitle').textContent = `missoula, montana · ${label}`; },
   onRoom: (id, scene) => { sound.setRoom(id); root.dataset.room = id; root.querySelector('.place-name').textContent = scene.name; root.querySelector('.place-subtitle').textContent = scene.subtitle; root.querySelector('.footer-location').textContent = id === 'town' ? 'a little visit to missoula.' : 'take your time. look around.'; root.querySelector('.interact').disabled = true; },
   onNearby: point => { const button = root.querySelector('.interact'); button.disabled = !point; button.querySelector('span').textContent = point?.label || 'walk up to something'; },
@@ -237,7 +232,6 @@ root.querySelector('.close-dialog').addEventListener('click', () => closeDialog(
 dialog.addEventListener('cancel', event => { event.preventDefault(); closeDialog(); });
 dialog.addEventListener('click', event => { if (event.target === dialog) { const bounds = dialog.getBoundingClientRect(); if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) closeDialog(); } });
 root.querySelector('.skip-link').addEventListener('click', event => { event.preventDefault(); directory(); });
-document.addEventListener('keydown', event => { if (!dialog.open && event.key.toLowerCase() === 'm' && !event.ctrlKey && !event.metaKey && !event.altKey) { event.preventDefault(); map(); } });
 root.querySelectorAll('[data-direction]').forEach(button => {
   button.addEventListener('contextmenu', event => event.preventDefault());
   button.addEventListener('selectstart', event => event.preventDefault());

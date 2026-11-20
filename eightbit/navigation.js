@@ -28,8 +28,3 @@ export function nearbyPath(scene, from, target) {
   }
   return [];
 }
-
-export function mapPosition(id, player) {
-  if (id === 'town') return { x: player.x / 1536 * 140, y: player.y / 1024 * 96 };
-  return { arcade: { x: 119, y: 54 }, cabin: { x: 129, y: 25 }, rooftop: { x: 130, y: 47 } }[id];
-}
