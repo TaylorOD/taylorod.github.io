@@ -1,5 +1,5 @@
 import { hiddenFriends } from './hunt-art.js';
-import { drawInterior } from './interior-view.js';
+import { drawInterior, roofSky } from './interior-view.js';
 import { daylight, paintSky, outdoorLight, mountainLight } from './daylight.js';
 import { scoutActors } from './scout.js';
 import { animateArcade } from './arcade-art.js';
@@ -195,6 +195,7 @@ export class World {
     box(ctx, 0, 0, this.canvas.width, this.canvas.height, '#182b32');
     ctx.save(); ctx.translate(-Math.round(this.camera.x), -Math.round(this.camera.y));
     drawInterior(ctx, this.id);
+    if (outdoors) roofSky(ctx, light);
     if (this.id === 'arcade') {
       box(ctx, 189, 372, 36, 7, '#d5a16b'); text(ctx, 'PIZZA', 207, 368, 6, '#f5dfb0');
       box(ctx, 548, 365, 26, 17, '#697d70'); box(ctx, 551, 367, 20, 11, '#1d3739');
