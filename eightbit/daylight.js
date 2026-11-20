@@ -70,6 +70,10 @@ export function outdoorLight(ctx, room, width, height, light) {
     polygon(ctx,[[x-3,y-68],[x+9,y-68],[x+32,y+2],[x-26,y+2]],'#f4be79'); ctx.restore();
   }
   for(const x of [395,625]) { glow(ctx,x,285,'#f3c28e',34,.06); box(ctx,x-5,266,11,2,'#ffe0a8'); }
+  ctx.save(); ctx.globalAlpha *= .15;
+  polygon(ctx,[[495,432],[529,432],[555,493],[469,493]],'#f4c488');
+  for(const [x,w] of [[341,137],[546,121]]) polygon(ctx,[[x,432],[x+w,432],[x+w+12,464],[x-12,464]],'#dfb87c');
+  ctx.restore();
   text(ctx,'LAST LIGHT ARCADE',512,285,18,'#f0dcb0');
   // The cabin windows stay warm while the surrounding hill settles into night.
   glow(ctx,875,221,'#f1b46e',48,.07);
@@ -87,6 +91,33 @@ export function riverReflection(ctx, light, time) {
     const width=18+i*7, x=center-width/2+Math.sin(time/1800+i)*5;
     if (x < 580 && x+width > 440) continue;
     box(ctx,x,616+i*5,width,2,light.stars>.5?'#bcced6':'#f2c29b');
+  }
+  ctx.restore();
+}
+
+
+export function groundShadows(ctx, light, people, trees = []) {
+  if (light.night >= .3) return;
+  const length = 18 + light.warmth * 240;
+  const direction = light.sun.x > .5 ? -1 : 1;
+  ctx.save(); ctx.globalAlpha = .16 * (1-light.night/.3);
+  ctx.beginPath(); ctx.rect(0,432,1024,168); ctx.rect(0,680,1024,184); ctx.clip();
+  for (const [x,y,height,width] of [
+    ...people.map(p=>[p.x,p.y,p.height || 42,p.width || 14]),
+    ...trees.map(([x,y,size])=>[x,y,80*size,22*size]),
+    ...[[288,448],[738,456],[398,579],[620,579]].map(([x,y])=>[x,y,90,5]),
+  ]) {
+    const reach=length*height/48;
+    polygon(ctx,[[x-width/2,y],[x+width/2,y],[x+direction*reach+width*.3,y+reach*.32],[x+direction*reach-width*.3,y+reach*.32]],'#182d40');
+  }
+  ctx.restore();
+}
+
+export function mountainLight(ctx, width, light) {
+  ctx.save(); ctx.globalAlpha = light.warmth * 2;
+  for(const [fraction,h] of [[0,80],[.2,110],[.46,89],[.7,123],[1,104]]) {
+    const x=width*fraction,y=180-h;
+    polygon(ctx,[[x-35,y+29],[x,y],[x+34,y+40],[x+12,y+30],[x-2,y+43],[x-13,y+29]],'#f6b48b');
   }
   ctx.restore();
 }
