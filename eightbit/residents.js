@@ -1,5 +1,5 @@
 import { findSmoothPath as findPath, scenes } from './scenes.js';
-import { box } from './art.js';
+import { box, polygon } from './art.js';
 
 // Fictional neighbors with different ages, builds, clothing and mobility.
 const looks = [
@@ -105,15 +105,25 @@ export function drawResident(ctx, resident, time, reduced) {
   const w = look.width, seated = look.chair || resident.seated || resident.resting === 'sit';
   box(ctx, -w / 2 - 2, 0, w + 4, 4, '#17292f55');
   box(ctx, -8, -14, 6, 14 - stride, '#324354'); box(ctx, 3, -14, 6, 14 + stride, '#324354');
+  box(ctx,-8,-13,2,10-stride,'#465966');box(ctx,3,-13,2,10+stride,'#465966');
   box(ctx, -10, -2 - stride, 10, 4, '#1f2632'); box(ctx, 2, -2 + stride, 10, 4, '#1f2632');
-  box(ctx, -w / 2, -29, w, 19, look.shirt);
-  box(ctx, -w / 2 - 3, -27 + stride, 4, 15, look.skin); box(ctx, w / 2, -27 - stride, 4, 15, look.skin);
-  box(ctx, -8, -42, 16, 15, look.skin); box(ctx, -9, -46, 18, 7, look.hair);
+  polygon(ctx,[[-w/2,-25],[-w/2+3,-30],[w/2-3,-30],[w/2,-25],[w/2,-11],[-w/2,-11]],look.shirt);
+  ctx.save();ctx.globalAlpha=.18;
+  box(ctx,w/2-4,-25,4,14,'#152b33');box(ctx,-w/2+3,-29,w-7,2,'#fff4d8');
+  box(ctx,-3,-16,9,2,'#152b33');ctx.restore();
+  box(ctx, -w / 2 - 3, -25 + stride, 4, 13, look.skin); box(ctx, w / 2, -25 - stride, 4, 13, look.skin);
+  box(ctx,-w/2-3,-28+stride,5,8,look.shirt);box(ctx,w/2-1,-28-stride,5,8,look.shirt);
+  box(ctx,-w/2-2,-13+stride,3,2,'#e4bc93');box(ctx,w/2,-13-stride,3,2,'#e4bc93');
+  box(ctx,-3,-31,6,4,look.skin);
+  polygon(ctx,[[-8,-41],[-5,-44],[5,-44],[8,-40],[8,-33],[4,-29],[-4,-29],[-8,-33]],look.skin);
+  polygon(ctx,[[-9,-40],[-9,-44],[-5,-47],[5,-47],[9,-43],[9,-38],[6,-40],[4,-43],[-4,-42],[-6,-38]],look.hair);
+  ctx.save();ctx.globalAlpha=.2;box(ctx,5,-39,3,8,'#5a3b35');box(ctx,-5,-41,5,2,'#fff0c8');ctx.restore();
   if (look.curls) for (let i = 0; i < 4; i++) box(ctx, -11 + i * 6, -48 + i % 2 * 2, 7, 9, look.hair);
   if (look.long) { box(ctx, -10, -42, 4, 20, look.hair); box(ctx, 7, -42, 4, 20, look.hair); }
   if (look.hat) { box(ctx, -10, -48, 20, 8, '#daa34d'); box(ctx, -14, -42, 28, 3, '#daa34d'); }
   if (direction === 'up') box(ctx, -8, -40, 16, 11, look.hair);
   else { box(ctx, direction === 'right' ? 5 : -5, -35, 2, 2, '#242936'); if (direction === 'down') box(ctx, 4, -35, 2, 2, '#242936'); }
+  if (direction !== 'up') { box(ctx,-1,-31,4,1,'#a77561'); if(direction==='right')box(ctx,8,-36,2,3,look.skin); if(direction==='left')box(ctx,-10,-36,2,3,look.skin); }
   if (resident.chatting && !reduced) box(ctx, w / 2, -24 + Math.sin(time / 420) * 2, 7, 4, look.skin);
   if (look.cane) { box(ctx, w / 2 + 3, -16, 3, 20, '#b99c74'); box(ctx, w / 2, -17, 6, 3, '#b99c74'); }
   if (seated) box(ctx, -10, -12, 24, 7, '#38424d');
