@@ -14,7 +14,7 @@ const looks = [
 ];
 const destinations = [{ x: 424, y: 576 }, { x: 1304, y: 576, door: 'arcade' }, { x: 1200, y: 656 }, { x: 896, y: 800 }, { x: 584, y: 656, activity: 'sit' }, { x: 640, y: 656, activity: 'talk' }, { x: 672, y: 656, activity: 'talk' }];
 const indoorStops = {
-  arcade: [{ x: 240, y: 280 }, { x: 544, y: 320 }, { x: 528, y: 280 }],
+  arcade: ['lilgotchi', 'poker', 'reachoutt'].map(id => scenes.arcade.points.find(point => point.id === id)),
 };
 
 export function createResidents() {
@@ -97,10 +97,12 @@ export function updateResidents(residents, _scene, delta, player, playerRoom = '
   }
 }
 
-export function drawResident(ctx, resident, time, reduced) {
+export const arcadePersonScale = 1.85;
+
+export function drawResident(ctx, resident, time, reduced, roomScale = 1) {
   const { look, direction } = resident;
   const stride = resident.walking && !reduced ? Math.sin(time / 140) * 3 : 0;
-  ctx.save(); ctx.translate(Math.round(resident.x), Math.round(resident.y - (resident.resting === 'sit' ? 16 : 0))); ctx.scale(look.scale || 1, look.scale || 1);
+  ctx.save(); ctx.translate(Math.round(resident.x), Math.round(resident.y - (resident.resting === 'sit' ? 16 : 0))); ctx.scale((look.scale || 1) * roomScale, (look.scale || 1) * roomScale);
   const w = look.width, seated = resident.seated || resident.resting === 'sit';
   box(ctx, -w / 2 - 2, 0, w + 4, 4, '#17292f55');
   box(ctx, -8, -14, 6, 14 - stride, '#324354'); box(ctx, 3, -14, 6, 14 + stride, '#324354');
@@ -138,14 +140,14 @@ export function drawResident(ctx, resident, time, reduced) {
 
 // Regulars stay at decorative machines, leaving every project cabinet available.
 export const arcadeRegulars = [
-  [204, 292, 0, 'pinball'], [165, 340, 4, 'pinball'], [600, 302, 5, 'poker'],
-].map(([x, y, look, playing]) => ({ x, y, look: { ...looks[look], scale: .85 }, direction: playing === 'poker' ? 'down' : 'up', playing }));
+  [216, 316, 0, 'pinball'], [178, 336, 4, 'pinball'], [600, 318, 5, 'poker'],
+].map(([x, y, look, playing]) => ({ x, y, look: { ...looks[look], scale: arcadePersonScale }, direction: playing === 'poker' ? 'down' : 'up', playing }));
 
 export function drawArcadeRegular(ctx, resident, time, reduced) {
   ctx.save();
   // The far chair is behind the table. Only the seated upper body is visible.
   if (resident.playing === 'poker') {
-    ctx.beginPath(); ctx.rect(resident.x - 22, resident.y - 48, 44, 36); ctx.clip();
+    ctx.beginPath(); ctx.rect(resident.x - 24 * arcadePersonScale, resident.y - 50 * arcadePersonScale, 48 * arcadePersonScale, 30 * arcadePersonScale); ctx.clip();
   }
   drawResident(ctx, resident, time, true);
   ctx.restore();
