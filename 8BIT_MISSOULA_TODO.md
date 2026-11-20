@@ -76,3 +76,5 @@ SBG Missoula: https://sbgmissoula.com/
 The coin counter is now an L shaped coins and beer bar at the front. The poker table is taller and sits partly behind the staircase. Updated walking areas keep the exit and every cabinet reachable.
 
 Arcade people now share a larger indoor scale so the player, visitors and regulars fit the cabinets, pinball controls and poker seating. Walking clearance is wider, pinball poses and the poker crop were adjusted, and visitor destinations follow the current furniture layout.
+
+Corrected the bar orientation to run up from the entrance and turn left. Lowered and widened the poker table, pushed the three pinballs against the left wall, and moved the regulars and walking areas to match.
