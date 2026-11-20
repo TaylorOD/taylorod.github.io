@@ -100,7 +100,7 @@ export function updateResidents(residents, _scene, delta, player, playerRoom = '
 export function drawResident(ctx, resident, time, reduced) {
   const { look, direction } = resident;
   const stride = resident.walking && !reduced ? Math.sin(time / 140) * 3 : 0;
-  ctx.save(); ctx.translate(Math.round(resident.x), Math.round(resident.y - (resident.resting === 'sit' ? 24 : 0))); ctx.scale(look.scale || 1, look.scale || 1);
+  ctx.save(); ctx.translate(Math.round(resident.x), Math.round(resident.y - (resident.resting === 'sit' ? 16 : 0))); ctx.scale(look.scale || 1, look.scale || 1);
   const w = look.width, seated = resident.seated || resident.resting === 'sit';
   box(ctx, -w / 2 - 2, 0, w + 4, 4, '#17292f55');
   box(ctx, -8, -14, 6, 14 - stride, '#324354'); box(ctx, 3, -14, 6, 14 + stride, '#324354');

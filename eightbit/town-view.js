@@ -2,7 +2,7 @@ import { lMountain } from './l-mountain.js';
 import { woodlandTrees, woodlandForeground, behindWoodlandBuildings } from './woodland.js';
 import { hiddenFriends } from './hunt-art.js';
 import { drawRiverLife } from './river-life.js';
-import { box, polygon, person, pet, text, glow } from './art.js';
+import { box, polygon, person, pet, text } from './art.js';
 import { daylight, paintSky } from './daylight.js';
 import { drawResident } from './residents.js';
 import { trailActors, trailVisitors } from './trail-visitors.js';
@@ -32,20 +32,31 @@ function sky(ctx,light) {
     [356,68],[214,150],[74,110],[56,108],[26,90],[0,104]];
   ctx.beginPath(); skyline.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();
   ctx.clip();
-  ctx.globalAlpha=Math.max(0,Math.min(1,(light.phase-.06)/.08,(1-light.phase)/.06));
+  ctx.globalAlpha=1;
   paintSky(ctx,1536,210,light);
   ctx.globalAlpha=1; lMountain(ctx);
   ctx.restore();
 }
 
+function lampGlow(ctx,x,y,radius,strength) {
+  const opacity=ctx.globalAlpha;
+  for(let dy=-radius;dy<radius;dy+=4) for(let dx=-radius;dx<radius;dx+=4) {
+    const falloff=Math.max(0,1-Math.hypot(dx+2,dy+2)/radius);
+    if(!falloff) continue;
+    ctx.globalAlpha=opacity*strength*falloff*falloff;
+    box(ctx,x+dx,y+dy,4,4,'#ffd398');
+  }
+  ctx.globalAlpha=opacity;
+}
+
 function lighting(ctx,light) {
   ctx.save();ctx.globalAlpha=light.night;box(ctx,0,0,1536,1024,'#07162f');ctx.restore();
-  if(light.label==='daytime') { ctx.save();ctx.globalAlpha=.08;box(ctx,0,180,1536,844,'#e5f5dd');ctx.restore(); }
+
   ctx.save();ctx.globalAlpha=light.lights;
   for(const [x,y] of [[55,562],[802,561],[1441,560],[101,880],[436,840],[736,894]]) {
-    glow(ctx,x,y,'#ffd398',64,.16);box(ctx,x-5,y-7,10,12,'#ffe2a9');
+    lampGlow(ctx,x,y,40,.32);box(ctx,x-5,y-7,10,12,'#ffe2a9');
   }
-  for(const [x,y] of [[133,510],[602,487],[743,490],[900,490],[1076,489],[1305,516],[1416,218]]) glow(ctx,x,y,'#ffd19b',48,.13);
+  for(const [x,y] of [[133,510],[602,487],[743,490],[900,490],[1076,489],[1305,516],[1416,218]]) lampGlow(ctx,x,y,28,.22);
   ctx.globalAlpha=light.lights*.13;
   polygon(ctx,[[1288,554],[1319,554],[1357,599],[1251,599]],'#ffdb9d');ctx.restore();
 }
@@ -107,7 +118,7 @@ export function drawTown(world,time) {
   if(progress.pizza==='delivered') { box(ctx,543,623,24,5,'#e9ba79');text(ctx,'THANKS!',552,592,8,'#f1d8a7'); }
   if(world.target&&world.path.length) {const {x,y}=world.target;box(ctx,x-5,y,10,2,'#efdbab');box(ctx,x,y-5,2,10,'#efdbab');}
   lighting(ctx,light);
-  for(const point of world.scene.points) if(point.id===world.nearby?.id || point.id===world.hovered?.id) {
+  for(const point of world.scene.points) if(point.id===world.hovered?.id) {
     const y=point.hit?point.hit[1]-12:point.y-60, width=point.label.length*7+16;
     box(ctx,point.x-width/2,y-20,width,23,'#142d35');text(ctx,point.label,point.x,y-9,11,'#f3dfb6');
   }

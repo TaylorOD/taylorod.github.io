@@ -70,7 +70,7 @@ export class World {
   resize() {
     const bounds = this.canvas.getBoundingClientRect();
     if (!bounds.width || !bounds.height) return;
-    const scale = this.id === 'town' ? (bounds.width < 600 ? .75 : Math.max(bounds.width / 1536, bounds.height / 1024)) : bounds.width < 600 ? .9 : Math.max(1.35, Math.min(bounds.width / 960, bounds.height / 620));
+    const scale = this.id === 'town' ? (bounds.width < 600 ? .75 : Math.max(bounds.width / 1536, bounds.height / 1024)) : bounds.width < 600 ? .9 : Math.min(bounds.width / 960, bounds.height / 620);
     this.canvas.width = Math.round(bounds.width / scale);
     this.canvas.height = Math.round(bounds.height / scale);
     this.ctx.imageSmoothingEnabled = false; this.updateCamera(true);
@@ -218,11 +218,12 @@ export class World {
     actors.sort((a, b) => a.y - b.y).forEach(actor => actor.draw());
     if (outdoors) { ctx.save(); ctx.globalAlpha = light.night; box(ctx,0,0,768,512,'#07162f'); ctx.restore(); }
     for (const point of this.scene.points) {
-      const near = point.id === this.nearby?.id;
-      if (point.id !== 'arcade' && (near || point.id === this.hovered?.id)) {
-        const y = point.hit ? point.hit[1] - 13 : point.y - 95;
-        box(ctx, point.x - 10, y - 9, 20, 18, near ? '#edc389' : '#b1cead'); text(ctx, near ? 'E' : '↓', point.x, y, 11, '#293f41');
-        if (near || this.hovered?.id === point.id) { const w = point.label.length * 6 + 16; box(ctx, point.x - w / 2, y - 30, w, 18, '#152c34'); text(ctx, point.label, point.x, y - 21, 10, '#f4dfb3'); }
+      if (point.id !== 'arcade' && point.id === this.hovered?.id) {
+        const y = point.hit ? point.hit[1] - 13 : point.y - 60;
+        const x = point.hit ? point.hit[0] + point.hit[2] / 2 : point.x;
+        const w = point.label.length * 6 + 16;
+        box(ctx, x - w / 2, y - 18, w, 18, '#152c34');
+        text(ctx, point.label, x, y - 9, 10, '#f4dfb3');
       }
     }
     ctx.restore();
