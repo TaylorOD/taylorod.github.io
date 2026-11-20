@@ -178,7 +178,7 @@ export class World {
     }
     const nearest = this.scene.points.filter(point => Math.hypot(point.x - this.player.x, point.y - this.player.y) < 53).sort((a, b) => Math.hypot(a.x - this.player.x, a.y - this.player.y) - Math.hypot(b.x - this.player.x, b.y - this.player.y))[0];
     if (nearest?.id !== this.nearby?.id) { this.nearby = nearest; this.onNearby?.(nearest); }
-    this.updateCamera(false, elapsed); this.onPosition?.(this.id, this.player); this.transition = Math.max(0, this.transition - elapsed * 3); this.draw(time);
+    this.updateCamera(false, elapsed); this.onPosition?.(this.id, this.player, this.lifeTime); this.transition = Math.max(0, this.transition - elapsed * 3); this.draw(time);
     this.canvas.dataset.position = `${Math.round(this.player.x)},${Math.round(this.player.y)}`;
     this.canvas.dataset.room = this.id;
     if (!document.hidden) this.frame = requestAnimationFrame(next => this.tick(next));
