@@ -197,12 +197,7 @@ export class World {
     if (this.id === 'town') {
       drawWildlife(ctx, this.lifeTime, this.reduced.matches);
       drawRiverLife(ctx, time, this.reduced.matches || this.paused);
-      const lit = this.reduced.matches ? 16 : Math.min(16, Math.floor((time - this.enteredAt) / 70));
-      for (let i = 0; i < lit; i++) box(ctx, 354 + i * 20, 303, 4, 4, i % 2 ? '#f3b56c' : '#9bded5');
-      box(ctx, 687, 421, 11, 9, this.progress.pizza === 'delivered' ? '#a5d7a0' : '#c29c5e');
-      // Small silhouettes pass behind the arcade windows without entering the street layer.
-      const offset = this.reduced.matches ? 12 : Math.floor(time / 180) % 30;
-      for (const x of [358, 614]) { box(ctx, x + offset, 375, 7, 7, '#765b4a'); box(ctx, x + offset - 2, 382, 11, 14, '#486a65'); }
+      box(ctx, 688, 421, 9, 6, this.progress.pizza === 'delivered' ? '#a5b78c' : '#88775a');
     }
     if (this.id === 'arcade') animateArcade(ctx, time, this.reduced.matches || this.paused, this.nearby?.id);
     if (this.target && this.path.length) { const { x, y } = this.target; box(ctx, x - 7, y - 1, 14, 2, '#e7cf9a'); box(ctx, x - 1, y - 7, 2, 14, '#e7cf9a'); }
@@ -239,7 +234,7 @@ export class World {
     }
     for (const point of this.scene.points) {
       const near = point.id === this.nearby?.id;
-      if (near || point.id === this.hovered?.id || this.id === 'town' && point.id === 'arcade') {
+      if (point.id !== 'arcade' && (near || point.id === this.hovered?.id)) {
         const y = point.hit ? point.hit[1] - 13 : point.y - 95;
         box(ctx, point.x - 10, y - 9, 20, 18, near ? '#edc389' : '#b1cead'); text(ctx, near ? 'E' : '↓', point.x, y, 11, '#293f41');
         if (near || this.hovered?.id === point.id) { const w = point.label.length * 6 + 16; box(ctx, point.x - w / 2, y - 30, w, 18, '#152c34'); text(ctx, point.label, point.x, y - 21, 10, '#f4dfb3'); }
