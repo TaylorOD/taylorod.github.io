@@ -1,3 +1,4 @@
+import { hiddenFriends } from './hunt-art.js';
 import { drawInterior } from './interior-view.js';
 import { daylight, paintSky, outdoorLight, mountainLight } from './daylight.js';
 import { scoutActors } from './scout.js';
@@ -202,12 +203,14 @@ export class World {
     const greeting = time - this.enteredAt < 2200;
     const curious = !this.walking && ['pizza', 'snowcrust', 'lilgotchi', 'relay'].includes(this.nearby?.id);
     const companion = () => {
+      if(!this.progress.adopted) return;
       const hop = greeting && !this.reduced.matches ? Math.max(0, Math.sin((time - this.enteredAt) / 150)) * 5 : 0;
       const direction = curious ? this.nearby.x > this.companion.x ? 'right' : 'left' : this.companion.direction;
       pet(ctx, this.companion.x, this.companion.y - hop, this.progress.pet, this.reduced.matches ? 0 : time, !greeting && !curious && time - this.lastMove > 12000, 1, direction, greeting);
       if (greeting || curious) text(ctx, greeting ? '♥' : this.nearby.id === 'snowcrust' || this.nearby.id === 'pizza' ? 'PIZZA?' : '?', this.companion.x, this.companion.y - 44, 8, '#edc389');
     };
     const actors = [
+      ...hiddenFriends(ctx,this.id,this.progress,this.reduced.matches?0:time),
       ...scoutActors(ctx, this.id, this.lifeTime, this.reduced.matches),
       ...(this.id === 'arcade' ? arcadeRegulars.map(resident => ({ y: resident.y, draw: () => drawArcadeRegular(ctx, resident, time, this.reduced.matches || this.paused) })) : []),
       { y: this.companion.y, draw: companion },
