@@ -84,3 +84,25 @@ export function findPath(scene, from, to) {
   }
   return [];
 }
+
+// Keep only turns that scenery requires. Sample the whole segment, including the
+// actor's radius, so smoothing cannot cut across riverbanks or furniture.
+export function findSmoothPath(scene, from, to) {
+  const route = findPath(scene, from, to);
+  const result = [];
+  let anchor = from, start = 0;
+  while (start < route.length) {
+    let end = start;
+    for (let i = start + 1; i < route.length; i++) {
+      const target = route[i], steps = Math.ceil(Math.hypot(target.x-anchor.x,target.y-anchor.y) / .5);
+      let clear = true;
+      for (let n = 0; n <= steps; n++) {
+        if (!isWalkable(scene, anchor.x+(target.x-anchor.x)*n/steps, anchor.y+(target.y-anchor.y)*n/steps, 7.5)) { clear = false; break; }
+      }
+      if (!clear) break;
+      end = i;
+    }
+    anchor = route[end]; result.push(anchor); start = end + 1;
+  }
+  return result;
+}

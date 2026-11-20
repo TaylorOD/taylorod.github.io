@@ -6,7 +6,7 @@ import { foreground } from './depth.js';
 import { canEnter, hitTest, nearbyPath } from './navigation.js';
 import { createResidents, updateResidents, drawResident, arcadeRegulars, drawArcadeRegular } from './residents.js';
 import { followTrail } from './companions.js';
-import { scenes, findPath, isWalkable } from './scenes.js';
+import { scenes, findSmoothPath as findPath, isWalkable } from './scenes.js';
 import { paintScene, ambience, person, pet, box, text, screen } from './art.js';
 import { drawTown } from './town-view.js';
 import { projects } from './content.js';
@@ -163,7 +163,7 @@ export class World {
       }
       const length = Math.hypot(dx, dy);
       if (length) {
-        const speed = 126 * delta, nx = this.player.x + dx / length * speed, ny = this.player.y + dy / length * speed;
+        const speed = Math.min(126 * delta, this.path.length ? Math.hypot(this.path[0].x-this.player.x,this.path[0].y-this.player.y) : Infinity), nx = this.player.x + dx / length * speed, ny = this.player.y + dy / length * speed;
         const before = { ...this.player };
         if (isWalkable(this.scene, nx, this.player.y)) this.player.x = nx;
         if (isWalkable(this.scene, this.player.x, ny)) this.player.y = ny;

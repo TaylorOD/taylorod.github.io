@@ -1,4 +1,4 @@
-import { findPath, scenes } from './scenes.js';
+import { findSmoothPath as findPath, scenes } from './scenes.js';
 import { box } from './art.js';
 
 // Fictional neighbors with different ages, builds, clothing and mobility.
