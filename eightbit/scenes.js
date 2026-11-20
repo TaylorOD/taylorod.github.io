@@ -22,7 +22,7 @@ export const scenes = {
   },
   arcade: {
     name: 'last best arcade', subtitle: 'quarters in. real world out.', width: 768, height: 512,
-    spawn: { x: 384, y: 352 }, bounds: [16, 256, 752, 400], grid: 8,
+    spawn: { x: 384, y: 456 }, bounds: [16, 256, 752, 504], grid: 8,
     obstacles: [[24,256,144,96], [560,256,180,104]],
     points: [
       ...[['lilgotchi','meet lilgotchi',240],['snowcrust','play snowcrust',288],['relay','try relay',336],['fight','fight terminal',384],['sweat','mr game and sweat',432],['moonbean','moonbean coffee',480],['reachoutt','reachoutt',528]].map(([id,label,x]) => point(id,label,x,280,`project:${id}`,{hit:[x-22,132,44,128]})),
@@ -30,7 +30,7 @@ export const scenes = {
       point('poker','poker seater',544,320,'project:poker',{hit:[560,256,180,104]}),
       point('pizza','pizza delivery',208,376,'pizza',{hit:[187,365,38,28]}),
       point('photo','take a photo',480,376,'photo'),
-      point('exit','back to main street',384,384,'room:town',{hit:[310,362,138,140]}),
+      point('exit','back to main street',384,488,'room:town',{hit:[336,480,96,32]}),
     ],
   },
   cabin: {
