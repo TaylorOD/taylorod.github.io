@@ -1,3 +1,4 @@
+import { trailActors, trailVisitors } from './trail-visitors.js';
 import { drawCarousel } from './carousel.js';
 import { drawWildlife } from './wildlife.js';
 import { scoutActors } from './scout.js';
@@ -213,6 +214,7 @@ export class World {
     const actors = [
       ...(this.id === 'town' ? [{ y: 844, draw: () => { ctx.save(); ctx.translate(0, 96); drawCarousel(ctx, this.lifeTime, this.reduced.matches); ctx.restore(); } }] : []),
       ...scoutActors(ctx, this.id, this.lifeTime, this.reduced.matches),
+      ...(this.id === 'town' ? trailActors(ctx, this.lifeTime, this.reduced.matches) : []),
       ...(this.id === 'town' ? bikeActors(ctx, this.lifeTime, this.reduced.matches) : []),
       ...(this.id === 'town' ? campusActors(ctx, this.lifeTime, this.reduced.matches) : []),
       ...(this.id === 'arcade' ? arcadeRegulars.map(resident => ({ y: resident.y, draw: () => drawArcadeRegular(ctx, resident, time, this.reduced.matches || this.paused) })) : []),
@@ -222,7 +224,7 @@ export class World {
     ];
     for (const [x, y, w, h, depth] of foreground[this.id] || []) if ([this.player, this.companion, ...this.residents.filter(r => r.room === this.id && !r.seated)].some(actor => actor.x > x - 14 && actor.x < x + w + 14 && actor.y < depth && actor.y > y)) actors.push({ y: depth, draw: () => ctx.drawImage(this.cache.get(this.id), x, y, w, h, x, y, w, h) });
     if (this.id === 'town') {
-      const visibleActors = [this.player, this.companion, ...this.residents.filter(resident => resident.room === 'town' && !resident.hidden)];
+      const visibleActors = [this.player, this.companion, ...trailVisitors(this.lifeTime, this.reduced.matches), ...this.residents.filter(resident => resident.room === 'town' && !resident.hidden)];
       for (const item of riverTrees) actors.push({ y: item[1], draw: () => {
         ctx.save(); ctx.globalAlpha = treeOpacity(item, visibleActors); tree(ctx, ...item); ctx.restore();
       } });
