@@ -9,9 +9,10 @@ const visitors = [
 ];
 
 // Each visitor enters and leaves beyond the edge. Longer gaps keep runners occasional.
-export function trailVisitors(time, reduced = false) {
+export function trailVisitors(time, reduced = false, layout = null) {
   return visitors.flatMap((visitor, index) => {
-    const phase = ((reduced ? 0 : time / 1000) + visitor.offset) % visitor.period;
+    const period = visitor.period + ((layout?.width || 1024) - 1024) / visitor.speed;
+    const phase = ((reduced ? 0 : time / 1000) + visitor.offset) % period;
     const started = ((time / 1000 - phase) % 360 + 360) % 360;
     if (!reduced && started > 90 && started < 215) return [];
     let moving = phase, activity = 'walk', pauseProgress = 0;
@@ -26,11 +27,13 @@ export function trailVisitors(time, reduced = false) {
       }
     }
     const distance = moving * visitor.speed;
-    if (distance > 1164) return [];
-    const x = visitor.direction === 1 ? -70 + distance : 1094 - distance;
+    const width = layout?.width || 1024;
+    if (distance > width + 140) return [];
+    const x = visitor.direction === 1 ? -70 + distance : width + 70 - distance;
     const sniff = activity === 'sniff' ? Math.sin(pauseProgress * Math.PI) : 0;
     const lead = 24 + Math.sin(moving * 1.4) * 5;
-    return [{ ...visitor, id: index, x, activity, sniff, dogX: x + visitor.direction * lead, dogY: visitor.y + 5 + sniff * 10 }];
+    const y = layout ? (visitor.y === 576 ? layout.north : layout.south) : visitor.y;
+    return [{ ...visitor, y, id: index, x, activity, sniff, dogX: x + visitor.direction * lead, dogY: y + 3 + sniff * (layout ? 4 : 10) }];
   });
 }
 
@@ -68,9 +71,9 @@ function dog(ctx, visitor, time) {
   ctx.restore();
 }
 
-export function trailActors(ctx, time, reduced = false) {
+export function trailActors(ctx, time, reduced = false, layout = null) {
   const poseTime = reduced ? 0 : time;
-  return trailVisitors(time, reduced).map(visitor => ({ y: visitor.dogY, draw: () => {
+  return trailVisitors(time, reduced, layout).map(visitor => ({ y: visitor.dogY, draw: () => {
     if (visitor.kind === 'jogger') { jogger(ctx, visitor, poseTime); return; }
     drawResident(ctx, { ...visitor, walking: !reduced && visitor.activity === 'walk', chatting: visitor.activity === 'wait', direction: visitor.activity === 'wait' ? 'up' : visitor.direction === 1 ? 'right' : 'left', look: { ...visitor, width: 19 } }, poseTime, reduced);
     ctx.strokeStyle = '#d7c4a2'; ctx.lineWidth = 1.5; ctx.beginPath();

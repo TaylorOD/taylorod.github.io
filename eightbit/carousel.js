@@ -17,7 +17,7 @@ export function carouselHorses(time, reduced = false) {
   }).sort((a, b) => a.y - b.y);
 }
 
-function horse(ctx, item) {
+export function horse(ctx, item) {
   const { x, y, bob, facing, coat, saddle } = item;
   box(ctx, x, 683, 2, y + 9 - 683, '#dec68b');
   ctx.save(); ctx.translate(Math.round(x), Math.round(y + bob)); ctx.scale(facing, 1);

@@ -1,19 +1,21 @@
+import { townPaths, insidePolygon } from './town-layout.js';
 // Coordinates are world pixels. Every interaction has a clear, reachable approach point.
 const point = (id, label, x, y, action, extra = {}) => ({ id, label, x, y, action, ...extra });
 export const scenes = {
   town: {
-    name: 'main street', subtitle: 'missoula, montana · just before sunset', width: 1024, height: 864,
-    spawn: { x: 512, y: 488 }, bounds: [32, 224, 992, 832],
-    obstacles: [[174, 776, 172, 68], [7, 272, 91, 171], [100, 208, 208, 62], [109, 300, 48, 48], [320, 216, 384, 216], [800, 112, 160, 148], [0, 608, 448, 64], [576, 608, 448, 64], [736, 480, 128, 64]],
+    name: 'main street', subtitle: 'missoula, montana · sunset', width: 1536, height: 1024,
+    spawn: { x: 896, y: 576 }, bounds: [0, 240, 1536, 1000], grid: 8,
+    paths: townPaths, obstacles: [[174,870,218,85]],
     points: [
-      point('carousel', 'the carousel', 384, 800, 'carousel', { hit: [174, 716, 172, 128] }),
-      point('wilma', 'outside the Wilma', 64, 464, 'wilma', { hit: [7, 272, 91, 171] }),
-      point('arcade', 'enter the arcade', 512, 448, 'room:arcade', { sign: 'LAST LIGHT ARCADE', hint: 'eight projects. one room.', hit: [320, 208, 384, 224] }),
-      point('cabin', 'visit the cabin', 880, 288, 'room:cabin', { sign: 'HOME BASE', hit: [800, 82, 160, 185] }),
-      point('mailbox', 'say hello', 736, 560, 'contact', { sign: 'POST', hit: [716, 501, 34, 48] }),
-      point('bench', 'talk to the neighbor', 256, 544, 'delivery', { hit: [218, 475, 76, 60] }),
-      point('river', 'by the river', 512, 704, 'river'),
-      point('roof', 'the rooftop', 688, 464, 'roof', { sign: '↑ ROOFTOP', hit: [682, 218, 22, 214] }),
+      point('carousel', 'the carousel', 424, 944, 'carousel', { hit: [172,812,222,145] }),
+      point('wilma', 'outside the Wilma', 144, 576, 'wilma', { hit: [52,174,211,386] }),
+      point('arcade', 'enter the arcade', 1304, 576, 'room:arcade', { sign: 'LAST LIGHT ARCADE', hint: 'eight projects. one room.', hit: [1154,410,280,150] }),
+      point('cabin', 'visit the cabin', 1416, 264, 'room:cabin', { sign: 'HOME BASE', hit: [1356,92,122,162] }),
+      point('mailbox', 'say hello', 1008, 656, 'contact', { hit: [998,612,28,34] }),
+      point('bench', 'talk to the neighbor', 560, 656, 'delivery', { hit: [520,605,80,42] }),
+      point('river', 'by the river', 896, 800, 'river'),
+      point('campus', 'the university', 432, 304, 'campus', { hit: [337,158,166,132] }),
+      point('roof', 'the rooftop', 1424, 576, 'roof', { hit: [1408,468,24,88] }),
     ],
   },
   arcade: {
@@ -51,12 +53,13 @@ export const scenes = {
 export function isWalkable(scene, x, y, radius = 7) {
   const [left, top, right, bottom] = scene.bounds;
   if (x < left + radius || y < top + radius || x > right - radius || y > bottom - radius) return false;
+  if (scene.paths && ![[0,0],[radius,0],[-radius,0],[0,radius],[0,-radius]].every(([dx,dy]) => scene.paths.some(p => insidePolygon(x+dx,y+dy,p)))) return false;
   return !scene.obstacles.some(([ox, oy, w, h]) => x > ox - radius && x < ox + w + radius && y > oy - radius && y < oy + h + radius);
 }
 
 // A small grid search keeps click destinations from walking through buildings or furniture.
 export function findPath(scene, from, to) {
-  const cell = 16;
+  const cell = scene.grid || 16;
   const start = [Math.round(from.x / cell), Math.round(from.y / cell)];
   const end = [Math.round(to.x / cell), Math.round(to.y / cell)];
   if (!isWalkable(scene, end[0] * cell, end[1] * cell)) return [];
