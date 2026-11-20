@@ -9,6 +9,7 @@ test('fleeing elk pass behind SBG while the forest remains visible', () => {
   assert.equal(hidden(1260,374), false);
   assert.equal(hidden(1100,374), true);
   assert.equal(hidden(1300,470), true);
+  assert.equal(hidden(1300,400), true);
   let behind = 0, clearing = 0;
   for (let time=58000;time<116000;time+=100) {
     const x=1260-elkMoment(time).offset;
