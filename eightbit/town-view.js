@@ -1,3 +1,4 @@
+import { lMountain } from './l-mountain.js';
 import { woodlandTrees, woodlandForeground } from './woodland.js';
 import { hiddenFriends } from './hunt-art.js';
 import { drawRiverLife } from './river-life.js';
@@ -33,6 +34,7 @@ function sky(ctx,light) {
   ctx.clip();
   ctx.globalAlpha=Math.max(0,Math.min(1,(light.phase-.06)/.08,(1-light.phase)/.06));
   paintSky(ctx,1536,210,light);
+  ctx.globalAlpha=1; lMountain(ctx);
   ctx.restore();
 }
 
