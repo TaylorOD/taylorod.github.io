@@ -44,7 +44,8 @@ function river(ctx,time,reduced) {
   box(ctx,x-30,y-8+Math.sin(t/240)*3,61,2,'#dfc98e');
   ctx.restore();
   // The fisher stays beside the water, away from the bridge entrance.
-  person(ctx,83,779,'right',false,0,false,.8);
+  drawResident(ctx, { x: 83, y: 779, direction: 'right', walking: false,
+    look: { skin: '#b58261', hair: '#dad4bd', shirt: '#b46f44', width: 23, hat: true } }, 0, true);
   ctx.strokeStyle='#d5c89e';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(91,758);ctx.quadraticCurveTo(150,670+Math.sin(t/1600)*12,185,733);ctx.stroke();
 }
 
