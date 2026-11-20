@@ -72,3 +72,5 @@ SBG Missoula: https://sbgmissoula.com/
 ## latest review
 
 [Full request audit and review limits](docs/missoula-review.md). The latest check repeated the carousel route, house, arcade, stairs in both directions, desktop and phone layouts, and periodic observations across a full day cycle after fixes. Earlier collection and postcard checks above were not all repeated in this pass.
+
+The coin counter is now an L shaped coins and beer bar at the front. The poker table is taller and sits partly behind the staircase. Updated walking areas keep the exit and every cabinet reachable.
