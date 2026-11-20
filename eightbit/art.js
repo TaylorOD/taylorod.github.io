@@ -1,3 +1,4 @@
+import { riverbanks } from './riverbank.js';
 import { daylight, paintSky } from './daylight.js';
 import { arcadeStorefront } from './storefront.js';
 import { wilma } from './wilma-art.js';
@@ -113,10 +114,9 @@ function town(ctx, transparentSky) {
   universityCampus(ctx);
   cobbles(ctx, 0, 448, 1024, 128); cobbles(ctx, 448, 416, 128, 416);
   // Continuous paths on both banks meet the bridge at either end.
-  cobbles(ctx, 0, 560, 1024, 40); cobbles(ctx, 0, 680, 1024, 48);
-  box(ctx, 0, 558, 1024, 2, '#c1b38e'); box(ctx, 0, 728, 1024, 3, '#c1b38e');
+
   box(ctx, 0, 604, 1024, 8, '#3e6154'); box(ctx, 0, 612, 1024, 56, '#315d65'); box(ctx, 0, 668, 1024, 5, '#779075');
-  for (let x = 0; x < 1024; x += 14) { box(ctx, x, 603 + x % 5, 9, 3, '#809275'); box(ctx, x + 4, 667, 8, 3, '#93a080'); }
+  riverbanks(ctx);
   for (let y = 598; y < 685; y += 9) { box(ctx, 444, y, 136, 8, '#a88f6b'); box(ctx, 449, y + 1, 126, 1, '#c1a77b'); }
   for (const x of [442, 576]) { box(ctx, x, 586, 5, 95, '#514e40'); box(ctx, x - 2, 600, 9, 5, '#d5b684'); }
   for (const [x, y, s] of [[20, 259, 1.2], [88, 270, .9], [250, 282, 1.2], [742, 256, 1], [1001, 268, 1.3], [984, 506, 1.4], [20, 850, 1.5], [134, 848, 1], [816, 848, 1.1], [986, 852, 1.5]]) tree(ctx, x, y, s);
