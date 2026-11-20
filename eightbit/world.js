@@ -212,7 +212,7 @@ export class World {
       ...(this.id === 'arcade' ? arcadeRegulars.map(resident => ({ y: resident.y, draw: () => drawArcadeRegular(ctx, resident, time, this.reduced.matches || this.paused) })) : []),
       { y: this.companion.y, draw: companion },
       { y: this.player.y, draw: () => person(ctx, this.player.x, this.player.y, this.direction, this.walking && !this.reduced.matches, time, this.progress.pizza === 'carrying', this.id === 'arcade' ? arcadePersonScale : 1) },
-      ...this.residents.filter(resident => resident.room === this.id && !resident.hidden && !resident.home).map(resident => ({ y: resident.y + (resident.seated ? 16 : 0), draw: () => drawResident(ctx, resident, time, this.reduced.matches, this.id === 'arcade' ? arcadePersonScale : 1) })),
+      ...this.residents.filter(resident => resident.room === this.id && !resident.hidden && !resident.home).map(resident => ({ y: resident.y + (resident.seated ? 16 : 0), draw: () => resident.playing && this.id === 'arcade' ? drawArcadeRegular(ctx, { ...resident, y: resident.y - 20, look: { ...resident.look, scale: arcadePersonScale } }, time, this.reduced.matches || this.paused) : drawResident(ctx, resident, time, this.reduced.matches, this.id === 'arcade' ? arcadePersonScale : 1) })),
     ];
 
     actors.sort((a, b) => a.y - b.y).forEach(actor => actor.draw());

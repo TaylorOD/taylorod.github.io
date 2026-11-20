@@ -49,3 +49,20 @@ test('neighbors rest, chat, go home through the Wilma and return after dawn', ()
   assert.ok(activities.has('sit'));
   assert.ok(activities.has('talk'));
 });
+
+test('arcade visitors play every cabinet and stop playing when they leave', () => {
+  const residents = createResidents(), games = new Set(['snowcrust', 'sweat']);
+  for (let tick = 0; tick < 36000; tick++) {
+    updateResidents(residents, scenes.town, 1 / 60, { x: -100, y: -100 });
+    for (const resident of residents) {
+      if (resident.playing) {
+        assert.equal(resident.room, 'arcade');
+        assert.equal(resident.direction, 'up');
+        assert.ok(resident.stop > 0);
+        games.add(resident.game.id);
+        assert.equal(residents.filter(other => other.playing && other.game.id === resident.game.id).length, 1);
+      }
+    }
+  }
+  assert.deepEqual([...games].sort(), ['lilgotchi', 'snowcrust', 'relay', 'fight', 'sweat', 'moonbean', 'reachoutt'].sort());
+});
