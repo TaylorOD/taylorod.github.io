@@ -13,7 +13,7 @@ export const scenes = {
       point('mailbox', 'say hello', 736, 560, 'contact', { sign: 'POST', hit: [716, 501, 34, 48] }),
       point('bench', 'talk to the neighbor', 256, 544, 'delivery', { hit: [218, 475, 76, 60] }),
       point('river', 'by the river', 512, 704, 'river'),
-      point('roof', 'the rooftop', 688, 464, 'roof', { sign: '↑ ROOFTOP', hit: [682, 312, 22, 120] }),
+      point('roof', 'the rooftop', 688, 464, 'roof', { sign: '↑ ROOFTOP', hit: [682, 218, 22, 214] }),
     ],
   },
   arcade: {
