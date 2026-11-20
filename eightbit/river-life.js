@@ -8,8 +8,10 @@ export function castMoment(time) {
   return { phase, casting, angle: -.9 + swing * .85, drift: casting ? 0 : (phase - .4) / .6 };
 }
 
+export const raftScale = .65;
+
 export function raftPosition(time) {
-  return { x: 1630 - (time / 36 % 1750), y: 751 + Math.sin(time / 2700) * 2 };
+  return { x: 1630 - (time / 36 % 1750), y: 758 + Math.sin(time / 2700) };
 }
 
 function stroke(ctx, points, color, width = 1) {
@@ -56,7 +58,8 @@ export function drawRiverLife(ctx,time,reduced=false) {
   polygon(ctx,[[surfX-5,surfY-24],[surfX+5,surfY-25],[surfX+6,surfY-14],[surfX-3,surfY-12]],'#b85e48');
   box(ctx,surfX-3,surfY-33,8,8,'#c89c76');box(ctx,surfX-3,surfY-35,9,4,'#38433a');
   stroke(ctx,[[surfX-14,surfY-20],[surfX-4,surfY-23],[surfX+4,surfY-22],[surfX+16,surfY-17]],'#c89c76',3);
-  const raft=raftPosition(t), {x,y}=raft;
+  const raft=raftPosition(t), x=0, y=0;
+  ctx.save();ctx.translate(raft.x,raft.y);ctx.scale(raftScale,raftScale);
   polygon(ctx,[[x-30,y-10],[x+25,y-10],[x+34,y],[x+25,y+10],[x-30,y+10],[x-38,y]],'#ba6749');
   polygon(ctx,[[x-25,y-5],[x+23,y-5],[x+26,y+4],[x-26,y+4]],'#344e4d');
   for(const offset of [-15,12]) {
@@ -65,7 +68,7 @@ export function drawRiverLife(ctx,time,reduced=false) {
     stroke(ctx,[[x+offset,y-9],[x+offset-16,y+12+paddle]],'#d7c39a',2);
     stroke(ctx,[[x+offset-16,y+12+paddle],[x+offset-22,y+18+paddle]],'#dfb367',4);
   }
-  ctx.restore();
+  ctx.restore();ctx.restore();
   fisher(ctx,t);
 }
 
