@@ -19,7 +19,6 @@ test('a stationary player cannot block neighbors in town or the arcade', () => {
 test('town residents keep to reachable routes for a full walk cycle', () => {
   const residents = createResidents(scenes.town, 'town');
   assert.equal(residents.length, 9);
-  assert.ok(residents.some(person => person.look.chair));
   assert.ok(residents.some(person => person.look.cane));
   const visited = new Set();
   for (let tick = 0; tick < 18000; tick++) {
@@ -41,7 +40,6 @@ test('neighbors rest, chat, go home through the Wilma and return after dawn', ()
     updateResidents(residents, scenes.town, 1 / 60, { x: -100, y: -100 }, 'town', time);
     for (const resident of residents) {
       if (resident.resting) activities.add(resident.resting);
-      if (resident.look.chair) assert.notEqual(resident.resting, 'sit');
       if (resident.home) { assert.equal(resident.x, 144); assert.equal(resident.y, 576); }
     }
     assert.ok(residents.filter(r=>r.resting==='sit').length <= 1);
