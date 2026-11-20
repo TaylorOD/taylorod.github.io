@@ -1,12 +1,14 @@
 import { box, polygon, person, pet, text, glow } from './art.js';
 import { daylight, paintSky } from './daylight.js';
 import { drawResident } from './residents.js';
-import { trailActors } from './trail-visitors.js';
+import { trailActors, trailVisitors } from './trail-visitors.js';
 import { drawBike } from './bikes.js';
 import { horse, carouselHorses } from './carousel.js';
 import { campusActors, campusScale } from './campus-life.js';
 import { scoutActors } from './scout.js';
 import { grazer } from './wildlife.js';
+import { riverTree } from './town-trees.js';
+import { riverTrees, treeOpacity } from './depth.js';
 import { townLayout } from './town-layout.js';
 
 let painting;
@@ -98,6 +100,11 @@ export function drawTown(world,time) {
   for(const resident of world.residents.filter(r=>r.room==='town'&&!r.hidden&&!r.home)) actors.push({y:resident.y,draw:()=>drawResident(ctx,resident,moment,reduced)});
   actors.push({y:companion.y,draw:()=>pet(ctx,companion.x,companion.y,progress.pet,reduced?0:moment,false,.75*campusScale(companion.x,companion.y),companion.direction)});
   actors.push({y:player.y,draw:()=>person(ctx,player.x,player.y,world.direction,world.walking&&!reduced,moment,progress.pizza==='carrying',.9*campusScale(player.x,player.y))});
+  const visible = [player, companion, ...trailVisitors(moment, reduced, townLayout), ...world.residents.filter(r => r.room === 'town' && !r.home)];
+  for (const [x, y, size] of riverTrees) actors.push({ y, draw: () => {
+    ctx.save(); ctx.globalAlpha = treeOpacity([x, y, size], visible);
+    riverTree(ctx, x, y, size, x === 1490); ctx.restore();
+  }});
   actors.sort((a,b)=>a.y-b.y).forEach(a=>a.draw());
   if(progress.pizza==='delivered') { box(ctx,543,623,24,5,'#e9ba79');text(ctx,'THANKS!',552,592,8,'#f1d8a7'); }
   if(world.target&&world.path.length) {const {x,y}=world.target;box(ctx,x-5,y,10,2,'#efdbab');box(ctx,x,y-5,2,10,'#efdbab');}
