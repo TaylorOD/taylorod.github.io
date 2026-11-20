@@ -39,7 +39,7 @@ Updated November 20, 2026.
 2. Actual browser checks covered desktop and phone layouts, the arcade, house and rooftop, all four discoveries, hints, companion selection, saved progress after reload and the postcard reward.
 3. The carousel round trip was repeated after the town and movement changes. Both arrival and return to main street passed.
 4. Each change has its own branch and PR with browser screenshots.
-5. Final live deployment check is the remaining delivery step.
+5. Final deployment passed. The live /8-bit-missoula/ page, bookstore link, collection and desktop and phone views were checked after merging.
 
 Phone checks use a Chrome viewport. A physical iPhone touch check has not been performed.
 
