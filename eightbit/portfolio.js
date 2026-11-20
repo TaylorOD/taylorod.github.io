@@ -9,18 +9,17 @@ import { Sound } from './sound.js';
 
 const progress = loadProgress();
 const sound = new Sound();
-const normalURL = new URL(location.href);
-normalURL.searchParams.delete('mode'); normalURL.hash = '';
+const normalURL = new URL('../', import.meta.url);
 const root = document.createElement('div'); root.id = 'eightbit';
 root.innerHTML = `
   <a class="skip-link" href="#directory">skip to the projects</a>
-  <header class="game-header"><a class="brand" href="?mode=8bit" aria-label="Last best arcade home"><span class="brand-icon">✦</span><span>LAST BEST<small>TAYLOR DORSETT'S LITTLE CORNER OF THE INTERNET</small></span></a><nav aria-label="Quick navigation"><button data-ui="directory">projects <span>08</span></button><button data-ui="about">about</button><button data-ui="contact">contact</button><button data-ui="sound" aria-pressed="false">sound off</button><a class="normal-site">normal site ↗</a></nav></header>
-  <main class="game-stage" aria-label="Last best arcade">
+  <header class="game-header"><a class="brand" href="./" aria-label="8 bit missoula home"><span class="brand-icon">✦</span><span>8 BIT MISSOULA<small>A LITTLE PIXEL TOWN IN MONTANA</small></span></a><nav aria-label="Quick navigation"><button data-ui="directory">projects <span>08</span></button><button data-ui="about">about</button><button data-ui="contact">contact</button><button data-ui="sound" aria-pressed="false">sound off</button><a class="normal-site">portfolio ↗</a></nav></header>
+  <main class="game-stage" aria-label="8 bit missoula">
     <canvas class="world-canvas" tabindex="0" aria-label="Explore the town. Arrow keys or WASD to walk. E or Enter to interact. Click a place to walk there, or use the projects menu."></canvas>
     <div class="scene-shade" aria-hidden="true"></div>
     <div class="place-label"><span class="place-dot"></span><div><h1 class="place-name">main street</h1><p class="place-subtitle">missoula, montana · just before sunset</p></div></div>
     <div class="inventory-bar"><button data-ui="pets" class="companion-button" aria-label="Choose a pet companion"><canvas width="30" height="32" aria-hidden="true"></canvas><span class="pet-name">slice</span></button><button data-ui="passport" class="stamp-count">0 / 8 stamps</button></div>
-    <section class="welcome"><p class="eyebrow">HEY, I'M TAYLOR.</p><h2>a few good<br>side quests.</h2><p>software engineer. recovering recruiter.<br>this is where my projects live.</p><button class="primary" data-ui="enter">come into the arcade <span>↗</span></button><button class="quiet" data-ui="dismiss">i'll take a look around</button><small>click to walk · arrow keys work too</small></section>
+    <section class="welcome"><p class="eyebrow">WELCOME TO MISSOULA.</p><h2>take the<br>scenic route.</h2><p>a little town, some familiar faces<br>and a few hidden friends.</p><button class="primary" data-ui="enter">come into the arcade <span>↗</span></button><button class="quiet" data-ui="dismiss">i'll take a look around</button><small>click to walk · arrow keys work too</small></section>
     <div class="room-toast" role="status"></div>
     <div class="quest-note" hidden><span>◈</span> pizza delivery <small>take it to the town bench</small></div>
     <button class="interact" disabled><kbd>E</kbd><span>walk up to something</span><b>↗</b></button>
@@ -30,7 +29,7 @@ root.innerHTML = `
   <dialog class="game-dialog" aria-labelledby="dialog-title"><div class="dialog-top"><span class="dialog-tag"></span><button class="close-dialog" aria-label="Close dialog">✕</button></div><div class="dialog-content"></div></dialog>`;
 root.querySelector('.normal-site').href = normalURL.href;
 document.body.replaceChildren(root); document.documentElement.classList.add('eightbit-mode');
-document.title = 'Last best arcade | Taylor Dorsett';
+document.title = '8 bit missoula';
 const canvas = root.querySelector('.world-canvas'), dialog = root.querySelector('dialog');
 let postcardPose = 'hello';
 let activeDemo;
@@ -198,7 +197,7 @@ function handleAction(action) {
     campus: () => openDialog('UNIVERSITY OF MONTANA', 'at the end of the street.', '<p class="dialog-lead">a little walk past the storefronts, with mount sentinel in the background.</p><button class="secondary" data-ui="close">back to exploring</button>'),
     river: () => openDialog('ON THE CLARK FORK', "Brennan's Wave", '<p class="dialog-lead">a standing wave in the middle of Missoula. stop along the riverwalk and watch surfers and paddlers take their turns.</p><a class="text-link" href="https://www.missouladowntown.com/caras-park/brennans-wave/" target="_blank" rel="noopener noreferrer">about the wave</a>'),
     books: () => openDialog('ON THE BOOKSHELF', 'away from the keyboard.', '<p class="dialog-lead">reading, games, bjj and poker. a few ways to spend the time between making things.</p><button class="secondary" data-ui="about">a bit more about me →</button>'),
-    legacy: () => openDialog('AN EARLIER SAVE FILE / 2020', 'booting the old computer.', '<p class="dialog-lead">the original portfolio, running right here. a little piece of where this started.</p><iframe class="legacy-computer" src="eightbit/legacy/index.html" title="Taylor’s original 2020 portfolio" sandbox="allow-scripts allow-popups" loading="lazy"></iframe><a class="text-link" href="https://github.com/TaylorOD/8_bit_portfolio">see the original source ↗</a>'),
+    legacy: () => openDialog('AN EARLIER SAVE FILE / 2020', 'booting the old computer.', '<p class="dialog-lead">the original portfolio, running right here. a little piece of where this started.</p><iframe class="legacy-computer" src="../eightbit/legacy/index.html" title="Taylor’s original 2020 portfolio" sandbox="allow-scripts allow-popups" loading="lazy"></iframe><a class="text-link" href="https://github.com/TaylorOD/8_bit_portfolio">see the original source ↗</a>'),
     roof: () => progress.pizza === 'delivered' ? changeRoom('rooftop') : openDialog('A LOCKED ROOFTOP DOOR', 'someone has the key.', '<p class="dialog-lead">a note on the door: “ask the person waiting on a pizza. they know the way up.”</p><button class="secondary" data-room="arcade">check the pizza counter →</button>'),
     view: () => openDialog('ABOVE IT ALL', 'a pretty good place to pause.', '<p class="dialog-lead">thanks for taking the long way around. hope you found something you liked.</p><button class="secondary" data-ui="contact">say hello before you go ↗</button>'),
     'take-pizza': () => { progress.pizza = 'carrying'; updateInventory(); closeDialog(); toast('pizza acquired. find the neighbor on the town bench.'); },
