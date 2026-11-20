@@ -1,4 +1,20 @@
 // These silhouettes follow the existing painted pines. Their roots set the draw order.
+// Woodland wildlife can travel behind these buildings, never across their faces.
+export const woodlandBuildings = [
+  [[522,299],[681,299],[681,292],[817,292],[817,278],[995,278],[995,299],[1154,299],[1154,562],[522,562]],
+  [[1154,410],[1406,410],[1432,443],[1432,562],[1154,562]],
+  [[1356,236],[1415,94],[1478,240],[1478,255],[1356,255]],
+];
+
+export function behindWoodlandBuildings(ctx, draw) {
+  ctx.save(); ctx.beginPath(); ctx.rect(0,0,1536,1024);
+  for (const points of woodlandBuildings) {
+    points.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));
+    ctx.closePath();
+  }
+  ctx.clip('evenodd'); draw(); ctx.restore();
+}
+
 export const woodlandTrees = [
   {x:1125,y:304,top:187,width:43},
   {x:1182,y:402,top:268,width:48,chase:true},

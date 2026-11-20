@@ -1,5 +1,5 @@
 import { lMountain } from './l-mountain.js';
-import { woodlandTrees, woodlandForeground } from './woodland.js';
+import { woodlandTrees, woodlandForeground, behindWoodlandBuildings } from './woodland.js';
 import { hiddenFriends } from './hunt-art.js';
 import { drawRiverLife } from './river-life.js';
 import { box, polygon, person, pet, text, glow } from './art.js';
@@ -82,8 +82,8 @@ export function drawTown(world,time) {
   for(let y=486;y<554;y+=10) box(ctx,1413,y,15,2,'#b2b79a');
   const actors=trailActors(ctx,moment,reduced,townLayout);
   actors.push(
-    {y:374+bounce,draw:()=>grazer(ctx,1260-elk.offset,374+bounce,.65,true,elk.running?-1:1,reduced?0:moment,0)},
-    {y:362-bounce,draw:()=>grazer(ctx,1304-elk.offset,362-bounce,.48,true,-1,reduced?0:moment,2)},
+    {y:374+bounce,draw:()=>behindWoodlandBuildings(ctx,()=>grazer(ctx,1260-elk.offset,374+bounce,.65,true,elk.running?-1:1,reduced?0:moment,0))},
+    {y:362-bounce,draw:()=>behindWoodlandBuildings(ctx,()=>grazer(ctx,1304-elk.offset,362-bounce,.48,true,-1,reduced?0:moment,2))},
     ...woodlandTrees.map(tree=>({y:tree.y,draw:()=>woodlandForeground(ctx,painting,tree)})),
   );
   actors.push(...hiddenFriends(ctx,'town',progress,reduced?0:moment));
@@ -92,7 +92,9 @@ export function drawTown(world,time) {
     const bike={x:i?1600-travel:travel-64,y:i?586:579,facing:i?-1:1};
     actors.push({y:bike.y,draw:()=>drawBike(ctx,bike,reduced?0:moment,i)});
   }
-  actors.push(...campusActors(ctx,moment,reduced), ...scoutActors(ctx,'town',moment,reduced,townLayout));
+  actors.push(...campusActors(ctx,moment,reduced), ...scoutActors(ctx,'town',moment,reduced,townLayout).map(actor=>({
+    ...actor,draw:()=>behindWoodlandBuildings(ctx,actor.draw),
+  })));
   for(const resident of world.residents.filter(r=>r.room==='town'&&!r.hidden&&!r.home)) actors.push({y:resident.y,draw:()=>drawResident(ctx,resident,moment,reduced)});
   if(progress.adopted) actors.push({y:companion.y,draw:()=>pet(ctx,companion.x,companion.y,progress.pet,reduced?0:moment,false,.75*campusScale(companion.x,companion.y),companion.direction)});
   actors.push({y:player.y,draw:()=>person(ctx,player.x,player.y,world.direction,world.walking&&!reduced,moment,progress.pizza==='carrying',.9*campusScale(player.x,player.y))});
