@@ -112,7 +112,7 @@ function cobbles(ctx, x, y, w, h) {
 function town(ctx, transparentSky) {
   sky(ctx, 1024, 864, transparentSky); ground(ctx, 1024, 864);
   universityCampus(ctx);
-  cobbles(ctx, 0, 448, 1024, 128); cobbles(ctx, 448, 416, 128, 416);
+  cobbles(ctx, 0, 448, 1024, 96); cobbles(ctx, 448, 416, 128, 416);
   // Continuous paths on both banks meet the bridge at either end.
 
   box(ctx, 0, 604, 1024, 8, '#3e6154'); box(ctx, 0, 612, 1024, 56, '#315d65'); box(ctx, 0, 668, 1024, 5, '#779075');
@@ -133,6 +133,11 @@ function town(ctx, transparentSky) {
   bench(ctx, 800, 517); lamp(ctx, 288, 448); lamp(ctx, 738, 456); lamp(ctx, 398, 579); lamp(ctx, 620, 579);
   box(ctx, 728, 521, 9, 28, '#604f42'); border(ctx, 716, 501, 34, 25, '#b27b65', '#3e5148', 3); box(ctx, 722, 509, 22, 3, '#2c4541'); text(ctx, 'POST', 733, 519, 7);
   for (let i = 0; i < 42; i++) { const x = 50 + i * 67 % 922, y = 597 + i % 3; box(ctx, x, y, 2, 5, '#799365'); box(ctx, x - 1, y - 2, 4, 3, i % 3 ? '#c4b47e' : '#dca38b'); }
+  // Concrete apron connects the pavilion to the park walkway.
+  box(ctx, 160, 780, 208, 80, '#a4a89b');
+  box(ctx, 162, 782, 204, 76, '#b7b9ac');
+  for (const x of [212, 264, 316]) box(ctx, x, 782, 1, 76, '#929b8f');
+  box(ctx, 162, 820, 204, 1, '#929b8f');
   cobbles(ctx, 368, 728, 80, 96);
   border(ctx, 452, 813, 120, 20, '#294944', '#849373', 2); text(ctx, 'MISSOULA · MT', 512, 824, 9, '#bcccaa');
 }
