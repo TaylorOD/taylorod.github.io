@@ -211,7 +211,7 @@ export class World {
       if (greeting || curious) text(ctx, greeting ? '♥' : this.nearby.id === 'snowcrust' || this.nearby.id === 'pizza' ? 'PIZZA?' : '?', this.companion.x, this.companion.y - 44, 8, '#edc389');
     };
     const actors = [
-      ...(this.id === 'town' ? [{ y: 748, draw: () => drawCarousel(ctx, this.lifeTime, this.reduced.matches) }] : []),
+      ...(this.id === 'town' ? [{ y: 844, draw: () => { ctx.save(); ctx.translate(0, 96); drawCarousel(ctx, this.lifeTime, this.reduced.matches); ctx.restore(); } }] : []),
       ...scoutActors(ctx, this.id, this.lifeTime, this.reduced.matches),
       ...(this.id === 'town' ? bikeActors(ctx, this.lifeTime, this.reduced.matches) : []),
       ...(this.id === 'town' ? campusActors(ctx, this.lifeTime, this.reduced.matches) : []),
