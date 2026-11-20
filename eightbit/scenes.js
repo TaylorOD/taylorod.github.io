@@ -23,13 +23,14 @@ export const scenes = {
   arcade: {
     name: 'last best arcade', subtitle: 'quarters in. real world out.', width: 768, height: 512,
     spawn: { x: 384, y: 456 }, bounds: [16, 256, 752, 504], grid: 8,
-    obstacles: [[24,256,144,96], [560,256,180,104], [20,360,80,116], [572,384,176,88]],
+    obstacles: [[24,256,144,96], [560,256,180,104], [16,336,112,156], [628,344,120,136], [165,340,80,70]],
     points: [
       ...[['lilgotchi','meet lilgotchi',240],['snowcrust','play snowcrust',288],['relay','try relay',336],['fight','fight terminal',384],['sweat','mr game and sweat',432],['moonbean','moonbean coffee',480],['reachoutt','reachoutt',528]].map(([id,label,x]) => point(id,label,x,280,`project:${id}`,{hit:[x-22,132,44,128]})),
       point('hidden-cypunk','look beside the pinball',184,320,'find:cypunk',{hit:[172,295,24,32]}),
       point('poker','poker seater',544,320,'project:poker',{hit:[560,256,180,104]}),
-      point('pizza','pizza delivery',208,376,'pizza',{hit:[187,365,38,28]}),
+      point('pizza','pizza delivery',208,432,'pizza',{hit:[165,340,80,70]}),
       point('photo','take a photo',480,376,'photo'),
+      point('roof','stairs to the rooftop',608,456,'roof',{hit:[628,344,120,136]}),
       point('exit','back to main street',384,488,'room:town',{hit:[336,480,96,32]}),
     ],
   },
@@ -48,7 +49,7 @@ export const scenes = {
     name: 'above it all', subtitle: 'a sunset over missoula', width: 768, height: 512,
     spawn: { x: 624, y: 368 }, bounds: [64,272,728,388], grid: 8,
     obstacles: [[132,272,100,32],[488,272,136,48],[648,344,72,44]],
-    points: [point('view','enjoy the view',384,288,'view'), point('photo','take a photo',448,352,'photo'), point('exit','back downstairs',632,368,'room:town',{hit:[648,320,72,80]})],
+    points: [point('view','enjoy the view',384,288,'view'), point('photo','take a photo',448,352,'photo'), point('exit','back to the arcade',632,368,'room:arcade',{hit:[648,320,72,80]})],
   },
 };
 

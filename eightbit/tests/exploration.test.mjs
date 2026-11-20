@@ -21,3 +21,11 @@ test('a blocked ground tap finds a nearby reachable tile', () => {
   assert.ok(path.every(point => isWalkable(scenes.town, point.x, point.y)));
   assert.ok(Math.hypot(path.at(-1).x - 200, path.at(-1).y - 640) < 60);
 });
+
+test('the indoor stairs connect the arcade and roof with clear landings', () => {
+  const stair = scenes.arcade.points.find(point => point.id === 'roof');
+  assert.equal(stair.action, 'roof');
+  assert.equal(hitTest(scenes.arcade, { x: 680, y: 420 }).id, 'roof');
+  assert.ok(isWalkable(scenes.arcade, stair.x, stair.y));
+  assert.equal(scenes.rooftop.points.find(point => point.id === 'exit').action, 'room:arcade');
+});

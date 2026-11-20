@@ -62,7 +62,8 @@ function changeRoom(id, history = true) {
   dismissWelcome();
   const previous = world.id;
   const doors = { arcade: { x: 1304, y: 576 }, cabin: { x: 1416, y: 264 }, rooftop: { x: 1424, y: 576 } };
-  world.enter(id, id === 'town' ? doors[previous] : undefined);
+  const arrival = id === 'arcade' && previous === 'rooftop' ? scenes.arcade.points.find(point => point.id === 'roof') : id === 'town' ? doors[previous] : undefined;
+  world.enter(id, arrival);
   if (history) setRoute(id);
   sound.chime();
 }
@@ -138,7 +139,7 @@ function foundFriend(event) {
   const item=discover(progress,event);
   if(!item) return false;
   updateInventory();
-  openDialog('FOUND A LILGOTCHI', `hello, ${item.id}.`, `<p class="dialog-lead">${progress.found.length===discoveries.length?'that is everyone! your Missoula postcard is ready.':`you found ${progress.found.length} of ${discoveries.length}. this friend can now walk with you.`}</p>${item.id==='slice'?'<p>your neighbor also gave you the rooftop key. the ladder beside the arcade is yours to use.</p>':''}<button class="primary" data-pet="${item.id}">come with me</button><button class="secondary" data-ui="passport">see the collection</button>`);
+  openDialog('FOUND A LILGOTCHI', `hello, ${item.id}.`, `<p class="dialog-lead">${progress.found.length===discoveries.length?'that is everyone! your Missoula postcard is ready.':`you found ${progress.found.length} of ${discoveries.length}. this friend can now walk with you.`}</p>${item.id==='slice'?'<p>your neighbor also gave you the rooftop key. the stairs inside the arcade are yours to use.</p>':''}<button class="primary" data-pet="${item.id}">come with me</button><button class="secondary" data-ui="passport">see the collection</button>`);
   return true;
 }
 
