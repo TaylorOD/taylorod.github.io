@@ -5,7 +5,7 @@ import { box, polygon } from './art.js';
 const looks = [
   { skin: '#754b38', hair: '#261f2c', shirt: '#e1ad49', width: 22, curls: true },
   { skin: '#e4b08c', hair: '#d9d6c7', shirt: '#8aafbd', width: 20, cane: true },
-  { skin: '#b7815b', hair: '#383043', shirt: '#d173ab', width: 25, chair: true },
+  { skin: '#b7815b', hair: '#383043', shirt: '#d173ab', width: 25 },
   { skin: '#f0c8a1', hair: '#8c4738', shirt: '#789a71', width: 17, scale: .78 },
   { skin: '#edc4a4', hair: '#212831', shirt: '#8d87c7', width: 27, long: true },
   { skin: '#e2b38f', hair: '#25272d', shirt: '#f08168', width: 20, hat: true },
@@ -86,7 +86,7 @@ export function updateResidents(residents, _scene, delta, player, playerRoom = '
     if (distance <= step) { resident.x = target.x; resident.y = target.y; resident.route.shift();
       if (!resident.route.length && !resident.headingHome && resident.phase === 'street') {
         resident.resting = resident.destination?.activity;
-        if (resident.resting === 'sit' && (resident.look.chair || residents.some(other => other !== resident && other.resting === 'sit'))) resident.resting = 'pause';
+        if (resident.resting === 'sit' && (residents.some(other => other !== resident && other.resting === 'sit'))) resident.resting = 'pause';
         resident.stop = resident.resting ? 14 + resident.index : 3;
         if (resident.resting === 'sit') resident.direction = 'down';
       }
@@ -101,7 +101,7 @@ export function drawResident(ctx, resident, time, reduced) {
   const { look, direction } = resident;
   const stride = resident.walking && !reduced ? Math.sin(time / 140) * 3 : 0;
   ctx.save(); ctx.translate(Math.round(resident.x), Math.round(resident.y - (resident.resting === 'sit' ? 24 : 0))); ctx.scale(look.scale || 1, look.scale || 1);
-  const w = look.width, seated = look.chair || resident.seated || resident.resting === 'sit';
+  const w = look.width, seated = resident.seated || resident.resting === 'sit';
   box(ctx, -w / 2 - 2, 0, w + 4, 4, '#17292f55');
   box(ctx, -8, -14, 6, 14 - stride, '#324354'); box(ctx, 3, -14, 6, 14 + stride, '#324354');
   box(ctx,-8,-13,2,10-stride,'#465966');box(ctx,3,-13,2,10+stride,'#465966');
@@ -121,17 +121,18 @@ export function drawResident(ctx, resident, time, reduced) {
   ctx.save();ctx.globalAlpha=.2;box(ctx,5,-39,3,8,'#5a3b35');box(ctx,-5,-41,5,2,'#fff0c8');ctx.restore();
   if (look.curls) for (let i = 0; i < 4; i++) box(ctx, -11 + i * 6, -48 + i % 2 * 2, 7, 9, look.hair);
   if (look.long) { box(ctx, -10, -42, 4, 20, look.hair); box(ctx, 7, -42, 4, 20, look.hair); }
+  // Hair covers the crown and the back of the head in each facing direction.
+  if (direction === 'up') {
+    polygon(ctx,[[-8,-43],[-5,-46],[5,-46],[8,-42],[8,-32],[4,-29],[-4,-29],[-8,-32]],look.hair);
+    if (look.long) box(ctx,-9,-40,19,18,look.hair);
+  } else if (direction === 'right') box(ctx,-8,-42,8,12,look.hair);
+  else if (direction === 'left') box(ctx,1,-42,7,12,look.hair);
   if (look.hat) { box(ctx, -10, -48, 20, 8, '#daa34d'); box(ctx, -14, -42, 28, 3, '#daa34d'); }
-  if (direction === 'up') box(ctx, -8, -40, 16, 11, look.hair);
-  else { box(ctx, direction === 'right' ? 5 : -5, -35, 2, 2, '#242936'); if (direction === 'down') box(ctx, 4, -35, 2, 2, '#242936'); }
+  if (direction !== 'up') { box(ctx, direction === 'right' ? 5 : -5, -35, 2, 2, '#242936'); if (direction === 'down') box(ctx, 4, -35, 2, 2, '#242936'); }
   if (direction !== 'up') { box(ctx,-1,-31,4,1,'#a77561'); if(direction==='right')box(ctx,8,-36,2,3,look.skin); if(direction==='left')box(ctx,-10,-36,2,3,look.skin); }
   if (resident.chatting && !reduced) box(ctx, w / 2, -24 + Math.sin(time / 420) * 2, 7, 4, look.skin);
   if (look.cane) { box(ctx, w / 2 + 3, -16, 3, 20, '#b99c74'); box(ctx, w / 2, -17, 6, 3, '#b99c74'); }
   if (seated) box(ctx, -10, -12, 24, 7, '#38424d');
-  if (look.chair) {
-    for (const x of [-15, 10]) { box(ctx, x, -14, 8, 19, '#b0cbd5'); box(ctx, x + 2, -11, 4, 13, '#283546'); box(ctx, x + 3, -7, 2, 5, '#8eafc1'); }
-    box(ctx, -14, -20, 29, 3, '#9cbbc8'); box(ctx, 12, -26, 3, 30, '#9cbbc8');
-  }
   ctx.restore();
 }
 
