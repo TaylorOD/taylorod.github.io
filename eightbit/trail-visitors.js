@@ -12,10 +12,25 @@ const visitors = [
 export function trailVisitors(time, reduced = false) {
   return visitors.flatMap((visitor, index) => {
     const phase = ((reduced ? 0 : time / 1000) + visitor.offset) % visitor.period;
-    const distance = phase * visitor.speed;
+    const started = ((time / 1000 - phase) % 360 + 360) % 360;
+    if (!reduced && started > 90 && started < 215) return [];
+    let moving = phase, activity = 'walk', pauseProgress = 0;
+    if (visitor.kind === 'dog') {
+      const stops = [[visitor.direction < 0 ? 414 : 390, 6, 'sniff'], [800, 5, 'wait']];
+      let delay = 0;
+      for (const [distance, duration, name] of stops) {
+        const start = distance / visitor.speed + delay;
+        if (phase >= start && phase < start + duration) { activity = name; pauseProgress = (phase-start)/duration; }
+        moving -= Math.max(0, Math.min(duration, phase-start));
+        delay += duration;
+      }
+    }
+    const distance = moving * visitor.speed;
     if (distance > 1164) return [];
     const x = visitor.direction === 1 ? -70 + distance : 1094 - distance;
-    return [{ ...visitor, id: index, x, dogX: x + visitor.direction * 30, dogY: visitor.y + 5 }];
+    const sniff = activity === 'sniff' ? Math.sin(pauseProgress * Math.PI) : 0;
+    const lead = 24 + Math.sin(moving * 1.4) * 5;
+    return [{ ...visitor, id: index, x, activity, sniff, dogX: x + visitor.direction * lead, dogY: visitor.y + 5 + sniff * 10 }];
   });
 }
 
@@ -38,16 +53,17 @@ function jogger(ctx, visitor, time) {
 }
 
 function dog(ctx, visitor, time) {
-  const stride = Math.sin(time / 140) * 3;
+  const stride = visitor.activity === 'walk' ? Math.sin(time / 140) * 3 : 0;
   ctx.save(); ctx.translate(Math.round(visitor.dogX), visitor.dogY); ctx.scale(visitor.direction, 1);
   box(ctx, -17, 0, 37, 3, '#233c3f44');
   for (const [x, swing] of [[-12,stride],[-6,-stride],[10,-stride],[15,stride]]) {
     box(ctx, x + swing, -9, 3, 10, visitor.muzzle);
   }
-  box(ctx, -16, -18, 29, 13, visitor.coat); box(ctx, 8, -23, 13, 15, visitor.coat);
+  box(ctx, -16, -18, 29, 13, visitor.coat); ctx.save(); ctx.translate(0,visitor.sniff*9); box(ctx, 8, -23, 13, 15, visitor.coat);
   box(ctx, 16, -17, 12, 7, visitor.muzzle); box(ctx, 25, -17, 4, 3, '#252d30');
   polygon(ctx, [[9,-23],[5,-21],[7,-11],[12,-14]], visitor.coat);
   box(ctx, 18, -21, 2, 2, '#ece0bf'); box(ctx, 8, -10, 13, 3, '#b96e67');
+  ctx.restore();
   polygon(ctx, [[-13,-15],[-24,-22-stride/2],[-25,-18-stride/2],[-15,-10]], visitor.coat);
   ctx.restore();
 }
@@ -56,7 +72,7 @@ export function trailActors(ctx, time, reduced = false) {
   const poseTime = reduced ? 0 : time;
   return trailVisitors(time, reduced).map(visitor => ({ y: visitor.dogY, draw: () => {
     if (visitor.kind === 'jogger') { jogger(ctx, visitor, poseTime); return; }
-    drawResident(ctx, { ...visitor, walking: !reduced, direction: visitor.direction === 1 ? 'right' : 'left', look: { ...visitor, width: 19 } }, poseTime, reduced);
+    drawResident(ctx, { ...visitor, walking: !reduced && visitor.activity === 'walk', chatting: visitor.activity === 'wait', direction: visitor.activity === 'wait' ? 'up' : visitor.direction === 1 ? 'right' : 'left', look: { ...visitor, width: 19 } }, poseTime, reduced);
     ctx.strokeStyle = '#d7c4a2'; ctx.lineWidth = 1.5; ctx.beginPath();
     ctx.moveTo(visitor.x + visitor.direction * 10, visitor.y - 16);
     ctx.quadraticCurveTo(visitor.x + visitor.direction * 21, visitor.y + 1, visitor.dogX + visitor.direction * 10, visitor.dogY - 9);
