@@ -1,18 +1,13 @@
-import { daylight, paintSky, outdoorLight, riverReflection, groundShadows, mountainLight } from './daylight.js';
-import { trailActors, trailVisitors } from './trail-visitors.js';
-import { drawCarousel } from './carousel.js';
-import { drawWildlife } from './wildlife.js';
+import { daylight, paintSky, outdoorLight, mountainLight } from './daylight.js';
 import { scoutActors } from './scout.js';
-import { bikeActors } from './bikes.js';
-import { campusActors, campusScale } from './campus-life.js';
 import { animateArcade } from './arcade-art.js';
-import { foreground, riverTrees, treeOpacity } from './depth.js';
+import { foreground } from './depth.js';
 import { canEnter, hitTest, nearbyPath } from './navigation.js';
-import { drawRiverLife } from './river.js';
 import { createResidents, updateResidents, drawResident, arcadeRegulars, drawArcadeRegular } from './residents.js';
 import { followTrail } from './companions.js';
 import { scenes, findPath, isWalkable } from './scenes.js';
-import { paintScene, ambience, person, pet, box, text, screen, tree } from './art.js';
+import { paintScene, ambience, person, pet, box, text, screen } from './art.js';
+import { drawTown } from './town-view.js';
 import { projects } from './content.js';
 
 export class World {
@@ -62,7 +57,7 @@ export class World {
     if (isWalkable(this.scene, this.player.x - 28, this.player.y)) this.companion.x -= 28;
     this.trail = [];
     if (id === 'town' && !this.progress.visited && !this.reduced.matches) {
-      this.companion = { x: 512, y: 448, direction: 'down' };
+      this.companion = { x: this.player.x - 32, y: this.player.y, direction: 'down' };
       this.trail = findPath(this.scene, this.companion, this.player);
     }
     this.residents ||= createResidents();
@@ -73,7 +68,7 @@ export class World {
   resize() {
     const bounds = this.canvas.getBoundingClientRect();
     if (!bounds.width || !bounds.height) return;
-    const scale = bounds.width < 600 ? .9 : Math.max(1.35, Math.min(bounds.width / 960, bounds.height / 620));
+    const scale = this.id === 'town' ? (bounds.width < 600 ? .75 : Math.max(bounds.width / 1536, bounds.height / 1024)) : bounds.width < 600 ? .9 : Math.max(1.35, Math.min(bounds.width / 960, bounds.height / 620));
     this.canvas.width = Math.round(bounds.width / scale);
     this.canvas.height = Math.round(bounds.height / scale);
     this.ctx.imageSmoothingEnabled = false; this.updateCamera(true);
@@ -188,8 +183,9 @@ export class World {
   }
 
   draw(time) {
+    if (this.id === 'town') { drawTown(this, time); return; }
     const ctx = this.ctx;
-    const outdoors = this.id === 'town' || this.id === 'rooftop';
+    const outdoors = this.id === 'rooftop';
     const light = daylight(this.lifeTime, this.reduced.matches);
     const skyLabel = `${this.id}:${light.label}`;
     if (skyLabel !== this.skyLabel) { this.skyLabel = skyLabel; this.onDaylight?.(this.id, light.label); }
@@ -203,53 +199,26 @@ export class World {
     if (outdoors) paintSky(ctx, this.scene.width, this.scene.height, light);
     ctx.drawImage(this.cache.get(this.id), 0, 0);
     if (outdoors) mountainLight(ctx, this.scene.width, light);
-    if (this.id === 'town') {
-      const shadows = [this.player, { ...this.companion, height: 22, width: 18 },
-        ...this.residents.filter(r=>r.room==='town' && !r.hidden && !r.home && !r.seated),
-        ...trailVisitors(this.lifeTime,this.reduced.matches)];
-      groundShadows(ctx,light,shadows,riverTrees);
-    }
     ambience(ctx, this.id, time, this.reduced.matches || this.paused);
-    if (this.id === 'town') {
-      drawWildlife(ctx, this.lifeTime, this.reduced.matches);
-      drawRiverLife(ctx, time, this.reduced.matches || this.paused);
-      riverReflection(ctx, light, this.lifeTime);
-      box(ctx, 688, 421, 9, 6, this.progress.pizza === 'delivered' ? '#a5b78c' : '#88775a');
-    }
     if (this.id === 'arcade') animateArcade(ctx, time, this.reduced.matches || this.paused, this.nearby?.id);
     if (this.target && this.path.length) { const { x, y } = this.target; box(ctx, x - 7, y - 1, 14, 2, '#e7cf9a'); box(ctx, x - 1, y - 7, 2, 14, '#e7cf9a'); }
     const greeting = time - this.enteredAt < 2200;
     const curious = !this.walking && ['pizza', 'snowcrust', 'lilgotchi', 'relay'].includes(this.nearby?.id);
-    const perspective = actor => this.id === 'town' ? campusScale(actor.x, actor.y) : 1;
     const companion = () => {
       const hop = greeting && !this.reduced.matches ? Math.max(0, Math.sin((time - this.enteredAt) / 150)) * 5 : 0;
       const direction = curious ? this.nearby.x > this.companion.x ? 'right' : 'left' : this.companion.direction;
-      pet(ctx, this.companion.x, this.companion.y - hop, this.progress.pet, this.reduced.matches ? 0 : time, !greeting && !curious && time - this.lastMove > 12000, perspective(this.companion), direction, greeting);
+      pet(ctx, this.companion.x, this.companion.y - hop, this.progress.pet, this.reduced.matches ? 0 : time, !greeting && !curious && time - this.lastMove > 12000, 1, direction, greeting);
       if (greeting || curious) text(ctx, greeting ? '♥' : this.nearby.id === 'snowcrust' || this.nearby.id === 'pizza' ? 'PIZZA?' : '?', this.companion.x, this.companion.y - 44, 8, '#edc389');
     };
     const actors = [
-      ...(this.id === 'town' ? [{ y: 844, draw: () => { ctx.save(); ctx.translate(0, 96); drawCarousel(ctx, this.lifeTime, this.reduced.matches); ctx.restore(); } }] : []),
       ...scoutActors(ctx, this.id, this.lifeTime, this.reduced.matches),
-      ...(this.id === 'town' ? trailActors(ctx, this.lifeTime, this.reduced.matches) : []),
-      ...(this.id === 'town' ? bikeActors(ctx, this.lifeTime, this.reduced.matches) : []),
-      ...(this.id === 'town' ? campusActors(ctx, this.lifeTime, this.reduced.matches) : []),
       ...(this.id === 'arcade' ? arcadeRegulars.map(resident => ({ y: resident.y, draw: () => drawArcadeRegular(ctx, resident, time, this.reduced.matches || this.paused) })) : []),
       { y: this.companion.y, draw: companion },
-      { y: this.player.y, draw: () => person(ctx, this.player.x, this.player.y, this.direction, this.walking && !this.reduced.matches, time, this.progress.pizza === 'carrying', perspective(this.player)) },
+      { y: this.player.y, draw: () => person(ctx, this.player.x, this.player.y, this.direction, this.walking && !this.reduced.matches, time, this.progress.pizza === 'carrying', 1) },
       ...this.residents.filter(resident => resident.room === this.id && !resident.hidden && !resident.home).map(resident => ({ y: resident.y + (resident.seated ? 16 : 0), draw: () => drawResident(ctx, resident, time, this.reduced.matches) })),
     ];
     for (const [x, y, w, h, depth] of foreground[this.id] || []) if ([this.player, this.companion, ...this.residents.filter(r => r.room === this.id && !r.seated)].some(actor => actor.x > x - 14 && actor.x < x + w + 14 && actor.y < depth && actor.y > y)) actors.push({ y: depth, draw: () => ctx.drawImage(this.cache.get(this.id), x, y, w, h, x, y, w, h) });
-    if (this.id === 'town') {
-      const visibleActors = [this.player, this.companion, ...trailVisitors(this.lifeTime, this.reduced.matches), ...this.residents.filter(resident => resident.room === 'town' && !resident.hidden && !resident.home)];
-      for (const item of riverTrees) actors.push({ y: item[1], draw: () => {
-        ctx.save(); ctx.globalAlpha = treeOpacity(item, visibleActors); tree(ctx, ...item); ctx.restore();
-      } });
-    }
     actors.sort((a, b) => a.y - b.y).forEach(actor => actor.draw());
-    if (this.id === 'town' && this.progress.pizza === 'delivered') {
-      box(ctx, 245, 512, 24, 5, '#e9ba79'); box(ctx, 245, 517, 24, 2, '#a55c3e');
-      text(ctx, 'THANKS!', 256, 478, 7, '#f1d8a7');
-    }
     if (outdoors) outdoorLight(ctx, this.id, this.scene.width, this.scene.height, light);
     for (const point of this.scene.points) {
       const near = point.id === this.nearby?.id;

@@ -23,8 +23,8 @@ for (const [id, scene] of Object.entries(scenes)) {
 }
 
 test('the river and buildings cannot be crossed, but the bridge can', () => {
-  assert.equal(isWalkable(scenes.town, 200, 640), false);
-  assert.equal(isWalkable(scenes.town, 512, 640), true);
+  assert.equal(isWalkable(scenes.town, 200, 740), false);
+  assert.equal(isWalkable(scenes.town, 896, 740), true);
   assert.equal(isWalkable(scenes.town, 512, 320), false);
   assert.deepEqual(findPath(scenes.town, scenes.town.spawn, { x: 512, y: 320 }), []);
 });
@@ -47,13 +47,13 @@ test("old companion choices migrate without losing progress", () => {
 
 
 test('both river banks have continuous paths connected by the bridge', () => {
-  for (const y of [576, 704]) {
-    for (let x = 48; x <= 976; x += 8) assert.ok(isWalkable(scenes.town, x, y), `${x},${y}`);
-    const route = findPath(scenes.town, { x: 48, y }, { x: 976, y });
+  for (const y of [656, 800]) {
+    for (let x = 48; x <= 1488; x += 8) assert.ok(isWalkable(scenes.town, x, y), `${x},${y}`);
+    const route = findPath(scenes.town, { x: 48, y }, { x: 1488, y });
     assert.ok(route.length);
     assert.ok(route.every(step => step.y === y));
   }
-  const crossing = findPath(scenes.town, { x: 48, y: 576 }, { x: 976, y: 704 });
+  const crossing = findPath(scenes.town, { x: 48, y: 656 }, { x: 1488, y: 800 });
   assert.ok(crossing.length);
-  assert.ok(crossing.filter(step => step.y > 600 && step.y < 680).every(step => step.x >= 464 && step.x <= 560));
+  assert.ok(crossing.filter(step => step.y > 700 && step.y < 780).every(step => step.x >= 832 && step.x <= 960));
 });

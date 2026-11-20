@@ -24,7 +24,7 @@ root.innerHTML = `
     <div class="quest-note" hidden><span>◈</span> pizza delivery <small>take it to the town bench</small></div>
     <button class="interact" disabled><kbd>E</kbd><span>walk up to something</span><b>↗</b></button>
     <div class="dpad" aria-label="Movement controls"><button data-direction="arrowup" aria-label="Walk up">↑</button><button data-direction="arrowleft" aria-label="Walk left">←</button><button data-direction="arrowdown" aria-label="Walk down">↓</button><button data-direction="arrowright" aria-label="Walk right">→</button></div>
-    <button class="mini-map" data-ui="map" aria-label="Open the town map"><svg viewBox="0 0 140 96" aria-hidden="true"><rect width="140" height="96" fill="#42645b"/><path d="M8 61H132M70 30V90" stroke="#b9aa84" stroke-width="10"/><path d="M0 79H140" stroke="#76a3a1" stroke-width="7"/><rect x="50" y="25" width="40" height="24" fill="#c99b79"/><rect x="108" y="31" width="23" height="18" fill="#b9bb8b"/><circle class="map-player" cx="70" cy="60" r="4" fill="#f4d094"/></svg><span>TOWN MAP <kbd>M</kbd></span></button>
+    <button class="mini-map" data-ui="map" aria-label="Open the town map"><svg viewBox="0 0 140 96" aria-hidden="true"><rect width="140" height="96" fill="#42645b"/><path d="M0 54H140M82 54V75" stroke="#b9aa84" stroke-width="10"/><path d="M0 69H140" stroke="#76a3a1" stroke-width="7"/><rect x="48" y="29" width="82" height="23" fill="#c99b79"/><rect x="123" y="12" width="12" height="12" fill="#b9bb8b"/><circle class="map-player" cx="70" cy="60" r="4" fill="#f4d094"/></svg><span>TOWN MAP <kbd>M</kbd></span></button>
   </main>
   <footer class="game-footer"><span class="footer-location">a little visit to missoula.</span><span class="desktop-help"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> move <i>·</i> <kbd>E</kbd> explore <i>·</i> click anywhere to walk</span><button data-ui="help">how to play <span>?</span></button></footer>
   <dialog class="game-dialog" aria-labelledby="dialog-title"><div class="dialog-top"><span class="dialog-tag"></span><button class="close-dialog" aria-label="Close dialog">✕</button></div><div class="dialog-content"></div></dialog>`;
@@ -60,7 +60,7 @@ function changeRoom(id, history = true) {
   if (!canEnter(id, progress)) { setRoute(world.id, true); handleAction('roof'); return; }
   dismissWelcome();
   const previous = world.id;
-  const doors = { arcade: { x: 512, y: 464 }, cabin: { x: 880, y: 304 }, rooftop: { x: 688, y: 480 } };
+  const doors = { arcade: { x: 1304, y: 576 }, cabin: { x: 1416, y: 264 }, rooftop: { x: 1424, y: 576 } };
   world.enter(id, id === 'town' ? doors[previous] : undefined);
   if (history) setRoute(id);
   sound.chime();
@@ -198,6 +198,7 @@ function handleAction(action) {
     bench: () => openDialog('A MOMENT ON MAIN STREET', 'stay a while.', '<p class="dialog-lead">nothing to collect here. just a bench, a river and a little space between projects.</p><button class="secondary" data-ui="close">back to exploring</button>'),
     carousel: () => openDialog('A CAROUSEL FOR MISSOULA', 'one more spin.', '<p class="dialog-lead">hand carved horses, a dragon and a whole lot of volunteer work. a little piece of Caras Park beside the river.</p><a class="text-link" href="https://www.missoulacarousel.org/" target="_blank" rel="noopener noreferrer">visit the real carousel ↗</a>'),
     wilma: () => openDialog('THE WILMA', 'a little downtown missoula.', '<p class="dialog-lead">a familiar marquee, a night of live music and the river just around the corner.</p><a class="text-link" href="https://logjampresents.com/venue/the-wilma/" target="_blank" rel="noopener noreferrer">see what is playing ↗</a>'),
+    campus: () => openDialog('UNIVERSITY OF MONTANA', 'at the end of the street.', '<p class="dialog-lead">a little walk past the storefronts, with mount sentinel in the background.</p><button class="secondary" data-ui="close">back to exploring</button>'),
     river: () => toast('the river isn’t going anywhere. neither is that side project.'),
     books: () => openDialog('ON THE BOOKSHELF', 'away from the keyboard.', '<p class="dialog-lead">reading, games, bjj and poker. a few ways to spend the time between making things.</p><button class="secondary" data-ui="about">a bit more about me →</button>'),
     legacy: () => openDialog('AN EARLIER SAVE FILE / 2020', 'booting the old computer.', '<p class="dialog-lead">the original portfolio, running right here. a little piece of where this started.</p><iframe class="legacy-computer" src="eightbit/legacy/index.html" title="Taylor’s original 2020 portfolio" sandbox="allow-scripts allow-popups" loading="lazy"></iframe><a class="text-link" href="https://github.com/TaylorOD/8_bit_portfolio">see the original source ↗</a>'),

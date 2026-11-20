@@ -1,20 +1,21 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { townLayout } from '../town-layout.js';
 import { trailVisitors } from '../trail-visitors.js';
 import { isWalkable, scenes } from '../scenes.js';
 
 test('visitors and their dogs stay on both river paths through full cycles', () => {
   const banks = new Set(), kinds = new Set();
   for (let time = 0; time < 200000; time += 100) {
-    for (const visitor of trailVisitors(time)) {
+    for (const visitor of trailVisitors(time, false, townLayout)) {
       banks.add(visitor.y); kinds.add(visitor.kind);
       for (const [x, y] of [[visitor.x, visitor.y], [visitor.dogX, visitor.dogY]]) {
-        if (x >= 40 && x <= 984) assert.ok(isWalkable(scenes.town, x, y), `${x},${y}`);
+        if (x >= 40 && x <= 1496) assert.ok(isWalkable(scenes.town, x, y), `${x},${y}`);
       }
       assert.ok(Math.hypot(visitor.dogX - visitor.x, visitor.dogY - visitor.y) < 36);
     }
   }
-  assert.deepEqual([...banks].sort(), [576, 704]);
+  assert.deepEqual([...banks].sort(), [656, 800]);
   assert.equal(kinds.size, 2);
 });
 
@@ -50,4 +51,19 @@ test('dogs sniff and wait without dragging their owner or jumping on the path', 
   }
   assert.deepEqual([...seen].sort(), ['sniff','wait','walk']);
   assert.equal(trailVisitors(200000).length,0);
+});
+
+test('the wider town lets visitors finish their trip before starting another', () => {
+  for (let time = 0; time < 400000; time += 100) {
+    const now = trailVisitors(time, false, townLayout);
+    const next = trailVisitors(time + 100, false, townLayout);
+    for (const visitor of now) {
+      const following = next.find(item => item.id === visitor.id);
+      if (following) assert.ok(Math.abs(following.x - visitor.x) <= 8.3);
+      else assert.ok(visitor.x < -50 || visitor.x > townLayout.width + 50);
+    }
+    for (const visitor of next.filter(item => !now.some(old => old.id === item.id))) {
+      assert.ok(visitor.x < -50 || visitor.x > townLayout.width + 50);
+    }
+  }
 });

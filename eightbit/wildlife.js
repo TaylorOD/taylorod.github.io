@@ -1,6 +1,6 @@
 import { box, polygon } from './art.js';
 
-function grazer(ctx, x, y, scale, elk, facing, time, offset) {
+export function grazer(ctx, x, y, scale, elk, facing, time, offset) {
   const grazing = Math.sin(time / 3400 + offset) > .25;
   ctx.save(); ctx.translate(x,y); ctx.scale(scale*facing,scale);
   const coat = elk ? '#ae946b' : '#bc9e73';

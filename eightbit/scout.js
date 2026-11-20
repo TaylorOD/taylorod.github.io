@@ -83,11 +83,16 @@ function drawSquirrel(ctx, squirrel, time) {
   box(ctx,-5,-1,5,2,'#705c40'); ctx.restore();
 }
 
-export function scoutActors(ctx, room, time, reduced = false) {
+export function scoutActors(ctx, room, time, reduced = false, layout = null) {
   const scout = scoutMoment(reduced ? 17500 : time);
   if (room === 'cabin' && scout.indoors) return [{ y: 476, draw: () => drawScout(ctx,{ x: 208, y: 449, direction: 1 },0,true) }];
   if (room !== 'town' || scout.indoors) return [];
+  if (layout) {
+    const project = point => ({ ...point, x: layout.cabin.x + (point.x - door.x) * .48, y: layout.cabin.y + (point.y - door.y) * .48 });
+    Object.assign(scout, project(scout));
+    if (scout.squirrel) scout.squirrel = project(scout.squirrel);
+  }
   const actors = [{ y: scout.y, draw: () => drawScout(ctx,scout,reduced ? 0 : time) }];
-  if (scout.squirrel) actors.push({ y: 415, draw: () => drawSquirrel(ctx,scout.squirrel,time) });
+  if (scout.squirrel) actors.push({ y: scout.squirrel.y, draw: () => drawSquirrel(ctx,scout.squirrel,time) });
   return actors;
 }

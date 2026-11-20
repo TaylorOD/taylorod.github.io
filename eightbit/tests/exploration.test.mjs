@@ -10,9 +10,9 @@ test('rooftop access requires the completed delivery', () => {
 });
 
 test('the ladder wins its overlapping building hit area', () => {
-  assert.equal(hitTest(scenes.town, { x: 692, y: 350 }).id, 'roof');
-  assert.equal(hitTest(scenes.town, { x: 512, y: 280 }).id, 'arcade');
-  assert.equal(hitTest(scenes.town, { x: 864, y: 200 }).id, 'cabin');
+  assert.equal(hitTest(scenes.town, { x: 1420, y: 500 }).id, 'roof');
+  assert.equal(hitTest(scenes.town, { x: 1304, y: 500 }).id, 'arcade');
+  assert.equal(hitTest(scenes.town, { x: 1416, y: 200 }).id, 'cabin');
 });
 
 test('a blocked ground tap finds a nearby reachable tile', () => {
@@ -23,6 +23,6 @@ test('a blocked ground tap finds a nearby reachable tile', () => {
 });
 
 test('map marker follows outdoor movement and identifies indoor buildings', () => {
-  assert.deepEqual(mapPosition('town', { x: 512, y: 384 }), { x: 70, y: 48 });
-  assert.deepEqual(mapPosition('cabin', {}), { x: 120, y: 24 });
+  assert.deepEqual(mapPosition('town', { x: 768, y: 512 }), { x: 70, y: 48 });
+  assert.deepEqual(mapPosition('cabin', {}), { x: 129, y: 25 });
 });
