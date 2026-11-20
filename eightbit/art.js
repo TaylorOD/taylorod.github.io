@@ -258,6 +258,9 @@ export function person(ctx, x, y, direction = 'down', walking = false, time = 0,
   } else {
     box(ctx, -9, -29, 19, 6, '#b8d8e9'); box(ctx, -6, -24, 13, 3, '#7caace');
   }
+  polygon(ctx,[[-9,-41],[-9,-47],[-5,-50],[6,-50],[10,-46],[10,-41]],'#26333c');
+  box(ctx,side ? (facing<0?-15:4) : -9,-42,side?12:22,3,'#17262e');
+  box(ctx,-5,-47,9,1,'#53616a');
   if (carrying && direction !== 'up') {
     const px = direction === 'left' ? -29 : direction === 'down' ? -10 : 7;
     border(ctx, px, -24, 22, 10, '#e2bd85', '#80664a', 2); text(ctx, 'P', px + 11, -19, 7, '#9b5f4b');
