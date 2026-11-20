@@ -1,10 +1,11 @@
+import { woodlandTrees } from './woodland.js';
 import { box, polygon } from './art.js';
 
 const door = { x: 1416, y: 264 };
 const porch = { x: 1382, y: 336 };
 const mix = (a,b,t) => ({ x: a.x+(b.x-a.x)*t, y: a.y+(b.y-a.y)*t });
-export const scoutSpeed = 1;
-export const chaseTrees = [[1245,340],[1272,370],[1325,390],[1368,326],[1291,324],[1450,390]];
+export const scoutSpeed = 1.55;
+export const chaseTrees = woodlandTrees.filter(tree => tree.chase).map(tree => [tree.x, tree.y]);
 
 function along(points, phase) {
   const lengths=points.slice(1).map((p,i)=>Math.hypot(p.x-points[i].x,p.y-points[i].y));
@@ -17,7 +18,7 @@ function along(points, phase) {
 }
 
 export function scoutMoment(time) {
-  const seconds=Math.max(0,Number.isFinite(time)?time:0)/1000, cycle=Math.floor(seconds/90), phase=seconds%90;
+  const seconds=Math.max(0,Number.isFinite(time)?time:0)*scoutSpeed/1000, cycle=Math.floor(seconds/90), phase=seconds%90;
   const [tx,ty]=chaseTrees[cycle%chaseTrees.length], tree={x:tx,y:ty};
   const watch={x:tx-23,y:ty+3};
   const turns=cycle%2 ? [[1320,369],[1380,410],[1270,400],[1310,342],[1420,375]] : [[1410,384],[1305,412],[1240,384],[1340,350],[1285,400]];
@@ -29,7 +30,8 @@ export function scoutMoment(time) {
   if(phase>=11&&phase<62) {
     const ahead=along(route,Math.min(1,(phase-11+2)/30));
     squirrel=phase<39?{...ahead,x:ahead.x+23,y:ahead.y-3}:{x:tree.x,y:tree.y-Math.min(68,(phase-39)*28)};
-    squirrel.climbing=phase>=39;squirrel.direction=1;
+    const following=along(route,Math.min(1,(phase-11+2.03)/30));
+    squirrel.climbing=phase>=39;squirrel.direction=following.x>=ahead.x?1:-1;
   }
   return {...position,direction:watching?1:next.x>=position.x?1:-1,walking:!indoors&&!watching,indoors,squirrel,
     vertical:!indoors&&(phase<11||phase>=63),entering:phase>=63,watching,
@@ -38,7 +40,7 @@ export function scoutMoment(time) {
 
 // Only some trips startle the elk. They return after Scout settles at the tree.
 export function elkMoment(time) {
-  const phase=time/1000%90, cycle=Math.floor(time/90000);
+  const phase=time*scoutSpeed/1000%90, cycle=Math.floor(time*scoutSpeed/90000);
   if(cycle%3!==1||phase<9||phase>=62) return {offset:0,running:false};
   const offset=phase<16?(phase-9)/7*160:phase<51?160:(62-phase)/11*160;
   return {offset,running:phase<16||phase>=51};
@@ -62,7 +64,7 @@ export function drawScout(ctx, scout, time, sleeping = false) {
       box(ctx,-3,-31,5,9,white); box(ctx,-6,-24,13,7,white); box(ctx,-2,-24,5,3,black);
       box(ctx,-6,-29,2,2,'#d5b279'); box(ctx,5,-29,2,2,'#d5b279');
       box(ctx,-8,-17,17,3,'#b56d85'); box(ctx,-5,-14,10,9,white);
-    } else { box(ctx,-8,-18,17,4,white); box(ctx,-2,-10,4,9,black); box(ctx,-2,-3,4,4,white); }
+    } else { box(ctx,-8,-18,17,4,white); box(ctx,-2,-12,4,4,black); }
     ctx.restore(); return;
   }
   box(ctx,-22,-1,49,4,'#203c3f33');
@@ -73,9 +75,8 @@ export function drawScout(ctx, scout, time, sleeping = false) {
   polygon(ctx,[[-22,-13],[-19,-24],[7,-25],[19,-20],[20,-10],[-14,-9]],black);
   polygon(ctx,[[8,-25],[17,-26],[23,-17],[18,-7],[10,-10]],white);
   box(ctx,-5,-24,5,5,white);
-  const wag = scout.walking || scout.watching ? Math.sin(time / 110) * 4 : 0;
-  polygon(ctx,[[-19,-20],[-28,-24-wag],[-31,-20-wag],[-23,-14]],black);
-  box(ctx,-32,-24-wag,5,5,white);
+  const wag = scout.walking || scout.watching ? Math.sin(time / 110) * 1.5 : 0;
+  polygon(ctx,[[-19,-21],[-24,-22-wag],[-25,-18-wag],[-20,-16]],black);
   box(ctx,14,-29,14,13,black); polygon(ctx,[[16,-28],[10,-27],[11,-16],[16,-19]],'#17232c');
   box(ctx,25,-22,9,7,white); box(ctx,31,-21,4,4,black);
   box(ctx,24,-28,2,2,'#dbb67b'); box(ctx,25,-26,2,6,white);
