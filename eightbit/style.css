@@ -18,7 +18,8 @@
 #eightbit kbd { font: inherit; border: 1px solid #69827988; padding: 1px 5px; font-size: 10px; color: #c7d1bc; background: #2a4140; }
 #eightbit .game-header { display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 79px; padding: 14px 30px; background: #172d32; border-bottom: 1px solid #6a83714d; z-index: 3; }
 #eightbit .brand { display: flex; gap: 15px; align-items: center; font: 14px/1.6 'Press Start 2P', monospace; color: #efdbb3; white-space: nowrap; }
-#eightbit .brand-icon { display: grid; place-items: center; width: 39px; height: 39px; border: 1px solid #d2ac78; color: #efc18b; box-shadow: 3px 3px 0 #091f25; font-size: 27px; }
+#eightbit .brand-icon { display: grid; place-items: center; flex: 0 0 auto; width: 39px; height: 39px; border: 1px solid #d2ac78; color: #efc18b; box-shadow: 3px 3px 0 #091f25; line-height: 0; }
+#eightbit .brand-icon svg { display: block; width: 24px; height: 24px; }
 #eightbit .brand small { display: block; font: 7px/1.8 'Space Mono', monospace; letter-spacing: 1.6px; color: #9fb8ab; margin-top: 4px; }
 #eightbit .game-header nav { display: flex; align-items: center; gap: 25px; font-size: 11px; }
 #eightbit .game-header nav button { padding: 9px 0; }
@@ -131,7 +132,8 @@
   #eightbit[data-room="town"] .world-canvas { height: calc(100% - 112px); }
   #eightbit .game-header { min-height: 102px; padding: 12px 16px 8px; flex-wrap: wrap; gap: 10px; }
   #eightbit .brand { font-size: 11px; }
-  #eightbit .brand-icon { width: 28px; height: 28px; font-size: 22px; }
+  #eightbit .brand-icon { width: 28px; height: 28px; }
+  #eightbit .brand-icon svg { width: 24px; height: 24px; }
   #eightbit .brand small { font-size: 5px; letter-spacing: .7px; margin-top: 3px; }
   #eightbit .game-header nav { width: 100%; justify-content: space-between; gap: 12px; font-size: 10px; }
   #eightbit .game-header nav button { padding: 3px 0; min-height: 30px; }
