@@ -81,7 +81,6 @@ export function updateResidents(residents, _scene, delta, player, playerRoom = '
       resident.stop = 1 + resident.index % 3;
       continue;
     }
-    if (resident.room === playerRoom && Math.hypot(resident.x - player.x, resident.y - player.y) < 30) continue;
     const target = resident.route[0], dx = target.x - resident.x, dy = target.y - resident.y;
     const distance = Math.hypot(dx, dy), step = resident.speed * delta;
     if (distance <= step) { resident.x = target.x; resident.y = target.y; resident.route.shift();

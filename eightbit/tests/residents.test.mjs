@@ -3,6 +3,19 @@ import assert from 'node:assert/strict';
 import { createResidents, updateResidents } from '../residents.js';
 import { scenes, isWalkable } from '../scenes.js';
 
+test('a stationary player cannot block neighbors in town or the arcade', () => {
+  for (const room of ['town', 'arcade']) {
+    const y = room === 'town' ? 576 : 352;
+    for (const direction of [-1, 1]) {
+      const resident = { ...createResidents()[0], room, x: 384 - direction * 40, y,
+        stop: 0, hidden: 0, route: [{ x: 384 + direction * 40, y }], speed: 40 };
+      const player = { x: 384, y };
+      for (let tick = 0; tick < 120; tick++) updateResidents([resident], scenes[room], 1 / 60, player, room);
+      assert.ok(direction * (resident.x - player.x) > 35);
+    }
+  }
+});
+
 test('town residents keep to reachable routes for a full walk cycle', () => {
   const residents = createResidents(scenes.town, 'town');
   assert.equal(residents.length, 9);
