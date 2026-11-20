@@ -23,12 +23,12 @@ export const scenes = {
   arcade: {
     name: 'last best arcade', subtitle: 'quarters in. real world out.', width: 768, height: 512,
     spawn: { x: 408, y: 456 }, bounds: [16, 256, 752, 504], grid: 8,
-    obstacles: [[100,256,100,70], [60,300,105,80], [16,360,108,84], [520,256,160,160], [630,30,120,450], [130,410,250,78], [130,348,74,62]],
+    obstacles: [[60,230,90,52], [30,260,90,62], [5,300,90,62], [500,336,180,90], [630,30,120,450], [145,360,223,72], [335,400,34,92]],
     points: [
       ...[['lilgotchi','meet lilgotchi',240],['snowcrust','play snowcrust',288],['relay','try relay',336],['fight','fight terminal',384],['sweat','mr game and sweat',432],['moonbean','moonbean coffee',480],['reachoutt','reachoutt',528]].map(([id,label,x]) => point(id,label,x === 528 ? 504 : x,280,`project:${id}`,{hit:[x-22,132,44,128]})),
       point('hidden-cypunk','look beside the pinball',224,328,'find:cypunk',{hit:[213,315,24,32]}),
-      point('poker','poker seater',480,360,'project:poker',{hit:[520,256,160,160]}),
-      point('pizza','coins and beer',408,440,'coins',{hit:[130,348,250,140]}),
+      point('poker','poker seater',480,384,'project:poker',{hit:[500,336,128,90]}),
+      point('pizza','coins and beer',408,440,'coins',{hit:[145,360,224,132]}),
       point('photo','take a photo',480,376,'photo'),
       point('roof','stairs to the rooftop',608,456,'roof',{hit:[628,344,120,136]}),
       point('exit','back to main street',400,488,'room:town',{hit:[336,480,96,32]}),
@@ -100,7 +100,7 @@ export function findSmoothPath(scene, from, to) {
       const target = route[i], steps = Math.ceil(Math.hypot(target.x-anchor.x,target.y-anchor.y) / .5);
       let clear = true;
       for (let n = 0; n <= steps; n++) {
-        if (!isWalkable(scene, anchor.x+(target.x-anchor.x)*n/steps, anchor.y+(target.y-anchor.y)*n/steps, 7.5)) { clear = false; break; }
+        if (!isWalkable(scene, anchor.x+(target.x-anchor.x)*n/steps, anchor.y+(target.y-anchor.y)*n/steps, scene === scenes.arcade ? 16.5 : 7.5)) { clear = false; break; }
       }
       if (!clear) break;
       end = i;

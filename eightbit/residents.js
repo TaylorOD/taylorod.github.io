@@ -140,7 +140,7 @@ export function drawResident(ctx, resident, time, reduced, roomScale = 1) {
 
 // Regulars stay at decorative machines, leaving every project cabinet available.
 export const arcadeRegulars = [
-  [216, 316, 0, 'pinball'], [178, 336, 4, 'pinball'], [600, 318, 5, 'poker'],
+  [168, 272, 0, 'pinball'], [137, 310, 4, 'pinball'], [546, 382, 5, 'poker'],
 ].map(([x, y, look, playing]) => ({ x, y, look: { ...looks[look], scale: arcadePersonScale }, direction: playing === 'poker' ? 'down' : 'up', playing }));
 
 export function drawArcadeRegular(ctx, resident, time, reduced) {
