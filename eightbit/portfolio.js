@@ -15,7 +15,7 @@ const normalURL = new URL('../', import.meta.url);
 const root = document.createElement('div'); root.id = 'eightbit';
 root.innerHTML = `
   <a class="skip-link" href="#directory">skip to the projects</a>
-  <header class="game-header"><a class="brand" href="./" aria-label="8 bit missoula home"><span class="brand-icon">✦</span><span>8 BIT MISSOULA<small>A LITTLE PIXEL TOWN IN MONTANA</small></span></a><nav aria-label="Quick navigation"><button data-ui="directory">projects <span>08</span></button><button data-ui="about">about</button><button data-ui="contact">contact</button><button data-ui="sound" aria-pressed="false">sound off</button><a class="normal-site">portfolio ↗</a></nav></header>
+  <header class="game-header"><a class="brand" href="./" aria-label="8 bit missoula home"><span class="brand-icon" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false" shape-rendering="crispEdges"><path fill="currentColor" d="M2 19v-3h2v-3h2v-3h2V7h4v3h2v3h2v-3h4v3h2v6Z"/><path fill="#fff0cf" d="M8 7h4v3h2v3h-4v-3H8Z"/></svg></span><span>8 BIT MISSOULA<small>A LITTLE PIXEL TOWN IN MONTANA</small></span></a><nav aria-label="Quick navigation"><button data-ui="directory">projects <span>08</span></button><button data-ui="about">about</button><button data-ui="contact">contact</button><button data-ui="sound" aria-pressed="false">sound off</button><a class="normal-site">portfolio ↗</a></nav></header>
   <main class="game-stage" aria-label="8 bit missoula">
     <canvas class="world-canvas" tabindex="0" aria-label="Explore the town. Arrow keys or WASD to walk. E or Enter to interact. Click a place to walk there, or use the projects menu."></canvas>
     <div class="scene-shade" aria-hidden="true"></div>
