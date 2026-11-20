@@ -11,7 +11,7 @@ function wheel(ctx, x) {
   box(ctx,x-3,-16,2,10,'#50696a'); box(ctx,x-8,-12,12,2,'#50696a');
 }
 
-function drawBike(ctx, bike, time, index) {
+export function drawBike(ctx, bike, time, index) {
   const pedal = Math.sin(time / 140) * 5;
   ctx.save(); ctx.translate(Math.round(bike.x),bike.y); ctx.scale(bike.facing,1);
   box(ctx,-29,0,58,3,'#27433944'); wheel(ctx,-19); wheel(ctx,24);

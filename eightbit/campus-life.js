@@ -11,8 +11,8 @@ export function campusWalker(time, index = 0) {
   const returning = phase > .5;
   const depth = returning ? (1 - phase) * 2 : phase * 2;
   return {
-    x: 164 + 34 * depth + (returning ? 5 : -5), y: 456 - 183 * depth,
-    look: { ...students[index % students.length], scale: 1 - .65 * depth },
+    x: 412 + 20 * depth + (returning ? 5 : -5), y: 566 - 263 * depth,
+    look: { ...students[index % students.length], scale: 1 - .72 * depth },
     direction: returning ? 'down' : 'up', walking: true,
   };
 }
@@ -25,6 +25,6 @@ export function campusActors(ctx, time, reduced = false) {
 }
 
 export function campusScale(x, y) {
-  if (x < 96 || x > 310 || y >= 448) return 1;
-  return .35 + .65 * Math.max(0, Math.min(1, (y - 273) / 175));
+  if (x < 340 || x > 480 || y >= 566) return 1;
+  return .28 + .72 * Math.max(0, Math.min(1, (y - 303) / 263));
 }

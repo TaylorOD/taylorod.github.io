@@ -12,7 +12,7 @@ const looks = [
   { skin: '#d3a17d', hair: '#cbb695', shirt: '#5a9b9e', width: 23, long: true },
   { skin: '#e7bd9e', hair: '#392f2d', shirt: '#b8ba74', width: 18, scale: .85 },
 ];
-const destinations = [{ x: 160, y: 464 }, { x: 512, y: 448, door: 'arcade' }, { x: 688, y: 576 }, { x: 512, y: 704 }, { x: 288, y: 544, activity: 'sit' }, { x: 640, y: 576, activity: 'talk' }, { x: 672, y: 576, activity: 'talk' }];
+const destinations = [{ x: 424, y: 576 }, { x: 1304, y: 576, door: 'arcade' }, { x: 1200, y: 656 }, { x: 896, y: 800 }, { x: 584, y: 656, activity: 'sit' }, { x: 640, y: 656, activity: 'talk' }, { x: 672, y: 656, activity: 'talk' }];
 const indoorStops = {
   arcade: [{ x: 272, y: 496 }, { x: 416, y: 672 }, { x: 752, y: 496 }],
 };
@@ -20,11 +20,11 @@ const indoorStops = {
 export function createResidents() {
   return [
     ...looks.map((look, index) => ({
-      ...(index === 7 ? { x: 944, y: 464 } : destinations[index % destinations.length]), index, look, room: 'town', direction: 'down', route: [],
+      ...(index === 7 ? { x: 1440, y: 576 } : destinations[index % destinations.length]), index, look, room: 'town', direction: 'down', route: [],
       stop: index * .7, next: (index + 2) % destinations.length, speed: 27 + index % 3 * 8,
       phase: 'street', hidden: 0,
     })),
-    { x: 256, y: 520, room: 'town', direction: 'down', look: looks[1], seated: true, walking: false },
+    { x: 552, y: 640, room: 'town', direction: 'down', look: looks[1], seated: true, walking: false },
   ];
 }
 
@@ -40,7 +40,7 @@ export function updateResidents(residents, _scene, delta, player, playerRoom = '
     }
     if (bedtime && resident.room === 'town' && !resident.headingHome) {
       resident.headingHome = true; resident.resting = null; resident.stop = 0;
-      resident.route = findPath(scenes.town, resident, { x: 64, y: 464 });
+      resident.route = findPath(scenes.town, resident, { x: 144, y: 576 });
     }
     if (resident.headingHome && !resident.route.length) {
       resident.headingHome = false; resident.home = true; resident.phase = 'street'; continue;
