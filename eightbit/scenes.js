@@ -7,6 +7,7 @@ export const scenes = {
     spawn: { x: 896, y: 576 }, bounds: [0, 240, 1536, 1000], grid: 8,
     paths: townPaths, obstacles: [[174,870,218,85]],
     points: [
+      point('hidden-original','look behind the tree',336,656,'find:original',{hit:[322,626,28,30]}),
       point('carousel', 'the carousel', 424, 944, 'carousel', { hit: [172,812,222,145] }),
       point('wilma', 'outside the Wilma', 144, 576, 'wilma', { hit: [52,174,211,386] }),
       point('arcade', 'enter the arcade', 1304, 576, 'room:arcade', { sign: 'LAST BEST ARCADE', hint: 'eight projects. one room.', hit: [1154,410,280,150] }),
@@ -25,6 +26,7 @@ export const scenes = {
     obstacles: [[24,256,144,96], [560,256,180,104]],
     points: [
       ...[['lilgotchi','meet lilgotchi',240],['snowcrust','play snowcrust',288],['relay','try relay',336],['fight','fight terminal',384],['sweat','mr game and sweat',432],['moonbean','moonbean coffee',480],['reachoutt','reachoutt',528]].map(([id,label,x]) => point(id,label,x,280,`project:${id}`,{hit:[x-22,132,44,128]})),
+      point('hidden-cypunk','look beside the pinball',184,320,'find:cypunk',{hit:[172,295,24,32]}),
       point('poker','poker seater',544,320,'project:poker',{hit:[560,256,180,104]}),
       point('pizza','pizza delivery',208,376,'pizza',{hit:[187,365,38,28]}),
       point('computer','boot the old computer',560,384,'legacy',{hit:[546,365,32,24]}),
