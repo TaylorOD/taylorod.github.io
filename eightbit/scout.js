@@ -1,37 +1,51 @@
 import { box, polygon } from './art.js';
 
-const door = { x: 875, y: 255 };
-const porch = { x: 875, y: 310 };
+const door = { x: 1416, y: 264 };
+const porch = { x: 1382, y: 336 };
 const mix = (a,b,t) => ({ x: a.x+(b.x-a.x)*t, y: a.y+(b.y-a.y)*t });
+export const scoutSpeed = 1;
+export const chaseTrees = [[1245,340],[1272,370],[1325,390],[1368,326],[1291,324],[1450,390]];
 
-// Scout has one continuous trip, with the doorway shared by exit and return.
-export const scoutSpeed = 2.5;
-export function scoutMoment(time) {
-  const seconds = time * scoutSpeed / 1000, phase = seconds % 50;
-  const right = Math.floor(seconds / 50) % 2 === 0;
-  const tree = { x: right ? 980 : 763, y: right ? 405 : 410 };
-  const clearing = { x: right ? 915 : 827, y: 350 };
-  const watch = { x: tree.x + (right ? -25 : 25), y: tree.y + 3 };
-  let position = door, direction = right ? 1 : -1, walking = false, indoors = false;
-  if (phase < 5 || phase >= 33) indoors = true;
-  else if (phase < 8) { position = mix(door,porch,(phase-5)/3); walking = true; }
-  else if (phase < 12) { position = mix(porch,clearing,(phase-8)/4); walking = true; }
-  else if (phase < 14) { position = mix(clearing,watch,(phase-12)/2); walking = true; }
-  else if (phase < 24) position = watch;
-  else if (phase < 30) { position = mix(watch,porch,(phase-24)/6); direction *= -1; walking = true; }
-  else { position = mix(porch,door,(phase-30)/3); direction *= -1; walking = true; }
-  let squirrel = null;
-  if (phase >= 10 && phase < 24) {
-    const start = { x: clearing.x + (right ? 20 : -20), y: clearing.y + 15 };
-    squirrel = phase < 14 ? mix(start,tree,Math.max(0,(phase-10)/4)) : { x: tree.x + 7, y: tree.y - Math.min(62,(phase-14)*14) };
-    squirrel.climbing = phase >= 14;
-    squirrel.direction = right ? 1 : -1;
+function along(points, phase) {
+  const lengths=points.slice(1).map((p,i)=>Math.hypot(p.x-points[i].x,p.y-points[i].y));
+  let remaining=Math.max(0,Math.min(1,phase))*lengths.reduce((a,b)=>a+b,0);
+  for(let i=0;i<lengths.length;i++) {
+    if(remaining<=lengths[i]) return mix(points[i],points[i+1],remaining/lengths[i]);
+    remaining-=lengths[i];
   }
-  return { ...position, direction, walking, indoors, squirrel, vertical: !indoors && (phase < 8 || phase >= 30), entering: phase >= 30, watching: phase >= 14 && phase < 21 };
+  return points.at(-1);
+}
+
+export function scoutMoment(time) {
+  const seconds=time/1000, cycle=Math.floor(seconds/90), phase=seconds%90;
+  const [tx,ty]=chaseTrees[cycle%chaseTrees.length], tree={x:tx,y:ty};
+  const watch={x:tx-23,y:ty+3};
+  const turns=cycle%2 ? [[1320,369],[1380,410],[1270,400],[1310,342],[1420,375]] : [[1410,384],[1305,412],[1240,384],[1340,350],[1285,400]];
+  const route=[porch,...turns.map(([x,y])=>({x,y})),watch];
+  const positionAt=p=>p<8||p>=66?door:p<11?mix(door,porch,(p-8)/3):p<41?along(route,(p-11)/30):p<53?watch:p<63?mix(watch,porch,(p-53)/10):mix(porch,door,(p-63)/3);
+  const position=positionAt(phase), next=positionAt(Math.min(65.999,phase+.03));
+  const indoors=phase<8||phase>=66, watching=phase>=41&&phase<53;
+  let squirrel=null;
+  if(phase>=11&&phase<62) {
+    const ahead=along(route,Math.min(1,(phase-11+2)/30));
+    squirrel=phase<39?{...ahead,x:ahead.x+23,y:ahead.y-3}:{x:tree.x,y:tree.y-Math.min(68,(phase-39)*28)};
+    squirrel.climbing=phase>=39;squirrel.direction=1;
+  }
+  return {...position,direction:watching?1:next.x>=position.x?1:-1,walking:!indoors&&!watching,indoors,squirrel,
+    vertical:!indoors&&(phase<11||phase>=63),entering:phase>=63,watching,
+    jump:watching?Math.max(0,Math.sin((phase-41)*Math.PI*1.1))*9:0};
+}
+
+// Only some trips startle the elk. They return after Scout settles at the tree.
+export function elkMoment(time) {
+  const phase=time/1000%90, cycle=Math.floor(time/90000);
+  if(cycle%3!==1||phase<9||phase>=62) return {offset:0,running:false};
+  const offset=phase<16?(phase-9)/7*160:phase<51?160:(62-phase)/11*160;
+  return {offset,running:phase<16||phase>=51};
 }
 
 export function drawScout(ctx, scout, time, sleeping = false) {
-  ctx.save(); ctx.translate(Math.round(scout.x),Math.round(scout.y)); ctx.scale(scout.direction || 1,1);
+  ctx.save(); ctx.translate(Math.round(scout.x),Math.round(scout.y-(scout.jump||0))); ctx.scale(scout.direction || 1,1);
   const black = '#222d35', white = '#e6e3ce';
   if (sleeping) {
     polygon(ctx,[[-22,-3],[-25,-12],[-17,-21],[6,-23],[20,-14],[21,-4]],black);
@@ -85,14 +99,9 @@ function drawSquirrel(ctx, squirrel, time) {
 }
 
 export function scoutActors(ctx, room, time, reduced = false, layout = null) {
-  const scout = scoutMoment(reduced ? 17500 / scoutSpeed : time);
+  const scout = scoutMoment(reduced ? 45000 : time);
   if (room === 'cabin' && scout.indoors) return [{ y: 296, draw: () => drawScout(ctx,{ x: 208, y: 296, direction: 1 },0,true) }];
   if (room !== 'town' || scout.indoors) return [];
-  if (layout) {
-    const project = point => ({ ...point, x: layout.cabin.x + (point.x - door.x) * .48, y: layout.cabin.y + (point.y - door.y) * .48 });
-    Object.assign(scout, project(scout));
-    if (scout.squirrel) scout.squirrel = project(scout.squirrel);
-  }
   const actors = [{ y: scout.y, draw: () => drawScout(ctx,scout,reduced ? 0 : time * 1.6) }];
   if (scout.squirrel) actors.push({ y: scout.squirrel.y, draw: () => drawSquirrel(ctx,scout.squirrel,time) });
   return actors;
