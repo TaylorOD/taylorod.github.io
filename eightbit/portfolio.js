@@ -223,7 +223,7 @@ function handleAction(action) {
 
 world = new World(canvas, {
   progress, onAction: handleAction,
-  onPosition: (id, player) => sound.position(id, player),
+  onPosition: (id, player, time) => sound.position(id, player, time),
   onDaylight: (id, label) => { if (id === 'town' || id === 'rooftop') root.querySelector('.place-subtitle').textContent = `missoula, montana · ${label}`; },
   onRoom: (id, scene) => { sound.setRoom(id); root.dataset.room = id; root.querySelector('.place-name').textContent = scene.name; root.querySelector('.place-subtitle').textContent = scene.subtitle; root.querySelector('.footer-location').textContent = id === 'town' ? 'a little visit to missoula.' : 'take your time. look around.'; root.querySelector('.interact').disabled = true; },
   onNearby: point => { const button = root.querySelector('.interact'); button.disabled = !point; button.querySelector('span').textContent = point?.label || 'walk up to something'; },
