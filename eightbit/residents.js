@@ -12,7 +12,7 @@ const looks = [
   { skin: '#d3a17d', hair: '#cbb695', shirt: '#5a9b9e', width: 23, long: true },
   { skin: '#e7bd9e', hair: '#392f2d', shirt: '#b8ba74', width: 18, scale: .85 },
 ];
-const destinations = [{ x: 160, y: 464 }, { x: 512, y: 448, door: 'arcade' }, { x: 688, y: 576 }, { x: 512, y: 704 }, { x: 272, y: 544, activity: 'sit' }, { x: 640, y: 576, activity: 'talk' }, { x: 672, y: 576, activity: 'talk' }];
+const destinations = [{ x: 160, y: 464 }, { x: 512, y: 448, door: 'arcade' }, { x: 688, y: 576 }, { x: 512, y: 704 }, { x: 288, y: 544, activity: 'sit' }, { x: 640, y: 576, activity: 'talk' }, { x: 672, y: 576, activity: 'talk' }];
 const indoorStops = {
   arcade: [{ x: 272, y: 496 }, { x: 416, y: 672 }, { x: 752, y: 496 }],
 };
@@ -20,7 +20,7 @@ const indoorStops = {
 export function createResidents() {
   return [
     ...looks.map((look, index) => ({
-      ...destinations[index % destinations.length], index, look, room: 'town', direction: 'down', route: [],
+      ...(index === 7 ? { x: 944, y: 464 } : destinations[index % destinations.length]), index, look, room: 'town', direction: 'down', route: [],
       stop: index * .7, next: (index + 2) % destinations.length, speed: 27 + index % 3 * 8,
       phase: 'street', hidden: 0,
     })),
@@ -87,6 +87,7 @@ export function updateResidents(residents, _scene, delta, player, playerRoom = '
     if (distance <= step) { resident.x = target.x; resident.y = target.y; resident.route.shift();
       if (!resident.route.length && !resident.headingHome && resident.phase === 'street') {
         resident.resting = resident.destination?.activity;
+        if (resident.resting === 'sit' && (resident.look.chair || residents.some(other => other !== resident && other.resting === 'sit'))) resident.resting = 'pause';
         resident.stop = resident.resting ? 14 + resident.index : 3;
         if (resident.resting === 'sit') resident.direction = 'down';
       }
