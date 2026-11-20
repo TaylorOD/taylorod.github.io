@@ -14,7 +14,7 @@ const looks = [
 ];
 const destinations = [{ x: 424, y: 576 }, { x: 1304, y: 576, door: 'arcade' }, { x: 1200, y: 656 }, { x: 896, y: 800 }, { x: 584, y: 656, activity: 'sit' }, { x: 640, y: 656, activity: 'talk' }, { x: 672, y: 656, activity: 'talk' }];
 const indoorStops = {
-  arcade: ['lilgotchi', 'poker', 'reachoutt'].map(id => scenes.arcade.points.find(point => point.id === id)),
+  arcade: ['lilgotchi', 'snowcrust', 'relay', 'fight', 'sweat', 'moonbean', 'reachoutt'].map(id => scenes.arcade.points.find(point => point.id === id)),
 };
 
 export function createResidents() {
@@ -47,25 +47,33 @@ export function updateResidents(residents, _scene, delta, player, playerRoom = '
     }
     if (resident.hidden > 0) { resident.hidden = Math.max(0, resident.hidden - delta); continue; }
     if (resident.stop > 0) {
-      resident.stop -= delta;
+      resident.stop = Math.max(0, resident.stop - delta);
+      if (!resident.stop) resident.playing = null;
       if (resident.resting === 'talk') {
         const friend = residents.find(other => other !== resident && other.room === 'town' && !other.home && Math.hypot(other.x-resident.x,other.y-resident.y) < 40);
         if (friend) { resident.direction = friend.x > resident.x ? 'right' : 'left'; resident.chatting = true; }
       }
       continue;
     }
-    resident.resting = null; resident.chatting = false;
+    resident.resting = null; resident.chatting = false; resident.playing = null;
     const scene = scenes[resident.room];
     if (!resident.route.length) {
       if (resident.phase === 'enter') {
         resident.room = resident.destination.door;
         Object.assign(resident, scenes[resident.room].spawn);
         resident.phase = 'inside'; resident.hidden = 1; resident.stop = 1;
-        resident.route = findPath(scenes[resident.room], resident, indoorStops[resident.room][resident.next % indoorStops[resident.room].length]);
+        const games = indoorStops[resident.room];
+        const occupied = new Set(['snowcrust', 'sweat', ...residents.filter(other => other !== resident && other.room === 'arcade').map(other => other.game?.id)]);
+        const start = (resident.index + (resident.visits || 0)) % games.length;
+        resident.game = games.slice(start).concat(games.slice(0, start)).find(game => !occupied.has(game.id));
+        if (!resident.game) { resident.phase = 'leave'; continue; }
+        resident.visits = (resident.visits || 0) + 1;
+        resident.route = findPath(scenes[resident.room], resident, resident.game);
         continue;
       }
       if (resident.phase === 'inside') {
-        resident.stop = 5 + resident.next;
+        resident.stop = 10 + resident.index;
+        resident.playing = 'cabinet'; resident.direction = 'up';
         resident.route = findPath(scene, resident, scene.spawn);
         resident.phase = 'leave'; continue;
       }
@@ -138,22 +146,32 @@ export function drawResident(ctx, resident, time, reduced, roomScale = 1) {
   ctx.restore();
 }
 
-// Regulars stay at decorative machines, leaving every project cabinet available.
+// Regulars and visitors never block the player or project interactions.
 export const arcadeRegulars = [
-  [168, 272, 0, 'pinball'], [137, 310, 4, 'pinball'], [546, 382, 5, 'poker'],
-].map(([x, y, look, playing]) => ({ x, y, look: { ...looks[look], scale: arcadePersonScale }, direction: playing === 'poker' ? 'down' : 'up', playing }));
+  [168, 272, 0, 'pinball'], [137, 310, 4, 'pinball'], [546, 320, 5, 'poker'],
+  [288, 260, 2, 'cabinet'], [432, 260, 6, 'cabinet'],
+  [230, 400, 0, 'bar'],
+].map(([x, y, look, playing]) => ({ x, y, look: { ...looks[look], scale: arcadePersonScale }, direction: ['poker', 'bar'].includes(playing) ? 'down' : 'up', playing }));
 
 export function drawArcadeRegular(ctx, resident, time, reduced) {
   ctx.save();
   // The far chair is behind the table. Only the seated upper body is visible.
-  if (resident.playing === 'poker') {
+  if (resident.playing === 'bar') {
+    ctx.beginPath(); ctx.rect(resident.x - 48, resident.y - 100, 96, 60); ctx.clip();
+  } else if (resident.playing === 'poker') {
     ctx.beginPath(); ctx.rect(resident.x - 24 * arcadePersonScale, resident.y - 50 * arcadePersonScale, 48 * arcadePersonScale, 30 * arcadePersonScale); ctx.clip();
   }
   drawResident(ctx, resident, time, true);
   ctx.restore();
-  const tap = reduced ? 0 : Math.floor(time / 230 + resident.x) % 2 * 2;
+  const tap = reduced ? 0 : Math.floor(time / (resident.playing === 'bar' ? 550 : 230) + resident.x) % 2 * 2;
   const { x, y, look } = resident;
   ctx.save(); ctx.translate(x, y); ctx.scale(look.scale, look.scale);
+  if (resident.playing === 'bar') {
+    box(ctx, -9, -29, 18, 7, '#244e45');
+    box(ctx, -13 + tap, -24, 26, 4, look.skin);
+    box(ctx, 8 + tap, -27, 6, 7, '#ead9b4');
+    ctx.restore(); return;
+  }
   // Elbows stay below the shoulders, with hands resting at control height.
   for (const side of [-1, 1]) {
     const arm = side < 0 ? -look.width / 2 - 3 : look.width / 2 - 1;
