@@ -12,7 +12,7 @@ const looks = [
   { skin: '#d3a17d', hair: '#cbb695', shirt: '#5a9b9e', width: 23, long: true },
   { skin: '#e7bd9e', hair: '#392f2d', shirt: '#b8ba74', width: 18, scale: .85 },
 ];
-const destinations = [{ x: 160, y: 464 }, { x: 512, y: 448, door: 'arcade' }, { x: 688, y: 576 }, { x: 512, y: 704 }, { x: 272, y: 560 }];
+const destinations = [{ x: 160, y: 464 }, { x: 512, y: 448, door: 'arcade' }, { x: 688, y: 576 }, { x: 512, y: 704 }, { x: 272, y: 544, activity: 'sit' }, { x: 640, y: 576, activity: 'talk' }, { x: 672, y: 576, activity: 'talk' }];
 const indoorStops = {
   arcade: [{ x: 272, y: 496 }, { x: 416, y: 672 }, { x: 752, y: 496 }],
 };
@@ -20,7 +20,7 @@ const indoorStops = {
 export function createResidents() {
   return [
     ...looks.map((look, index) => ({
-      ...destinations[index % destinations.length], look, room: 'town', direction: 'down', route: [],
+      ...destinations[index % destinations.length], index, look, room: 'town', direction: 'down', route: [],
       stop: index * .7, next: (index + 2) % destinations.length, speed: 27 + index % 3 * 8,
       phase: 'street', hidden: 0,
     })),
@@ -28,12 +28,33 @@ export function createResidents() {
   ];
 }
 
-export function updateResidents(residents, _scene, delta, player, playerRoom = 'town') {
+export function updateResidents(residents, _scene, delta, player, playerRoom = 'town', time = 0) {
   for (const resident of residents) {
     resident.walking = false;
     if (resident.seated) continue;
+    const phase = time % 360000 / 360000;
+    const bedtime = phase > .25 + resident.index * .008 && phase < .64;
+    if (resident.home) {
+      if (bedtime) continue;
+      resident.home = false; resident.hidden = .7; resident.stop = resident.index * .8;
+    }
+    if (bedtime && resident.room === 'town' && !resident.headingHome) {
+      resident.headingHome = true; resident.resting = null; resident.stop = 0;
+      resident.route = findPath(scenes.town, resident, { x: 64, y: 464 });
+    }
+    if (resident.headingHome && !resident.route.length) {
+      resident.headingHome = false; resident.home = true; resident.phase = 'street'; continue;
+    }
     if (resident.hidden > 0) { resident.hidden = Math.max(0, resident.hidden - delta); continue; }
-    if (resident.stop > 0) { resident.stop -= delta; continue; }
+    if (resident.stop > 0) {
+      resident.stop -= delta;
+      if (resident.resting === 'talk') {
+        const friend = residents.find(other => other !== resident && other.room === 'town' && !other.home && Math.hypot(other.x-resident.x,other.y-resident.y) < 40);
+        if (friend) { resident.direction = friend.x > resident.x ? 'right' : 'left'; resident.chatting = true; }
+      }
+      continue;
+    }
+    resident.resting = null; resident.chatting = false;
     const scene = scenes[resident.room];
     if (!resident.route.length) {
       if (resident.phase === 'enter') {
@@ -57,13 +78,19 @@ export function updateResidents(residents, _scene, delta, player, playerRoom = '
       resident.route = findPath(scenes.town, resident, resident.destination);
       resident.phase = resident.destination.door ? 'enter' : 'street';
       resident.next = (resident.next + 1) % destinations.length;
-      resident.stop = 2 + resident.next;
+      resident.stop = 1 + resident.index % 3;
       continue;
     }
     if (resident.room === playerRoom && Math.hypot(resident.x - player.x, resident.y - player.y) < 30) continue;
     const target = resident.route[0], dx = target.x - resident.x, dy = target.y - resident.y;
     const distance = Math.hypot(dx, dy), step = resident.speed * delta;
-    if (distance <= step) { resident.x = target.x; resident.y = target.y; resident.route.shift(); }
+    if (distance <= step) { resident.x = target.x; resident.y = target.y; resident.route.shift();
+      if (!resident.route.length && !resident.headingHome && resident.phase === 'street') {
+        resident.resting = resident.destination?.activity;
+        resident.stop = resident.resting ? 14 + resident.index : 3;
+        if (resident.resting === 'sit') resident.direction = 'down';
+      }
+    }
     else { resident.x += dx / distance * step; resident.y += dy / distance * step; }
     resident.direction = Math.abs(dx) > Math.abs(dy) ? dx > 0 ? 'right' : 'left' : dy > 0 ? 'down' : 'up';
     resident.walking = true;
@@ -73,8 +100,8 @@ export function updateResidents(residents, _scene, delta, player, playerRoom = '
 export function drawResident(ctx, resident, time, reduced) {
   const { look, direction } = resident;
   const stride = resident.walking && !reduced ? Math.sin(time / 140) * 3 : 0;
-  ctx.save(); ctx.translate(Math.round(resident.x), Math.round(resident.y)); ctx.scale(look.scale || 1, look.scale || 1);
-  const w = look.width, seated = look.chair || resident.seated;
+  ctx.save(); ctx.translate(Math.round(resident.x), Math.round(resident.y - (resident.resting === 'sit' ? 24 : 0))); ctx.scale(look.scale || 1, look.scale || 1);
+  const w = look.width, seated = look.chair || resident.seated || resident.resting === 'sit';
   box(ctx, -w / 2 - 2, 0, w + 4, 4, '#17292f55');
   box(ctx, -8, -14, 6, 14 - stride, '#324354'); box(ctx, 3, -14, 6, 14 + stride, '#324354');
   box(ctx, -10, -2 - stride, 10, 4, '#1f2632'); box(ctx, 2, -2 + stride, 10, 4, '#1f2632');
@@ -86,6 +113,7 @@ export function drawResident(ctx, resident, time, reduced) {
   if (look.hat) { box(ctx, -10, -48, 20, 8, '#daa34d'); box(ctx, -14, -42, 28, 3, '#daa34d'); }
   if (direction === 'up') box(ctx, -8, -40, 16, 11, look.hair);
   else { box(ctx, direction === 'right' ? 5 : -5, -35, 2, 2, '#242936'); if (direction === 'down') box(ctx, 4, -35, 2, 2, '#242936'); }
+  if (resident.chatting && !reduced) box(ctx, w / 2, -24 + Math.sin(time / 420) * 2, 7, 4, look.skin);
   if (look.cane) { box(ctx, w / 2 + 3, -16, 3, 20, '#b99c74'); box(ctx, w / 2, -17, 6, 3, '#b99c74'); }
   if (seated) box(ctx, -10, -12, 24, 7, '#38424d');
   if (look.chair) {
