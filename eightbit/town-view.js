@@ -1,3 +1,4 @@
+import { drawRiverLife } from './river-life.js';
 import { box, polygon, person, pet, text, glow } from './art.js';
 import { daylight, paintSky } from './daylight.js';
 import { drawResident } from './residents.js';
@@ -31,24 +32,6 @@ function sky(ctx,light) {
   ctx.globalAlpha=Math.max(0,Math.min(1,(light.phase-.06)/.08,(1-light.phase)/.06));
   paintSky(ctx,1536,210,light);
   ctx.restore();
-}
-
-function river(ctx,time,reduced) {
-  const t=reduced?0:time;
-  ctx.save(); ctx.beginPath(); ctx.rect(0,707,820,65); ctx.rect(979,707,557,65); ctx.clip();
-  for(let i=0;i<42;i++) {
-    const x=((i*127+t/90)%1536), y=710+(i*19)%59;
-    box(ctx,x,y,8+i%4*5,1,i%3?'#75aaa3':'#b1d0bd');
-  }
-  const x=1590-(t/27%1680), y=741;
-  polygon(ctx,[[x-29,y],[x-18,y-6],[x+24,y-6],[x+33,y],[x+19,y+7],[x-17,y+7]],'#e7a34e');
-  box(ctx,x-6,y-17,12,18,'#b85f46'); box(ctx,x-5,y-27,10,10,'#bd9470'); box(ctx,x-8,y-30,16,5,'#dcbf62');
-  box(ctx,x-30,y-8+Math.sin(t/240)*3,61,2,'#dfc98e');
-  ctx.restore();
-  // The fisher stays beside the water, away from the bridge entrance.
-  drawResident(ctx, { x: 83, y: 779, direction: 'right', walking: false,
-    look: { skin: '#b58261', hair: '#dad4bd', shirt: '#b46f44', width: 23, hat: true } }, 0, true);
-  ctx.strokeStyle='#d5c89e';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(91,758);ctx.quadraticCurveTo(150,670+Math.sin(t/1600)*12,185,733);ctx.stroke();
 }
 
 function lighting(ctx,light) {
@@ -89,7 +72,7 @@ export function drawTown(world,time) {
   box(ctx,1007,430,136,18,'#244a42');text(ctx,'SBG MISSOULA',1075,439,11,'#efd197');
   grazer(ctx,1260,374,.65,true,1,reduced?0:moment,0);
   grazer(ctx,1304,362,.48,true,-1,reduced?0:moment,2);
-  river(ctx,moment,reduced);carousel(ctx,moment,reduced);
+  drawRiverLife(ctx,moment,reduced);carousel(ctx,moment,reduced);
   box(ctx,1413,479,3,75,'#8b947f');box(ctx,1425,479,3,75,'#8b947f');
   for(let y=486;y<554;y+=10) box(ctx,1413,y,15,2,'#b2b79a');
   const actors=trailActors(ctx,moment,reduced,townLayout);
