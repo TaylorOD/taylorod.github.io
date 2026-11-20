@@ -1,3 +1,4 @@
+import { daylight, paintSky, outdoorLight, riverReflection } from './daylight.js';
 import { trailActors, trailVisitors } from './trail-visitors.js';
 import { drawCarousel } from './carousel.js';
 import { drawWildlife } from './wildlife.js';
@@ -15,14 +16,14 @@ import { paintScene, ambience, person, pet, box, text, screen, tree } from './ar
 import { projects } from './content.js';
 
 export class World {
-  constructor(canvas, { progress, onAction, onRoom, onNearby, onMove, onPosition }) {
+  constructor(canvas, { progress, onAction, onRoom, onNearby, onMove, onPosition, onDaylight }) {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
     this.progress = progress;
     this.onAction = onAction;
     this.onRoom = onRoom;
     this.onNearby = onNearby;
-    this.onMove = onMove; this.onPosition = onPosition;
+    this.onMove = onMove; this.onPosition = onPosition; this.onDaylight = onDaylight;
     this.reduced = matchMedia('(prefers-reduced-motion: reduce)');
     this.keys = new Set();
     this.direction = 'down';
@@ -188,16 +189,24 @@ export class World {
 
   draw(time) {
     const ctx = this.ctx;
+    const outdoors = this.id === 'town' || this.id === 'rooftop';
+    const light = daylight(this.lifeTime, this.reduced.matches);
+    const skyLabel = `${this.id}:${light.label}`;
+    if (skyLabel !== this.skyLabel) { this.skyLabel = skyLabel; this.onDaylight?.(this.id, light.label); }
+    this.canvas.dataset.daylight = light.label;
     if (!this.cache.has(this.id)) {
       const background = document.createElement('canvas'); background.width = this.scene.width; background.height = this.scene.height;
-      paintScene(background.getContext('2d'), this.id, projects); this.cache.set(this.id, background);
+      paintScene(background.getContext('2d'), this.id, projects, true); this.cache.set(this.id, background);
     }
     box(ctx, 0, 0, this.canvas.width, this.canvas.height, '#182b32');
-    ctx.save(); ctx.translate(-Math.round(this.camera.x), -Math.round(this.camera.y)); ctx.drawImage(this.cache.get(this.id), 0, 0);
+    ctx.save(); ctx.translate(-Math.round(this.camera.x), -Math.round(this.camera.y));
+    if (outdoors) paintSky(ctx, this.scene.width, this.scene.height, light);
+    ctx.drawImage(this.cache.get(this.id), 0, 0);
     ambience(ctx, this.id, time, this.reduced.matches || this.paused);
     if (this.id === 'town') {
       drawWildlife(ctx, this.lifeTime, this.reduced.matches);
       drawRiverLife(ctx, time, this.reduced.matches || this.paused);
+      riverReflection(ctx, light, this.lifeTime);
       box(ctx, 688, 421, 9, 6, this.progress.pizza === 'delivered' ? '#a5b78c' : '#88775a');
     }
     if (this.id === 'arcade') animateArcade(ctx, time, this.reduced.matches || this.paused, this.nearby?.id);
@@ -234,6 +243,7 @@ export class World {
       box(ctx, 245, 512, 24, 5, '#e9ba79'); box(ctx, 245, 517, 24, 2, '#a55c3e');
       text(ctx, 'THANKS!', 256, 478, 7, '#f1d8a7');
     }
+    if (outdoors) outdoorLight(ctx, this.id, this.scene.width, this.scene.height, light);
     for (const point of this.scene.points) {
       const near = point.id === this.nearby?.id;
       if (point.id !== 'arcade' && (near || point.id === this.hovered?.id)) {
