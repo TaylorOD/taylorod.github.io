@@ -1,54 +1,44 @@
-# last light arcade
+# 8 bit missoula
 
-Open `/?mode=8bit` for the alternate portfolio. `projects.html?mode=8bit` opens the arcade directly. The normal site and work mode remain separate.
+A small explorable Missoula at `/8-bit-missoula/`. The portfolio links to it as its own project. Old `?mode=8bit` bookmarks redirect here.
 
-Click a building or machine to walk over. Use WASD or arrow keys to move and E or Enter to interact. Phone visitors have direction buttons. The projects and map menus provide direct access without walking.
+Find four lilgotchi around town and inside the house and arcade. Some are hiding in the scenery. One needs a pizza delivered to a neighbor. Tap the found counter for hints. Found friends become walking companions, and finding everyone unlocks a Missoula postcard.
 
-Explore the town, arcade and cabin. Choose a companion, collect eight project stamps and download a postcard. Deliver the arcade pizza to the neighbor on the town bench to unlock the rooftop. Progress stays in local storage, with a fallback when storage is unavailable. Sound starts only when enabled. Reduced motion disables decorative animation and camera easing.
+Click a place to walk there, or use WASD and the arrow keys. E or Enter interacts. Phone visitors have direction buttons. The project menu opens the portfolio projects without walking.
 
-## files
+The arcade has seven project cabinets, pinball and a Poker Seater table. The house has books, a desk and Scout. Deliver the pizza from the arcade to unlock the rooftop. Existing optional sound stays off until enabled. No new audio was added.
 
-`boot.js` loads this mode only when requested. `content.js` owns project descriptions, work history and saved progress. Keep its content aligned with the normal site.
+## main files
 
-`scenes.js` defines rooms, collision areas and routes. `art.js` draws the original pixel scenery and illustrations. `arcade-art.js` owns the coin op interior and attract screens. `world.js` handles movement, the camera and rendering. `portfolio.js` handles dialogs, navigation and quests. `sound.js` synthesizes optional effects. `style.css` contains the alternate layout.
-
-Project dialogs show actual browser screenshots. Lilgotchi, Snowcrust and Relay also have small interactive demos. The companions use the actual Lilgotchi 3.0.7 sprite families, with Slice selected by default. The original 2020 portfolio runs inside the arcade repair desk using local archive assets.
-
-The cabin art uses the supplied house photos as reference. The photos themselves are private and are not published.
-
-## review checklist
-
-| request | implementation |
+| File | Responsibility |
 | --- | --- |
-| a composed arcade | 23 coin op machines, dark patterned carpet, neon, pinball, a cocktail cabinet, change counter and photo booth |
-| distinct main machines | eight labeled project cabinets with CRT previews, joysticks, buttons and coin doors |
-| real project previews | eight browser screenshots and three playable demos |
-| connected interaction | object centered dialog entry, cabinet proximity cues and focus return |
-| expressive companions | real sprites, directional looks, greetings, curiosity and idle sleep |
-| player movement | directional poses, walking cycle and pizza carrying |
-| personal rooms | photo inspired cabin with a wooded approach |
-| opening | immediate controls, sign bulbs lighting up and companion greeting |
-| lighting and depth | room palettes, cabinet glow and depth sorting, river canopies fade around people |
-| discovery | explicit click targets, labels, cursor feedback and reachable approaches |
-| pizza quest | seated recipient, pizza carrying, visible key exchange and changed rooftop lock |
-| keepsakes | drawn project stamps, collection animation, three postcard poses and PNG download |
-| original computer | working local archive with navigation and gallery filters |
-| meaningful copy | project details, work history and direct contact access |
-| phone layout | 44 pixel direction buttons, wrapping labels, direct project menu and phone camera framing |
-| populated town | varied residents visit public buildings, no house visits, kayaker, fly fisher and Brennan's Wave |
+| `boot.js` | Old bookmark redirects |
+| `portfolio.js` | Dialogs, navigation, collection and quests |
+| `content.js` | Project content and validated saved progress |
+| `hunt.js` | Discovery rules and old save migration |
+| `hunt-art.js` | Hidden friends drawn separately from backgrounds |
+| `world.js` | Movement, camera and scene rendering |
+| `scenes.js` | Rooms, collision areas and reachable interactions |
+| `town-view.js` | Painted town, depth and outdoor activity |
+| `interior-view.js` | Approved interior images and rooftop sky |
+| `residents.js` | Shared people art and resident schedules |
+| `scout.js` | Long squirrel chases, safe tree endings and occasional elk flight |
+| `river-life.js` | Fly casting, surfing and rafting |
+| `daylight.js` | Six minute outdoor clock |
+| `companions.js` | Real lilgotchi sprites and recorded footstep following |
 
-The backdrop includes Main Hall and the hillside M. The campus drawing uses [University of Montana reference photos](https://www.umt.edu/news/2023/06/060623fulb.php). It is distant scenery, with no new entry or walking obstruction.
+The clock moves through sunset, blue hour, night, dawn and daytime. It continues between rooms and pauses with dialogs or hidden tabs. Reduced motion holds a warm sunset and still wildlife poses.
 
-Eight arcade regulars play decorative machines while visitors come and go. The project machines remain available to the player.
+Progress stays in local storage with a fallback when storage is unavailable. Old adopted companions and completed pizza deliveries become discoveries. Project visit stamps remain saved separately from the hunt.
 
-First visits include a companion approaching from the arcade door and silhouettes moving behind the windows. River ambience gets louder near the water. Dialogs return toward their source with a short closing animation. Reduced motion skips these movements. A real iPhone long press check is still needed beyond the Chrome phone viewport check.
+The source photos used for the house and Scout are private and are not published. The original 2020 portfolio is available through the arcade computer using local archive assets.
 
 ## checking changes
 
 Serve the repository with a static server. Run `node --test eightbit/tests/*.test.mjs` and `git diff --check`.
 
-Look at the actual town, interiors and dialogs in a browser at desktop and phone widths. Check walking into a machine, keyboard controls, pet persistence, pizza delivery, stamp collection, the postcard download, browser back and the return to the normal site. Check that all project links still match their destinations.
+Look at the changed areas in a browser at desktop and phone widths before pushing. Check walking routes, interactions, collection hints, saved progress, the pizza delivery, rooftop lock, postcard and links. Keep screenshots in each PR.
+
+Phone checks use a Chrome viewport. A physical iPhone touch check remains separate.
 
 The original experiment is at https://github.com/TaylorOD/8_bit_portfolio.
-
-The outdoor clock runs through sunset, blue hour, night, dawn and daytime in six minutes. It starts at sunset and continues between rooms. Dialogs and hidden tabs pause it. Reduced motion holds a warm sunset. Streetlights, cabin windows, stars, the moon and river reflections follow the same clock.
