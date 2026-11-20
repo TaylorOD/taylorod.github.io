@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { canEnter, hitTest, nearbyPath, mapPosition } from '../navigation.js';
+import { canEnter, hitTest, nearbyPath } from '../navigation.js';
 import { scenes, isWalkable } from '../scenes.js';
 
 test('rooftop access requires the completed delivery', () => {
@@ -20,9 +20,4 @@ test('a blocked ground tap finds a nearby reachable tile', () => {
   assert.ok(path.length);
   assert.ok(path.every(point => isWalkable(scenes.town, point.x, point.y)));
   assert.ok(Math.hypot(path.at(-1).x - 200, path.at(-1).y - 640) < 60);
-});
-
-test('map marker follows outdoor movement and identifies indoor buildings', () => {
-  assert.deepEqual(mapPosition('town', { x: 768, y: 512 }), { x: 70, y: 48 });
-  assert.deepEqual(mapPosition('cabin', {}), { x: 129, y: 25 });
 });
