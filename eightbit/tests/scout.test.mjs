@@ -1,27 +1,26 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { scoutMoment, scoutSpeed } from '../scout.js';
-
-const at = time => scoutMoment(time / scoutSpeed);
-
-test('Scout leaves through the door, chases a squirrel and returns inside', () => {
-  assert.ok(at(0).indoors);
-  const exit = at(5000), outside = at(12000), watching = at(16000), returning = at(29000);
-  assert.equal(exit.indoors,false);
-  assert.ok(outside.y > exit.y && outside.walking);
-  assert.ok(watching.watching && watching.squirrel.climbing);
-  assert.ok(at(19000).squirrel.y < watching.squirrel.y);
-  assert.ok(returning.walking && returning.x < watching.x);
-  const entry = at(33000);
-  assert.ok(entry.indoors);
-  assert.equal(entry.x,exit.x); assert.equal(entry.y,exit.y);
+import {scoutMoment,elkMoment,chaseTrees} from '../scout.js';
+test('Scout follows a long chase before the squirrel climbs safely away',()=>{
+  assert.ok(scoutMoment(0).indoors);
+  for(const time of [12000,23000,37000]) assert.ok(scoutMoment(time).walking);
+  const watch=scoutMoment(44000);
+  assert.ok(watch.watching&&watch.squirrel.climbing);
+  assert.ok(watch.squirrel.y<watch.y-60);
+  assert.ok(scoutMoment(67000).indoors);
 });
-
-test('Scout alternates trees without jumping between route segments', () => {
-  assert.ok(at(17000).x > 875);
-  assert.ok(at(67000).x < 875);
-  for (let time=5001; time<100000; time+=10) {
-    const before=at(time-10), after=at(time);
-    assert.ok(Math.hypot(after.x-before.x,after.y-before.y) < 2);
+test('each tree is visited and movement stays continuous through six trips',()=>{
+  const trees=new Set();
+  for(let cycle=0;cycle<6;cycle++) trees.add(scoutMoment(cycle*90000+45000).x);
+  assert.equal(trees.size,chaseTrees.length);
+  for(let t=10;t<540000;t+=10) {
+    const a=scoutMoment(t-10),b=scoutMoment(t);
+    assert.ok(Math.hypot(a.x-b.x,a.y-b.y)<1);
   }
+});
+test('elk sometimes flee and then return',()=>{
+  assert.equal(elkMoment(14000).offset,0);
+  assert.ok(elkMoment(104000).offset>0);
+  assert.equal(elkMoment(153000).offset,0);
+  assert.equal(elkMoment(194000).offset,0);
 });
