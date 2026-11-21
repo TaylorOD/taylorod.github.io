@@ -19,7 +19,7 @@ function stroke(ctx, points, color, width = 1) {
   points.forEach(([x,y], i) => i ? ctx.lineTo(x,y) : ctx.moveTo(x,y)); ctx.stroke();
 }
 
-function fisher(ctx, time) {
+export function fisher(ctx, time) {
   const hand = [95,752];
   drawResident(ctx, { x:83, y:779, direction:'right', walking:false,
     contacts:[hand,[93,757]],look:{skin:'#b58261',hair:'#dad4bd',shirt:'#b46f44',width:23,hat:true} },0,true);
@@ -53,23 +53,31 @@ export function drawRiverLife(ctx,time,reduced=false) {
     box(ctx,x,y,7,2,row%2?'#cbdcd0':'#8fbdb4');
     box(ctx,x-9-(t/100%9),y+3,4,1,'#b0cec1');
   }
+  drawSurfer(ctx,t);
+  drawRaft(ctx,t);ctx.restore();
+  fisher(ctx,t);
+}
+
+
+export function drawSurfer(ctx,t){
   const surfX=579+Math.sin(t/1400)*23, surfY=735+Math.sin(t/750)*3;
   polygon(ctx,[[surfX-17,surfY],[surfX-10,surfY-3],[surfX+18,surfY-2],[surfX+12,surfY+3]],'#e1ad56');
   stroke(ctx,[[surfX-9,surfY-2],[surfX-4,surfY-12],[surfX+4,surfY-16],[surfX+10,surfY-2]],'#344b53',3);
   polygon(ctx,[[surfX-5,surfY-24],[surfX+5,surfY-25],[surfX+6,surfY-14],[surfX-3,surfY-12]],'#b85e48');
   box(ctx,surfX-3,surfY-33,8,8,'#c89c76');box(ctx,surfX-3,surfY-35,9,4,'#38433a');
   stroke(ctx,[[surfX-14,surfY-20],[surfX-4,surfY-23],[surfX+4,surfY-22],[surfX+16,surfY-17]],'#c89c76',3);
+}
+
+export function drawRaft(ctx,t,seats=[-15,12]){
   const raft=raftPosition(t), x=0, y=0;
   ctx.save();ctx.translate(raft.x,raft.y);ctx.scale(raftScale,raftScale);
   polygon(ctx,[[x-30,y-10],[x+25,y-10],[x+34,y],[x+25,y+10],[x-30,y+10],[x-38,y]],'#ba6749');
   polygon(ctx,[[x-25,y-5],[x+23,y-5],[x+26,y+4],[x-26,y+4]],'#344e4d');
-  for(const offset of [-15,12]) {
+  for(const offset of seats) {
     box(ctx,x+offset-5,y-13,10,12,'#d5a34a');box(ctx,x+offset-4,y-21,8,8,'#bb9270');box(ctx,x+offset-5,y-24,10,5,'#698d91');
     const paddle=Math.sin(t/420+offset)*5;
     stroke(ctx,[[x+offset,y-9],[x+offset-16,y+12+paddle]],'#d7c39a',2);
     stroke(ctx,[[x+offset-16,y+12+paddle],[x+offset-22,y+18+paddle]],'#dfb367',4);
   }
-  ctx.restore();ctx.restore();
-  fisher(ctx,t);
+  ctx.restore();
 }
-

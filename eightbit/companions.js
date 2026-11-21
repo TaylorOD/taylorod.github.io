@@ -29,14 +29,14 @@ export function drawCompanion(ctx, x, y, kind = 'slice', time = 0, asleep = fals
 }
 
 // Follow recorded footsteps so the pet takes the same turns around obstacles.
-export function followTrail(companion, trail, player, delta) {
+export function followTrail(companion, trail, player, delta, spacing = 28) {
   const last = trail.at(-1) || companion;
   if (Math.hypot(player.x - last.x, player.y - last.y) >= 3) trail.push({ ...player });
   let remaining = trail.reduce((sum, point, index) => {
     const previous = index ? trail[index - 1] : companion;
     return sum + Math.hypot(point.x - previous.x, point.y - previous.y);
   }, 0);
-  let budget = Math.min(Math.max(0, remaining - 28), delta * 150);
+  let budget = Math.min(Math.max(0, remaining - spacing), delta * 150);
   while (trail.length && budget > 0) {
     const next = trail[0], dx = next.x - companion.x, dy = next.y - companion.y;
     const distance = Math.hypot(dx, dy);

@@ -40,3 +40,14 @@ test('final pixels are confined to the same 256 colors for every layer',()=>{
   applyPalette(data);
   for(let i=0;i<data.length;i+=4)assert.ok(allowed.has(Array.from(data.slice(i,i+3)).join(',')));
 });
+
+test('walking shoes touch a leg in every direction and frame',()=>{
+  for(const direction of facings)for(const time of [0,130,260,390]){
+    const rectangles=[];
+    const ctx={save(){},restore(){},translate(){},scale(){},fillRect(x,y,w,h){rectangles.push({x,y,w,h,color:this.fillStyle});}};
+    drawHuman(ctx,{x:0,y:0,direction,action:'walk',time});
+    for(const shoe of rectangles.filter(r=>r.color===playerLook.shoes)){
+      assert.ok(rectangles.some(leg=>leg.color===playerLook.skin&&leg.y<-3&&leg.y+leg.h>=shoe.y&&leg.x<shoe.x+shoe.w&&leg.x+leg.w>shoe.x),`${direction} at ${time}`);
+    }
+  }
+});

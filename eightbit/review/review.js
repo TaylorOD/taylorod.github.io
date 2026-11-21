@@ -22,4 +22,14 @@ $('scene').onchange=scene;
 $('walk').onclick=()=>{world.pause(false);$('freeze').textContent='Pause';world.goTo($('destination').value);};
 $('freeze').onclick=()=>{world.pause(!world.paused);$('freeze').textContent=world.paused?'Resume':'Pause';};
 $('pizza').onchange=()=>{progress.pizza=$('pizza').checked?'carrying':'delivered';};
+$('save').onclick=()=>{
+  const id=world.id;
+  const canvas=document.createElement('canvas');canvas.width=world.scene.width;canvas.height=world.scene.height;
+  const snapshot=Object.assign(Object.create(World.prototype),world,{canvas,ctx:canvas.getContext('2d'),camera:{x:0,y:0},renderer:null,transition:0});
+  World.prototype.draw.call(snapshot,world.last);
+  canvas.toBlob(blob=>{
+    const link=document.createElement('a'),url=URL.createObjectURL(blob);
+    link.href=url;link.download=`missoula-${id}.png`;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  });
+};
 scene();

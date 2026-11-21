@@ -4,7 +4,7 @@ import { findSmoothPath as findPath, scenes } from './scenes.js';
 import { box, polygon } from './art.js';
 
 // Fictional neighbors with different ages, builds, clothing and mobility.
-const looks = [
+export const looks = [
   { skin: '#754b38', hair: '#261f2c', shirt: '#e1ad49', width: 22, curls: true },
   { skin: '#e4b08c', hair: '#d9d6c7', shirt: '#8aafbd', width: 20, cane: true },
   { skin: '#b7815b', hair: '#383043', shirt: '#d173ab', width: 25 },
