@@ -84,6 +84,7 @@ export function drawTown(world,time) {
   ctx.save();ctx.translate(-Math.round(world.camera.x),-Math.round(world.camera.y));
   ctx.drawImage(painting,0,0,1536,1024);
   sky(ctx,light);
+  box(ctx,74,488,148,14,'#f8e7bd');text(ctx,'LIVE MUSIC',148,495,11,'#17292f');
   box(ctx,704,439,94,15,'#244a42');text(ctx,'BASAL',751,447,13,'#efd197');
   box(ctx,1007,430,136,18,'#244a42');text(ctx,'SBG MISSOULA',1075,439,11,'#efd197');
   const elk=elkMoment(reduced?0:moment), bounce=elk.running?Math.sin(moment/80)*3:0;
