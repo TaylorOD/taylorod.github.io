@@ -1,4 +1,5 @@
 import { drawHuman, characterSizes } from './character-art.js';
+import { regularPose } from './interaction-art.js';
 import { findSmoothPath as findPath, scenes } from './scenes.js';
 import { box, polygon } from './art.js';
 
@@ -123,12 +124,6 @@ export const arcadeRegulars = [
 ].map(([x, y, look, playing]) => ({ x, y, look: { ...looks[look], scale: arcadePersonScale }, direction: ['poker', 'bar'].includes(playing) ? 'down' : 'up', playing }));
 
 export function drawArcadeRegular(ctx, resident, time, reduced) {
-  ctx.save();
-  if (resident.playing === 'bar') {
-    ctx.beginPath();ctx.rect(resident.x-48,resident.y-110,96,70);ctx.clip();
-  } else if(resident.playing==='poker') {
-    ctx.beginPath();ctx.rect(resident.x-48,resident.y-100,96,65);ctx.clip();
-  }
-  drawResident(ctx,resident,time,reduced,1);
-  ctx.restore();
+  const pose=regularPose(resident);
+  drawHuman(ctx,{...pose,look:resident.look,scale:arcadePersonScale,time:reduced?0:time,contacts:pose.hands});
 }

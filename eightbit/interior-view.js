@@ -2,7 +2,7 @@ import { box, text } from './art.js';
 import { paintSky } from './daylight.js';
 
 const images = new Map();
-function interiorImage(id) {
+export function interiorImage(id) {
   if (!images.has(id)) {
     const image = new Image();
     image.src = new URL(`./assets/${id}.png`, import.meta.url).href;
