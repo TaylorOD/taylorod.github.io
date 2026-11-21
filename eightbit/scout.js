@@ -89,7 +89,7 @@ export function drawScout(ctx, scout, time, sleeping = false) {
   ctx.restore();
 }
 
-function drawSquirrel(ctx, squirrel, time) {
+export function drawSquirrel(ctx, squirrel, time) {
   ctx.save(); ctx.translate(Math.round(squirrel.x),Math.round(squirrel.y));
   if (squirrel.climbing) ctx.rotate(-Math.PI/2);
   else ctx.scale(squirrel.direction,1);

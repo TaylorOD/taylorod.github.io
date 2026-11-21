@@ -60,7 +60,10 @@ export class World {
     this.stop(); this.id = id; this.scene = scenes[id];
     this.player = { ...(returnPoint || this.scene.spawn) };
     this.companion = { ...this.player, direction: 'down' };
-    if (isWalkable(this.scene, this.player.x - 28, this.player.y)) this.companion.x -= 28;
+    const gap=id==='town'?28:44;
+    for(const [dx,dy] of [[-gap,0],[gap,0],[0,gap],[0,-gap]]) {
+      if(isWalkable(this.scene,this.player.x+dx,this.player.y+dy)){this.companion.x+=dx;this.companion.y+=dy;break;}
+    }
     this.trail = [];
     if (id === 'town' && !this.progress.visited && !this.reduced.matches) {
       this.companion = { x: this.player.x - 32, y: this.player.y, direction: 'down' };
@@ -188,7 +191,7 @@ export class World {
         this.direction = Math.abs(dx) > Math.abs(dy) ? dx > 0 ? 'right' : 'left' : dy > 0 ? 'down' : 'up';
         if (this.walking) { this.lastMove = time; this.onMove?.(time, this.id); }
       }
-      followTrail(this.companion, this.trail, this.player, delta);
+      followTrail(this.companion, this.trail, this.player, delta, this.id==='town'?28:44);
       if (!this.reduced.matches) updateResidents(this.residents, this.scene, delta, this.player, this.id, this.lifeTime);
     }
     }

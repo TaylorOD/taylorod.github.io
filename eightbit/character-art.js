@@ -40,9 +40,10 @@ export function drawHuman(ctx,{x,y,look=playerLook,direction='down',action='idle
   } else {
     for(const [dx,swing] of [[side?-4:-8,stride],[side?2:3,-stride]]){
       const foot=action==='walk'?swing:0;
-      rect(dx,hip,6,-hip-2,look.shorts?skin:pants);
+      const lift=side?Math.abs(foot)/3:Math.max(0,foot);
+      rect(dx,hip,6,-hip-2-lift,look.shorts?skin:pants);
       if(look.shorts)rect(dx,hip,7,7,pants);
-      rect(dx+(side?foot:0),-2-(side?Math.abs(foot)/3:foot),8,3,shoes);
+      rect(dx+(side?foot:0),-2-lift,8,3,shoes);
     }
   }
   rect(-width/2,shoulder,width,hip-shoulder+2,shirt);

@@ -10,7 +10,7 @@ export const dogLooks = [
   { coat: '#ddd9ca', muzzle: '#eeeadb', size: 1.05, ears: 'floppy', spots: true },
 ];
 
-const visitors = [
+export const visitors = [
   { kind: 'jogger', y: 576, direction: 1, speed: 82, period: 67, offset: 6, skin: '#c58f68', hair: '#302d32', shirt: '#d77b65' },
   { kind: 'jogger', y: 704, direction: -1, speed: 76, period: 89, offset: 12, skin: '#80523d', hair: '#28252c', shirt: '#91b9b0' },
   { kind: 'dog', y: 576, direction: -1, speed: 26, period: 79, offset: 18, skin: '#e3b99a', hair: '#695248', shirt: '#8c93b6', coat: '#b48b5b', muzzle: '#ddc6a1' },
@@ -48,7 +48,7 @@ export function trailVisitors(time, reduced = false, layout = null) {
   });
 }
 
-function jogger(ctx, visitor, time) {
+export function jogger(ctx, visitor, time) {
   const stride = Math.sin(time / 95) * 7;
   ctx.save(); ctx.translate(Math.round(visitor.x), visitor.y); ctx.scale(visitor.direction*.8, .8);
   box(ctx, -12, 0, 25, 3, '#233c3f44');
@@ -66,7 +66,7 @@ function jogger(ctx, visitor, time) {
   ctx.restore();
 }
 
-function dog(ctx, visitor, time) {
+export function dog(ctx, visitor, time) {
   const stride = visitor.activity === 'walk' ? Math.sin(time / 140) * 3 : 0;
   ctx.save(); ctx.translate(Math.round(visitor.dogX), visitor.dogY); ctx.scale(visitor.direction * visitor.size*.75, visitor.size*.75);
   if (visitor.long) ctx.scale(1.25,.75);

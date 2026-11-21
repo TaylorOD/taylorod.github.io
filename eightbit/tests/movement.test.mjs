@@ -14,7 +14,9 @@ test('click travel reaches a cabinet and triggers its action once', () => {
     const canvas = { width: 800, height: 600, dataset: {}, getContext: () => ({}), getBoundingClientRect: () => ({ width: 1200, height: 900 }), addEventListener() {} };
     class HeadlessWorld extends World { draw() {} }
     const world = new HeadlessWorld(canvas, { progress: { pet: 'sprout', stamps: [] }, onAction: action => actions.push(action) });
-    world.enter('arcade'); world.goTo('lilgotchi');
+    world.enter('arcade');
+    assert.ok(Math.hypot(world.companion.x-world.player.x,world.companion.y-world.player.y)>=44,'the companion has a clear spawn beside the player');
+    world.goTo('lilgotchi');
     let time = world.last;
     for (let i = 0; i < 1000; i++) { time += 16; world.tick(time); }
     assert.deepEqual(actions, ['project:lilgotchi']);

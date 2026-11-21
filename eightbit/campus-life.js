@@ -1,6 +1,6 @@
 import { drawResident } from './residents.js';
 
-const students = [
+export const students = [
   { skin: '#e7bd99', hair: '#6a4332', shirt: '#773f50', width: 20, long: true },
   { skin: '#bd8d68', hair: '#292c32', shirt: '#c1b16f', width: 21 },
   { skin: '#e4b18c', hair: '#b0a17d', shirt: '#739ca8', width: 19 },
