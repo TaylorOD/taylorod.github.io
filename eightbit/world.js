@@ -1,3 +1,5 @@
+import { PixelRenderer } from './pixel-renderer.js';
+import { characterSizes } from './character-art.js';
 import { hiddenFriends } from './hunt-art.js';
 import { drawInterior, roofSky } from './interior-view.js';
 import { daylight, paintSky, outdoorLight, mountainLight } from './daylight.js';
@@ -73,7 +75,7 @@ export class World {
     const scale = this.id === 'town' ? (bounds.width < 600 ? .75 : Math.max(bounds.width / 1536, bounds.height / 1024)) : bounds.width < 600 ? .9 : Math.min(bounds.width / 960, bounds.height / 620);
     this.canvas.width = Math.round(bounds.width / scale);
     this.canvas.height = Math.round(bounds.height / scale);
-    this.ctx.imageSmoothingEnabled = false; this.updateCamera(true);
+    this.ctx.imageSmoothingEnabled = false; this.renderer?.resize(); this.updateCamera(true);
   }
 
   updateCamera(snap = false, elapsed = 1 / 60) {
@@ -185,7 +187,8 @@ export class World {
   }
 
   draw(time) {
-    if (this.id === 'town') { drawTown(this, time); return; }
+    if(!this.renderer){this.renderer=new PixelRenderer(this.canvas);this.renderer.resize();this.ctx=this.renderer.ctx;}
+    if (this.id === 'town') { drawTown(this, time); this.renderer.present(); return; }
     const ctx = this.ctx;
     const outdoors = this.id === 'rooftop';
     const light = daylight(this.lifeTime, this.reduced.matches);
@@ -211,7 +214,7 @@ export class World {
       ...scoutActors(ctx, this.id, this.lifeTime, this.reduced.matches),
       ...(this.id === 'arcade' ? arcadeRegulars.map(resident => ({ y: resident.y, draw: () => drawArcadeRegular(ctx, resident, time, this.reduced.matches || this.paused) })) : []),
       { y: this.companion.y, draw: companion },
-      { y: this.player.y, draw: () => person(ctx, this.player.x, this.player.y, this.direction, this.walking && !this.reduced.matches, time, this.progress.pizza === 'carrying', this.id === 'arcade' ? arcadePersonScale : 1) },
+      { y: this.player.y, draw: () => person(ctx, this.player.x, this.player.y, this.direction, this.walking && !this.reduced.matches, time, this.progress.pizza === 'carrying', characterSizes[this.id]) },
       ...this.residents.filter(resident => resident.room === this.id && !resident.hidden && !resident.home).map(resident => ({ y: resident.y + (resident.seated ? 16 : 0), draw: () => resident.playing && this.id === 'arcade' ? drawArcadeRegular(ctx, { ...resident, y: resident.y - 20, look: { ...resident.look, scale: arcadePersonScale } }, time, this.reduced.matches || this.paused) : drawResident(ctx, resident, time, this.reduced.matches, this.id === 'arcade' ? arcadePersonScale : 1) })),
     ];
 
@@ -228,6 +231,7 @@ export class World {
     }
     ctx.restore();
     if (this.transition) { ctx.fillStyle = `rgba(18, 34, 40, ${this.transition})`; ctx.fillRect(0, 0, this.canvas.width, this.canvas.height); }
+    this.renderer.present();
   }
 
   postcard(pose = 'hello') {

@@ -1,3 +1,4 @@
+import { drawHuman, playerLook } from './character-art.js';
 import { riverbanks } from './riverbank.js';
 import { daylight, paintSky } from './daylight.js';
 import { arcadeStorefront } from './storefront.js';
@@ -219,51 +220,9 @@ export function paintScene(ctx, id, projects, transparentSky = false) {
   else rooftop(ctx, transparentSky);
 }
 
-export function person(ctx, x, y, direction = 'down', walking = false, time = 0, carrying = false, scale = 1) {
-  const step = walking ? [0, 2, 0, -2][Math.floor(time / 110) % 4] : 0;
-  const side = direction === 'left' || direction === 'right';
-  const facing = direction === 'left' ? -1 : 1;
-  ctx.save(); ctx.translate(Math.round(x), Math.round(y)); ctx.scale(scale, scale);
-  box(ctx, -11, -2, 25, 6, '#192f3655');
-  // A side silhouette has a near arm, a nose and narrower shoulders.
-  const left = side ? -7 : -10, width = side ? 15 : 21;
-  box(ctx, -7, -14, 6, 13 - step, '#d5aa86'); box(ctx, 2, -14, 6, 11 + step, '#d5aa86');
-  box(ctx, -8, -16, 8, 8, '#253039'); box(ctx, 1, -16, 8, 8, '#253039');
-  box(ctx, -9, -3 - step, 9, 4, '#ef553e'); box(ctx, 2, -3 + step, 9, 4, '#ef553e');
-  if (carrying && direction === 'up') border(ctx, 7, -30, 22, 10, '#e2bd85', '#80664a', 2);
-  // Blue cloud tie dye, a loose hood and the tiny white bison from Taylor's hoodie.
-  box(ctx, left, -29, width, 18, '#82b5d9');
-  box(ctx, left, -27, 8, 5, '#b7d8e9'); box(ctx, 1, -22, side ? 6 : 9, 7, '#a4cfe6');
-  box(ctx, -6, -17, 8, 4, '#d3e5ee'); box(ctx, -2, -28, 5, 4, '#669ec9');
-  if (!side) {
-    box(ctx, -14, -27 + step, 5, 15, '#94c3e1'); box(ctx, 11, carrying ? -22 : -27 - step, 5, carrying ? 8 : 15, '#94c3e1');
-    box(ctx, -14, -13 + step, 5, 4, '#d5aa86'); box(ctx, 11, carrying ? -15 : -13 - step, 5, 4, '#d5aa86');
-  } else {
-    const arm = facing < 0 ? -9 : 6;
-    box(ctx, arm, carrying ? -23 : -27 + step, 5, carrying ? 9 : 15, '#a9d0e7');
-    box(ctx, arm, carrying ? -15 : -13 + step, 5, 4, '#d5aa86');
-  }
-  box(ctx, -8, -43, 17, 16, '#d5aa86'); box(ctx, -5, -46, 11, 4, '#d5aa86');
-  box(ctx, -5, -43, 7, 2, '#e5bd9a');
-  if (direction !== 'up') {
-    box(ctx, side ? facing < 0 ? -8 : 1 : -7, -33, side ? 8 : 15, 7, '#684c3b');
-    box(ctx, side ? facing < 0 ? -6 : 2 : -4, -27, side ? 5 : 9, 3, '#684c3b');
-    box(ctx, direction === 'left' ? -7 : direction === 'right' ? 5 : -4, -36, 2, 2, '#253b3c');
-    if (direction === 'down') {
-      box(ctx, 4, -36, 2, 2, '#253b3c'); box(ctx, -3, -31, 7, 2, '#d5aa86');
-      box(ctx, -4, -23, 8, 4, '#edf0e8'); box(ctx, 3, -24, 3, 4, '#edf0e8');
-      box(ctx, -4, -19, 2, 2, '#edf0e8'); box(ctx, 2, -19, 2, 2, '#edf0e8');
-    }
-    if (side) box(ctx, facing < 0 ? -11 : 8, -35, 3, 4, '#d5aa86');
-  } else {
-    box(ctx, -9, -29, 19, 6, '#b8d8e9'); box(ctx, -6, -24, 13, 3, '#7caace');
-  }
-  if (carrying && direction !== 'up') {
-    const px = direction === 'left' ? -29 : direction === 'down' ? -10 : 7;
-    border(ctx, px, -24, 22, 10, '#e2bd85', '#80664a', 2); text(ctx, 'P', px + 11, -19, 7, '#9b5f4b');
-    box(ctx, px + 6, -15, 10, 3, '#d2a282');
-  }
-  ctx.restore();
+export function person(ctx, x, y, direction = 'down', walking = false, time = 0, carrying = false, scale = 1, pose = null) {
+  return drawHuman(ctx,{x,y,direction,look:playerLook,scale,time,carrying,
+    action:pose?.action || (walking?'walk':carrying?'carry':'idle'),contacts:pose?.hands});
 }
 export const pet = drawCompanion;
 

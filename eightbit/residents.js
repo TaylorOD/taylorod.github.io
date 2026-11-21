@@ -1,3 +1,4 @@
+import { drawHuman, characterSizes } from './character-art.js';
 import { findSmoothPath as findPath, scenes } from './scenes.js';
 import { box, polygon } from './art.js';
 
@@ -105,45 +106,13 @@ export function updateResidents(residents, _scene, delta, player, playerRoom = '
   }
 }
 
-export const arcadePersonScale = 1.85;
+export const arcadePersonScale = characterSizes.arcade;
 
-export function drawResident(ctx, resident, time, reduced, roomScale = 1) {
-  const { look, direction } = resident;
-  const stride = resident.walking && !reduced ? Math.sin(time / 140) * 3 : 0;
-  ctx.save(); ctx.translate(Math.round(resident.x), Math.round(resident.y - (resident.resting === 'sit' ? 16 : 0))); ctx.scale((look.scale || 1) * roomScale, (look.scale || 1) * roomScale);
-  const w = look.width, seated = resident.seated || resident.resting === 'sit';
-  box(ctx, -w / 2 - 2, 0, w + 4, 4, '#17292f55');
-  box(ctx, -8, -14, 6, 14 - stride, '#324354'); box(ctx, 3, -14, 6, 14 + stride, '#324354');
-  box(ctx,-8,-13,2,10-stride,'#465966');box(ctx,3,-13,2,10+stride,'#465966');
-  box(ctx, -10, -2 - stride, 10, 4, '#1f2632'); box(ctx, 2, -2 + stride, 10, 4, '#1f2632');
-  polygon(ctx,[[-w/2,-25],[-w/2+3,-30],[w/2-3,-30],[w/2,-25],[w/2,-11],[-w/2,-11]],look.shirt);
-  ctx.save();ctx.globalAlpha=.18;
-  box(ctx,w/2-4,-25,4,14,'#152b33');box(ctx,-w/2+3,-29,w-7,2,'#fff4d8');
-  box(ctx,-3,-16,9,2,'#152b33');ctx.restore();
-  if (!resident.playing) {
-  box(ctx, -w / 2 - 3, -25 + stride, 4, 13, look.skin); box(ctx, w / 2, -25 - stride, 4, 13, look.skin);
-  box(ctx,-w/2-3,-28+stride,5,8,look.shirt);box(ctx,w/2-1,-28-stride,5,8,look.shirt);
-  box(ctx,-w/2-2,-13+stride,3,2,'#e4bc93');box(ctx,w/2,-13-stride,3,2,'#e4bc93');
-  }
-  box(ctx,-3,-31,6,4,look.skin);
-  polygon(ctx,[[-8,-41],[-5,-44],[5,-44],[8,-40],[8,-33],[4,-29],[-4,-29],[-8,-33]],look.skin);
-  polygon(ctx,[[-9,-40],[-9,-44],[-5,-47],[5,-47],[9,-43],[9,-38],[6,-40],[4,-43],[-4,-42],[-6,-38]],look.hair);
-  ctx.save();ctx.globalAlpha=.2;box(ctx,5,-39,3,8,'#5a3b35');box(ctx,-5,-41,5,2,'#fff0c8');ctx.restore();
-  if (look.curls) for (let i = 0; i < 4; i++) box(ctx, -11 + i * 6, -48 + i % 2 * 2, 7, 9, look.hair);
-  if (look.long) { box(ctx, -10, -42, 4, 20, look.hair); box(ctx, 7, -42, 4, 20, look.hair); }
-  // Hair covers the crown and the back of the head in each facing direction.
-  if (direction === 'up') {
-    polygon(ctx,[[-8,-43],[-5,-46],[5,-46],[8,-42],[8,-32],[4,-29],[-4,-29],[-8,-32]],look.hair);
-    if (look.long) box(ctx,-9,-40,19,18,look.hair);
-  } else if (direction === 'right') box(ctx,-8,-42,8,12,look.hair);
-  else if (direction === 'left') box(ctx,1,-42,7,12,look.hair);
-  if (look.hat) { box(ctx, -10, -48, 20, 8, '#daa34d'); box(ctx, -14, -42, 28, 3, '#daa34d'); }
-  if (direction !== 'up') { box(ctx, direction === 'right' ? 5 : -5, -35, 2, 2, '#242936'); if (direction === 'down') box(ctx, 4, -35, 2, 2, '#242936'); }
-  if (direction !== 'up') { box(ctx,-1,-31,4,1,'#a77561'); if(direction==='right')box(ctx,8,-36,2,3,look.skin); if(direction==='left')box(ctx,-10,-36,2,3,look.skin); }
-  if (resident.chatting && !reduced) box(ctx, w / 2, -24 + Math.sin(time / 420) * 2, 7, 4, look.skin);
-  if (look.cane) { box(ctx, w / 2 + 3, -16, 3, 20, '#b99c74'); box(ctx, w / 2, -17, 6, 3, '#b99c74'); }
-  if (seated) box(ctx, -10, -12, 24, 7, '#38424d');
-  ctx.restore();
+export function drawResident(ctx, resident, time, reduced, roomScale = characterSizes.town) {
+  const seated=resident.seated || resident.resting==='sit';
+  return drawHuman(ctx,{...resident,y:resident.y-(resident.resting==='sit'?10:0),
+    action:resident.playing || (seated?'sit':resident.walking?'walk':resident.chatting?'talk':'idle'),
+    scale:(resident.look.scale||1)*roomScale,time:reduced?0:time});
 }
 
 // Regulars and visitors never block the player or project interactions.
@@ -155,30 +124,11 @@ export const arcadeRegulars = [
 
 export function drawArcadeRegular(ctx, resident, time, reduced) {
   ctx.save();
-  // The far chair is behind the table. Only the seated upper body is visible.
   if (resident.playing === 'bar') {
-    ctx.beginPath(); ctx.rect(resident.x - 48, resident.y - 100, 96, 60); ctx.clip();
-  } else if (resident.playing === 'poker') {
-    ctx.beginPath(); ctx.rect(resident.x - 24 * arcadePersonScale, resident.y - 50 * arcadePersonScale, 48 * arcadePersonScale, 30 * arcadePersonScale); ctx.clip();
+    ctx.beginPath();ctx.rect(resident.x-48,resident.y-110,96,70);ctx.clip();
+  } else if(resident.playing==='poker') {
+    ctx.beginPath();ctx.rect(resident.x-48,resident.y-100,96,65);ctx.clip();
   }
-  drawResident(ctx, resident, time, true);
-  ctx.restore();
-  const tap = reduced ? 0 : Math.floor(time / (resident.playing === 'bar' ? 550 : 230) + resident.x) % 2 * 2;
-  const { x, y, look } = resident;
-  ctx.save(); ctx.translate(x, y); ctx.scale(look.scale, look.scale);
-  if (resident.playing === 'bar') {
-    box(ctx, -9, -29, 18, 7, '#244e45');
-    box(ctx, -13 + tap, -24, 26, 4, look.skin);
-    box(ctx, 8 + tap, -27, 6, 7, '#ead9b4');
-    ctx.restore(); return;
-  }
-  // Elbows stay below the shoulders, with hands resting at control height.
-  for (const side of [-1, 1]) {
-    const arm = side < 0 ? -look.width / 2 - 3 : look.width / 2 - 1;
-    box(ctx, arm, -28, 5, 9, look.shirt);
-    box(ctx, arm, -21, 5, 5, look.skin);
-    const hand = side < 0 ? arm - 3 : arm + 2;
-    box(ctx, hand, -24 + (side > 0 ? tap : 0), 6, 4, look.skin);
-  }
+  drawResident(ctx,resident,time,reduced,1);
   ctx.restore();
 }
