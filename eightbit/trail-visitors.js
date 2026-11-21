@@ -68,7 +68,7 @@ function jogger(ctx, visitor, time) {
 
 function dog(ctx, visitor, time) {
   const stride = visitor.activity === 'walk' ? Math.sin(time / 140) * 3 : 0;
-  ctx.save(); ctx.translate(Math.round(visitor.dogX), visitor.dogY); ctx.scale(visitor.direction * visitor.size, visitor.size);
+  ctx.save(); ctx.translate(Math.round(visitor.dogX), visitor.dogY); ctx.scale(visitor.direction * visitor.size*.75, visitor.size*.75);
   if (visitor.long) ctx.scale(1.25,.75);
   box(ctx, -17, 0, 37, 3, '#233c3f44');
   for (const [x, swing] of [[-12,stride],[-6,-stride],[10,-stride],[15,stride]]) {
@@ -91,10 +91,12 @@ export function trailActors(ctx, time, reduced = false, layout = null) {
   const poseTime = reduced ? 0 : time;
   return trailVisitors(time, reduced, layout).map(visitor => ({ y: visitor.dogY, draw: () => {
     if (visitor.kind === 'jogger') { jogger(ctx, visitor, poseTime); return; }
-    drawResident(ctx, { ...visitor, walking: !reduced && visitor.activity === 'walk', chatting: visitor.activity === 'wait', direction: visitor.activity === 'wait' ? 'up' : visitor.direction === 1 ? 'right' : 'left', look: { ...visitor, width: 19 } }, poseTime, reduced);
+    const hand=[visitor.x+visitor.direction*9,visitor.y-10];
+    drawResident(ctx, { ...visitor, contacts:[hand,[visitor.x+visitor.direction*4,visitor.y-12]],walking: !reduced && visitor.activity === 'walk', chatting: visitor.activity === 'wait', direction: visitor.direction === 1 ? 'right' : 'left', look: { ...visitor, width: 19 } }, poseTime, reduced);
     ctx.strokeStyle = '#d7c4a2'; ctx.lineWidth = 1.5; ctx.beginPath();
-    ctx.moveTo(visitor.x + visitor.direction * 10, visitor.y - 16);
-    ctx.quadraticCurveTo(visitor.x + visitor.direction * 21, visitor.y + 1, visitor.dogX + visitor.direction * 10, visitor.dogY - 9);
+    ctx.moveTo(...hand);
+    const size=visitor.size*.75;
+    ctx.quadraticCurveTo(visitor.x + visitor.direction * 21, visitor.y + 1, visitor.dogX + visitor.direction * 14*size*(visitor.long?1.25:1), visitor.dogY + (-9+visitor.sniff*9)*size*(visitor.long?.75:1));
     ctx.stroke(); dog(ctx, visitor, poseTime);
   } }));
 }

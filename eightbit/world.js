@@ -1,7 +1,8 @@
 import { PixelRenderer } from './pixel-renderer.js';
 import { characterSizes } from './character-art.js';
 import { hiddenFriends } from './hunt-art.js';
-import { drawInterior, roofSky } from './interior-view.js';
+import { drawInterior, roofSky, interiorImage } from './interior-view.js';
+import { interactionPose, regularPose, drawFurnitureFront } from './interaction-art.js';
 import { daylight, paintSky, outdoorLight, mountainLight } from './daylight.js';
 import { scoutActors } from './scout.js';
 import { animateArcade } from './arcade-art.js';
@@ -52,6 +53,7 @@ export class World {
   }
 
   enter(id, returnPoint) {
+    this.clearInteraction();
     if (!scenes[id] || !canEnter(id, this.progress)) id = 'town';
     this.enteredAt = performance.now();
     this.lastMove = this.enteredAt;
@@ -96,12 +98,13 @@ export class World {
     const key = event.key.toLowerCase();
     if (['arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'w', 'a', 's', 'd'].includes(key)) {
       event.preventDefault();
-      if (down) { this.path = []; this.destination = null; this.keys.add(key); } else this.keys.delete(key);
+      if (down) { this.clearInteraction(); this.path = []; this.destination = null; this.keys.add(key); } else this.keys.delete(key);
     }
     if (down && !event.repeat && ['e', 'enter', ' '].includes(key)) { event.preventDefault(); this.interact(); }
   }
 
   walk(direction, down) {
+    if(down&&!this.paused)this.clearInteraction();
     this.path = []; this.destination = null;
     if (!down) { this.keys.delete(direction); return; }
     if (this.paused) return;
@@ -121,6 +124,7 @@ export class World {
 
   click(event) {
     if (this.paused || event.button !== 0) return;
+    this.clearInteraction();
     this.canvas.focus({ preventScroll: true });
     const point = this.pointerPosition(event);
     const hit = hitTest(this.scene, point);
@@ -130,14 +134,24 @@ export class World {
   }
 
   goTo(id) {
+    this.clearInteraction();
     const point = this.scene.points.find(item => item.id === id);
     if (!point) return;
     this.keys.clear();
-    if (Math.hypot(point.x - this.player.x, point.y - this.player.y) < 22) { this.onAction(point.action); return; }
+    if (Math.hypot(point.x - this.player.x, point.y - this.player.y) < 3) { this.activate(point); return; }
     this.path = findPath(this.scene, this.player, point); this.destination = this.path.length ? point : null; this.target = this.path.at(-1);
   }
 
-  interact() { if (!this.paused && this.nearby) this.onAction(this.nearby.action); }
+  clearInteraction() { this.interaction=null;this.pendingAction=null; }
+
+  activate(point) {
+    this.interaction=interactionPose(this.id,point);
+    this.direction=this.interaction.direction;
+    this.interactionStarted=this.last;
+    this.pendingAction={point,at:this.last+(this.reduced.matches?0:220)};
+  }
+
+  interact() { if (!this.paused && this.nearby) this.goTo(this.nearby.id); }
 
   // UI panels grow from the object the visitor actually approached.
   interactionOrigin() {
@@ -161,7 +175,7 @@ export class World {
         const next = this.path[0], distance = Math.hypot(next.x - this.player.x, next.y - this.player.y);
         if (distance < 3) {
           this.player = { ...next }; this.path.shift();
-          if (!this.path.length && this.destination) { const action = this.destination.action; this.destination = null; this.onAction(action); }
+          if (!this.path.length && this.destination) { const point = this.destination; this.destination = null; this.activate(point); }
         } else { dx = (next.x - this.player.x) / distance; dy = (next.y - this.player.y) / distance; }
       }
       const length = Math.hypot(dx, dy);
@@ -178,6 +192,7 @@ export class World {
       if (!this.reduced.matches) updateResidents(this.residents, this.scene, delta, this.player, this.id, this.lifeTime);
     }
     }
+    if(this.pendingAction&&time>=this.pendingAction.at){const {point}=this.pendingAction;this.pendingAction=null;this.onAction(point.action);}
     const nearest = this.scene.points.filter(point => Math.hypot(point.x - this.player.x, point.y - this.player.y) < 53).sort((a, b) => Math.hypot(a.x - this.player.x, a.y - this.player.y) - Math.hypot(b.x - this.player.x, b.y - this.player.y))[0];
     if (nearest?.id !== this.nearby?.id) { this.nearby = nearest; this.onNearby?.(nearest); }
     this.updateCamera(false, elapsed); this.onPosition?.(this.id, this.player, this.lifeTime); this.transition = Math.max(0, this.transition - elapsed * 3); this.draw(time);
@@ -209,16 +224,20 @@ export class World {
       pet(ctx, this.companion.x, this.companion.y - hop, this.progress.pet, this.reduced.matches ? 0 : time, !greeting && !curious && time - this.lastMove > 12000, 1, direction, greeting);
       if (greeting || curious) text(ctx, greeting ? '♥' : this.nearby.id === 'snowcrust' || this.nearby.id === 'pizza' ? 'PIZZA?' : '?', this.companion.x, this.companion.y - 44, 8, '#edc389');
     };
+    const playerPose=this.interaction;
+    const settling=playerPose?Math.min(1,Math.max(0,(time-this.interactionStarted)/220)):0;
+    const playerPosition=playerPose?{x:this.player.x+(playerPose.x-this.player.x)*settling,y:this.player.y+(playerPose.y-this.player.y)*settling}:this.player;
+    const freeStation=resident=>!playerPose||!resident.playing||Math.hypot(regularPose(resident).x-playerPose.x,regularPose(resident).y-playerPose.y)>32;
     const actors = [
       ...hiddenFriends(ctx,this.id,this.progress,this.reduced.matches?0:time),
       ...scoutActors(ctx, this.id, this.lifeTime, this.reduced.matches),
-      ...(this.id === 'arcade' ? arcadeRegulars.map(resident => ({ y: resident.y, draw: () => drawArcadeRegular(ctx, resident, time, this.reduced.matches || this.paused) })) : []),
-      { y: this.companion.y, draw: companion },
-      { y: this.player.y, draw: () => person(ctx, this.player.x, this.player.y, this.direction, this.walking && !this.reduced.matches, time, this.progress.pizza === 'carrying', characterSizes[this.id]) },
-      ...this.residents.filter(resident => resident.room === this.id && !resident.hidden && !resident.home).map(resident => ({ y: resident.y + (resident.seated ? 16 : 0), draw: () => resident.playing && this.id === 'arcade' ? drawArcadeRegular(ctx, { ...resident, y: resident.y - 20, look: { ...resident.look, scale: arcadePersonScale } }, time, this.reduced.matches || this.paused) : drawResident(ctx, resident, time, this.reduced.matches, this.id === 'arcade' ? arcadePersonScale : 1) })),
+      ...(this.id === 'arcade' ? arcadeRegulars.filter(freeStation).map(resident => ({ ...regularPose(resident),look:resident.look, draw: () => drawArcadeRegular(ctx, resident, time, this.reduced.matches || this.paused) })) : []),
+      { x:this.companion.x,y: this.companion.y, draw: companion },
+      { ...playerPosition, draw: () => person(ctx, playerPosition.x, playerPosition.y, this.direction, this.walking && !this.reduced.matches, time, this.progress.pizza === 'carrying', characterSizes[this.id], this.progress.pizza==='carrying'?null:playerPose) },
+      ...this.residents.filter(resident => resident.room === this.id && !resident.hidden && !resident.home && freeStation(resident)).map(resident => ({ x:resident.x,y: resident.y + (resident.seated ? 16 : 0), draw: () => resident.playing && this.id === 'arcade' ? drawArcadeRegular(ctx, resident, time, this.reduced.matches || this.paused) : drawResident(ctx, resident, time, this.reduced.matches, characterSizes[this.id]) })),
     ];
 
-    actors.sort((a, b) => a.y - b.y).forEach(actor => actor.draw());
+    actors.sort((a, b) => a.y - b.y).forEach(actor => {actor.draw();if(Number.isFinite(actor.x))drawFurnitureFront(ctx,this.id,actor,interiorImage(this.id));});
     if (outdoors) { ctx.save(); ctx.globalAlpha = light.night; box(ctx,0,0,768,512,'#07162f'); ctx.restore(); }
     for (const point of this.scene.points) {
       if (point.id !== 'arcade' && point.id === this.hovered?.id) {

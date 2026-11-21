@@ -20,9 +20,10 @@ function stroke(ctx, points, color, width = 1) {
 }
 
 function fisher(ctx, time) {
+  const hand = [95,752];
   drawResident(ctx, { x:83, y:779, direction:'right', walking:false,
-    look:{skin:'#b58261',hair:'#dad4bd',shirt:'#b46f44',width:23,hat:true} },0,true);
-  const cast = castMoment(time), hand = [95,752];
+    contacts:[hand,[93,757]],look:{skin:'#b58261',hair:'#dad4bd',shirt:'#b46f44',width:23,hat:true} },0,true);
+  const cast = castMoment(time);
   const tip = [hand[0] + Math.cos(cast.angle) * 54, hand[1] + Math.sin(cast.angle) * 54 - 27];
   stroke(ctx, [hand, [hand[0]+(tip[0]-hand[0])*.6, hand[1]+(tip[1]-hand[1])*.6-4], tip], '#54573c', 2);
   stroke(ctx, [[91,757],[99,746]], '#bc9562', 3);

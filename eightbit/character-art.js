@@ -1,5 +1,5 @@
 // One body model for the player, neighbors, students and arcade regulars.
-export const characterSizes={town: .8, arcade:1.75, cabin:1.5, rooftop:1.25};
+export const characterSizes={town: .8, arcade:1.75, cabin:2, rooftop:1.25};
 export const facings=['down','left','right','up'];
 export const humanActions=['idle','walk','carry','talk','sit','cabinet','pinball','poker','bar','read','type','wave'];
 export const playerLook={skin:'#d5aa86',hair:'#684c3b',shirt:'#82b5d9',pants:'#253039',shoes:'#ef553e',width:21,bald:true,beard:true,hoodie:true,shorts:true};
@@ -8,9 +8,9 @@ export const frameIndex=(time,walking=false)=>Math.floor(Math.max(0,time)/(walki
 export function humanPose(direction='down',action='idle',frame=0,look=playerLook) {
   if(!facings.includes(direction)||!humanActions.includes(action)) throw new Error('Unknown character pose');
   const side=direction==='left'||direction==='right',face=direction==='left'?-1:1;
-  const seated=['sit','poker','type'].includes(action),stride=action==='walk'?[0,3,0,-3][frame%4]:0;
+  const seated=['sit','poker','type','cabinet'].includes(action),stride=action==='walk'?[0,3,0,-3][frame%4]:0;
   const width=side?Math.round((look.width||21)*.65):look.width||21;
-  const top=seated?-40:-46,shoulder=top+19,hip=seated?-13:-16;
+  const top=action==='type'?-52:seated&&action!=='cabinet'?-40:-46,shoulder=top+19,hip=seated&&action!=='cabinet'?-13:-16;
   const hands=side?[[face*7,shoulder+15],[face*4,shoulder+14]]:[[-width/2-2,shoulder+15+stride],[width/2+2,shoulder+15-stride]];
   if(['cabinet','pinball','read','type','poker','bar'].includes(action)) {
     hands[0]=[side?face*16:-7,shoulder+8];hands[1]=[side?face*18:8,shoulder+8];

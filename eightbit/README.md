@@ -51,3 +51,7 @@ Keep the original layouts, trees, furniture and character identities. The comple
 Player and neighbor bodies use the same model. Room sizes live in `characterSizes`. Campus depth multiplies that shared town size. Direction changes the body silhouette, hair, face and hands. Walking has four discrete frames. Carrying keeps both hands on the box throughout the walk.
 
 Open `/eightbit/review/` to walk to each destination in each room. The review uses the actual `World` renderer and movement code. The controls only affect that preview and do not save progress.
+
+Furniture contacts live in `interaction-art.js`. Each interaction defines its facing, pose and hand positions. Walkable approach points stay separate from seated positions. A short settling animation moves into the seat before the dialog opens. Moving away releases the pose and cancels a pending interaction. Furniture masks redraw the original counter, poker table and couch in front of people behind them.
+
+The interaction tests cover every destination from all four starting facings, return routes, arm reach and seat height. Browser review is still required for silhouettes, occlusion and motion. Those cannot be established by route tests alone.
