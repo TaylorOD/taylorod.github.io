@@ -13,7 +13,7 @@ function wheel(ctx, x) {
 
 export function drawBike(ctx, bike, time, index) {
   const pedal = Math.sin(time / 140) * 5;
-  ctx.save(); ctx.translate(Math.round(bike.x),bike.y); ctx.scale(bike.facing,1);
+  ctx.save(); ctx.translate(Math.round(bike.x),bike.y); ctx.scale(bike.facing*.8,.8);
   box(ctx,-29,0,58,3,'#27433944'); wheel(ctx,-19); wheel(ctx,24);
   polygon(ctx,[[-21,-11],[-11,-29],[5,-11],[-21,-11]],'#d39364');
   polygon(ctx,[[-17,-13],[-10,-24],[0,-13]],'#788b73');

@@ -22,6 +22,9 @@ The arcade has seven project cabinets, pinball and a Poker Seater table. The hou
 | `town-view.js` | Painted town, depth and outdoor activity |
 | `interior-view.js` | Approved interior images and rooftop sky |
 | `residents.js` | Shared people art and resident schedules |
+| `character-art.js` | Shared body sizes, four facings, discrete frames and hand anchors |
+| `pixel-renderer.js` | One pixel grid and palette for the complete scene |
+| `review/` | Live scene controls for checking movement against the actual art |
 | `scout.js` | Long squirrel chases, safe tree endings and occasional elk flight |
 | `river-life.js` | Fly casting, surfing and rafting |
 | `daylight.js` | Six minute outdoor clock |
@@ -40,3 +43,11 @@ Serve the repository with a static server. Run `node --test eightbit/tests/*.tes
 Look at the changed areas in a browser at desktop and phone widths before pushing. Check walking routes, interactions, collection hints, saved progress, the pizza delivery, rooftop lock, postcard and links. Keep screenshots in each PR.
 
 Phone checks use a Chrome viewport. A physical iPhone touch check remains separate.
+
+## art rules
+
+Keep the original layouts, trees, furniture and character identities. The complete scene renders on a two world pixel grid with a fixed palette of 256 colors. This is an 8 bit inspired art constraint, not a claim of NES hardware compatibility.
+
+Player and neighbor bodies use the same model. Room sizes live in `characterSizes`. Campus depth multiplies that shared town size. Direction changes the body silhouette, hair, face and hands. Walking has four discrete frames. Carrying keeps both hands on the box throughout the walk.
+
+Open `/eightbit/review/` to walk to each destination in each room. The review uses the actual `World` renderer and movement code. The controls only affect that preview and do not save progress.

@@ -50,7 +50,7 @@ export function trailVisitors(time, reduced = false, layout = null) {
 
 function jogger(ctx, visitor, time) {
   const stride = Math.sin(time / 95) * 7;
-  ctx.save(); ctx.translate(Math.round(visitor.x), visitor.y); ctx.scale(visitor.direction, 1);
+  ctx.save(); ctx.translate(Math.round(visitor.x), visitor.y); ctx.scale(visitor.direction*.8, .8);
   box(ctx, -12, 0, 25, 3, '#233c3f44');
   const bounce = Math.abs(Math.sin(time / 95)) * 2;
   ctx.translate(0, -bounce);
