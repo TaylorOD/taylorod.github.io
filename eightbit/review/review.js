@@ -21,6 +21,7 @@ function scene(){world.enter($('scene').value);world.lifeTime=0;lastAction='none
 $('scene').onchange=scene;
 $('walk').onclick=()=>{world.pause(false);$('freeze').textContent='Pause';world.goTo($('destination').value);};
 $('freeze').onclick=()=>{world.pause(!world.paused);$('freeze').textContent=world.paused?'Resume':'Pause';};
+$('clock').onchange=()=>{world.pause(true);$('freeze').textContent='Resume';world.lifeTime=Math.max(0,Math.min(360,Number($('clock').value)||0))*1000;};
 $('pizza').onchange=()=>{progress.pizza=$('pizza').checked?'carrying':'delivered';};
 $('save').onclick=()=>{
   const id=world.id;

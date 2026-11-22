@@ -104,6 +104,7 @@ export function updateResidents(residents, _scene, delta, player, playerRoom = '
     else { resident.x += dx / distance * step; resident.y += dy / distance * step; }
     resident.direction = Math.abs(dx) > Math.abs(dy) ? dx > 0 ? 'right' : 'left' : dy > 0 ? 'down' : 'up';
     resident.walking = true;
+    resident.gaitDistance=(resident.gaitDistance||0)+Math.min(distance,step)/(characterScale(resident.room,resident.y)*(resident.look.scale||1));
   }
 }
 

@@ -5,24 +5,30 @@ export const characterSizes={town: .7, arcade:1.75, cabin:2.25, rooftop:1.25};
 export function characterScale(room,y){
   return room==='arcade'?1.5+Math.max(0,Math.min(1,(y-260)/228))*.6:characterSizes[room];
 }
+export const companionScale=(room,y)=>.75*characterScale(room,y)/characterSizes.town;
+export const companionSpacing=(room,y)=>Math.max(28,32*companionScale(room,y));
 export const facings=['down','left','right','up'];
 export const humanActions=['idle','walk','carry','talk','sit','cabinet','pinball','poker','bar','read','type','wave','pet'];
 export const playerLook={skin:'#d5aa86',hair:'#684c3b',shirt:'#82b5d9',pants:'#253039',shoes:'#ef553e',width:21,bald:true,beard:true,hoodie:true,shorts:true};
-export const frameIndex=(time,walking=false)=>Math.floor(Math.max(0,time)/(walking?130:300))%4;
+export const frameIndex=(time,walking=false)=>Math.floor(Math.max(0,time)/(walking?65:300))%(walking?8:4);
+export const gaitFrame=distance=>Math.floor(Math.max(0,distance)/4)%8;
+const strideX=[8,4,0,-4,-8,-4,0,4],strideLift=[0,0,0,0,0,3,5,3];
 
 export function humanPose(direction='down',action='idle',frame=0,look=playerLook) {
   if(!facings.includes(direction)||!humanActions.includes(action)) throw new Error('Unknown character pose');
   const side=direction==='left'||direction==='right',face=direction==='left'?-1:1;
-  const seated=['sit','poker','type','cabinet','pet'].includes(action),stride=action==='walk'?[0,3,0,-3][frame%4]:0;
+  const seated=['sit','poker','type','cabinet','pet'].includes(action),stride=action==='walk'?strideX[frame%8]:0;
   const width=side?Math.round((look.width||21)*.65):look.width||21;
   const top=action==='pet'?-39:action==='type'?-52:seated?-50:-60,shoulder=top+20,hip=action==='pet'?-10:seated&&action!=='cabinet'?-13:action==='cabinet'?-16:-23;
-  const hands=side?[[face*7,shoulder+15],[face*4,shoulder+14]]:[[-width/2-2,shoulder+15+stride],[width/2+2,shoulder+15-stride]];
+  const hands=side?[[face*(4+stride),shoulder+15-Math.abs(stride)/3],[face*(4-stride),shoulder+15-Math.abs(stride)/3]]:[[-width/2-2,shoulder+15+stride],[width/2+2,shoulder+15-stride]];
   if(['cabinet','pinball','read','type','poker','bar','pet'].includes(action)) {
     hands[0]=[side?face*16:-7,shoulder+8];hands[1]=[side?face*18:8,shoulder+8];
   }
   if(action==='carry') {hands[0]=[side?face*17:-7,-16];hands[1]=[side?face*22:8,-16];}
   if(action==='wave'||action==='talk'){hands[1]=[side?face*13:width/2+7,shoulder-(frame%2)*2];}
-  return {direction,action,side,face,seated,stride,width,top,shoulder,hip,hands,feet:[[side?-3:-6,0],[side?4:6,0]],seat:[0,hip]};
+  const feet=[[side?-3:-6,0],[side?3:6,0]];
+  if(action==='walk')for(let i=0;i<2;i++){const phase=(frame+i*4)%8;feet[i]=[side?face*strideX[phase]:feet[i][0],-strideLift[phase]+(side?0:strideX[phase]*.35)];}
+  return {direction,action,side,face,seated,stride,width,top,shoulder,hip,hands,feet,seat:[0,hip]};
 }
 
 function pixelLine(rect,from,to,color,width=3){
@@ -31,9 +37,9 @@ function pixelLine(rect,from,to,color,width=3){
   for(;;){rect(x-1,y-1,width,width,color);if(x===tx&&y===ty)break;const e=2*err;if(e>=dy){err+=dy;x+=sx;}if(e<=dx){err+=dx;y+=sy;}}
 }
 
-export function drawHuman(ctx,{x,y,look=playerLook,direction='down',action='idle',scale=1,time=0,contacts=null,carrying=false}) {
-  const pose=humanPose(direction,action,frameIndex(time,action==='walk'),look);
-  const {side,face,seated,stride,width,top,shoulder,hip}=pose;
+export function drawHuman(ctx,{x,y,look=playerLook,direction='down',action='idle',scale=1,time=0,contacts=null,carrying=false,gaitDistance=null}) {
+  const pose=humanPose(direction,action,action==='walk'&&gaitDistance!==null?gaitFrame(gaitDistance):frameIndex(time,action==='walk'),look);
+  const {side,face,seated,width,top,shoulder,hip}=pose;
   const skin=look.skin,pants=look.pants||'#324354',shoes=look.shoes||'#1f2632',shirt=look.shirt;
   ctx.save();ctx.translate(Math.round(x),Math.round(y));ctx.scale(scale,scale);
   const rect=(a,b,w,h,color)=>{ctx.fillStyle=color;ctx.fillRect(Math.round(a),Math.round(b),Math.round(w),Math.round(h));};
@@ -41,19 +47,31 @@ export function drawHuman(ctx,{x,y,look=playerLook,direction='down',action='idle
   rect(-width/2-2,1,width+4,2,'#203b3d');
   // Legs bend at the knee when sitting. Side views no longer keep a front torso.
   if(seated){
-    if(side){rect(-5,hip,15,5,pants);rect(face>0?7:-8,hip+3,5,-hip-3,look.shorts?skin:pants);rect(face>0?6:-10,-2,9,3,shoes);}
+    if(side){rect(face>0?-5:-10,hip,15,5,pants);rect(face>0?7:-8,hip+3,5,-hip-3,look.shorts?skin:pants);rect(face>0?6:-10,-2,9,3,shoes);}
     else {for(const dx of [-8,3]){rect(dx,hip,8,6,pants);rect(dx+1,hip+5,5,-hip-5,look.shorts?skin:pants);rect(dx,-2,9,3,shoes);}}
   } else {
-    for(const [dx,swing] of [[side?-4:-8,stride],[side?2:3,-stride]]){
-      const foot=action==='walk'?swing:0;
-      const lift=side?Math.abs(foot)/3:Math.max(0,foot);
-      rect(dx,hip,6,-hip-2-lift,look.shorts?skin:pants);
-      rect(dx+4,hip+7,2,-hip-9-lift,shade(look.shorts?skin:pants,-25));
-      if(look.shorts)rect(dx,hip,7,7,pants);
-      rect(dx+(side?foot:0),-2-lift,8,3,shoes);
-      rect(dx+(side?foot:0),-lift,8,1,shade(shoes,45));
+    for(let i=0;i<2;i++){
+      const foot=pose.feet[i],hipPoint=[side?0:(i?6:-6),hip];
+      const knee=[Math.round((hipPoint[0]+foot[0])*.5)+(side&&action==='walk'?face*2:0),Math.round((hip+foot[1])*.5)];
+      const ankle=[foot[0],foot[1]-2],leg=look.shorts?skin:pants;
+      pixelLine(rect,hipPoint,knee,shade(leg,-25),5);pixelLine(rect,knee,ankle,shade(leg,-25),5);
+      pixelLine(rect,hipPoint,knee,leg,3);pixelLine(rect,knee,ankle,leg,3);
+      if(look.shorts)pixelLine(rect,hipPoint,[hipPoint[0]+(knee[0]-hipPoint[0])*.55,hip+6],pants,6);
+      rect(foot[0]-(side&&face<0?5:3),foot[1]-2,8,3,shoes);
+      rect(foot[0]-(side&&face<0?5:3),foot[1],8,1,shade(shoes,45));
     }
   }
+  function drawArms(){
+    const hands=contacts?contacts.map(([hx,hy])=>[(hx-x)/scale,(hy-y)/scale]):carrying?humanPose(direction,'carry',0,look).hands:pose.hands;
+    for(let i=0;i<2;i++){
+      if(side&&i===0&&!contacts&&!carrying)continue;
+      const start=[side?face*3:(i?-1:1)*(-width/2),shoulder+3];
+      const hand=hands[i]||hands[0];
+      const elbow=[start[0]+(hand[0]-start[0])*.35,Math.max(start[1]+4,hand[1]+3)];
+      pixelLine(rect,start,elbow,shade(shirt,-28),5);pixelLine(rect,start,elbow,shirt,3);pixelLine(rect,elbow,hand,skin,3);rect(hand[0]-2,hand[1]-1,4,3,skin);
+    }
+  }
+  if(direction==='up')drawArms();
   rect(-width/2,shoulder,width,hip-shoulder+2,shirt);
   rect(-width/2+2,shoulder+2,3,hip-shoulder-2,shade(shirt,22));
   rect(width/2-3,shoulder+3,3,hip-shoulder-1,look.shade||shade(shirt,-28));
@@ -67,14 +85,7 @@ export function drawHuman(ctx,{x,y,look=playerLook,direction='down',action='idle
       if(!side){rect(-5,shoulder+2,1,3,'#f8e7bd');rect(5,shoulder+2,1,3,'#f8e7bd');}
     }
   }
-  const hands=contacts?contacts.map(([hx,hy])=>[(hx-x)/scale,(hy-y)/scale]):carrying?humanPose(direction,'carry',0,look).hands:pose.hands;
-  for(let i=0;i<2;i++){
-    if(side&&i===0&&!contacts&&!carrying)continue;
-    const start=[side?face*3:(i?-1:1)*(-width/2),shoulder+3];
-    const hand=hands[i]||hands[0];
-    const elbow=[start[0]+(hand[0]-start[0])*.35,Math.max(start[1]+4,hand[1]+3)];
-    pixelLine(rect,start,elbow,shade(shirt,-28),5);pixelLine(rect,start,elbow,shirt,3);pixelLine(rect,elbow,hand,skin,3);rect(hand[0]-2,hand[1]-1,4,3,skin);
-  }
+  if(direction!=='up')drawArms();
   rect(-3,top+15,6,5,skin);
   rect(side?-6:-8,top+3,side?13:17,14,skin);rect(side?-3:-5,top,side?9:11,4,skin);
   rect(side?-5:-7,top+4,3,9,shade(skin,15));

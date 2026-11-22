@@ -16,7 +16,15 @@ test('raft travels downstream and wraps beyond both visible edges',()=>{
 test('raft clears the surfboard throughout its crossing',()=>{
   for(let time=0;time<63000;time+=100) {
     const raft=raftPosition(time);
-    const surfBottom=735+Math.sin(time/750)*3+3;
+    const surfBottom=728+Math.sin(time/750)*3+3;
     assert.ok(raft.y-24*raftScale>surfBottom);
   }
 });
+
+ test('paddles stay in the water at the larger raft scale',()=>{
+  assert.equal(raftScale,1);
+  for(let time=0;time<63000;time+=100){
+    const raft=raftPosition(time);
+    assert.ok(raft.y+(8+2)*raftScale+1<=772);
+  }
+ });

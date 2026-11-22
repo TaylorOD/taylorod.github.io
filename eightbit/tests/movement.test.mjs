@@ -24,10 +24,12 @@ test('click travel reaches a cabinet and triggers its action once', () => {
     world.walk('arrowdown', true); world.walk('arrowdown', false);
     assert.equal(world.player.y, 280, 'a quick direction tap moves between frames');
     world.player.y = 272;
-    const outdoorTime = world.lifeTime;
+    const outdoorTime = world.lifeTime, gaitDistance=world.gaitDistance;
+    assert.ok(gaitDistance>0,'travel advances the gait');
     world.pause(true); world.walk('arrowdown', true); world.tick(time + 16);
     assert.deepEqual(world.player, { x: 240, y: 272 }, 'dialogs pause movement');
     assert.equal(world.lifeTime, outdoorTime, 'dialogs pause the outdoor clock');
+    assert.equal(world.gaitDistance,gaitDistance,'waiting cannot advance footsteps');
     world.enter('town');
     assert.equal(world.lifeTime, outdoorTime, 'room changes preserve the clock');
     world.pause(false); world.reduced.matches = true; world.tick(time + 32);

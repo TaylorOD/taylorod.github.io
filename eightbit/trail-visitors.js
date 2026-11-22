@@ -44,7 +44,7 @@ export function trailVisitors(time, reduced = false, layout = null) {
     const y = layout ? (visitor.y === 576 ? layout.north : layout.south) : visitor.y;
     const trip = Math.floor(((reduced ? 0 : time / 1000) + visitor.offset) / period);
     const look = dogLooks[(trip + index) % dogLooks.length];
-    return [{ ...visitor, ...look, y, id: index, x, activity, sniff, dogX: x + visitor.direction * lead, dogY: y + 3 + sniff * (layout ? 4 : 10) }];
+    return [{ ...visitor, ...look, y, id: index, x, gaitDistance:distance/.7, activity, sniff, dogX: x + visitor.direction * lead, dogY: y + 3 + sniff * (layout ? 4 : 10) }];
   });
 }
 
