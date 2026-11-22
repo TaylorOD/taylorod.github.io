@@ -112,7 +112,7 @@ export function drawTown(world,time) {
   })));
   for(const resident of world.residents.filter(r=>r.room==='town'&&!r.hidden&&!r.home)) actors.push({y:resident.y,draw:()=>drawResident(ctx,resident,moment,reduced)});
   if(progress.adopted) actors.push({y:companion.y,draw:()=>pet(ctx,companion.x,companion.y,progress.pet,reduced?0:moment,false,.75*campusScale(companion.x,companion.y),companion.direction)});
-  actors.push({y:player.y,draw:()=>person(ctx,player.x,player.y,world.direction,world.walking&&!reduced,moment,progress.pizza==='carrying',characterSizes.town*campusScale(player.x,player.y),progress.pizza==='carrying'?null:world.interaction)});
+  actors.push({y:player.y,draw:()=>person(ctx,player.x,player.y,world.direction,world.walking&&!reduced,moment,progress.pizza==='carrying',characterSizes.town*campusScale(player.x,player.y),progress.pizza==='carrying'?null:world.interaction,world.gaitDistance)});
   const visible = [player, companion, ...trailVisitors(moment, reduced, townLayout), ...world.residents.filter(r => r.room === 'town' && !r.home)];
   for (const [x, y, size] of riverTrees) actors.push({ y, draw: () => {
     ctx.save(); ctx.globalAlpha = treeOpacity([x, y, size], visible);

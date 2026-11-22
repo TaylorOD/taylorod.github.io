@@ -10,7 +10,7 @@ test('every catalog model renders all declared actions and facings without inval
   ctx.fillRect=(...values)=>{assert.ok(values.every(Number.isFinite),'rectangle');rectangles++;};
   for(const model of models){
     assert.ok(model.actions.length&&model.directions.length,model.id);
-    for(const action of model.actions)for(const direction of model.directions)for(const time of [0,130,260,390])model.draw(ctx,direction,action,time);
+    for(const action of model.actions)for(const direction of model.directions)for(const time of [0,65,130,195,260,325,390,455])if(!model.supports||model.supports(direction,action))model.draw(ctx,direction,action,time);
   }
   assert.ok(rectangles>10000);
 });

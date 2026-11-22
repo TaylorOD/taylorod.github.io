@@ -1,3 +1,4 @@
+import {companionSpacing} from '../character-art.js';
 import {World} from '../world.js';
 import {scenes,isWalkable} from '../scenes.js';
 import {interactionPose} from '../interaction-art.js';
@@ -10,7 +11,8 @@ const world=new World(canvas,{progress:{pizza:'delivered',adopted:true,pet:'spro
 world.enter(id);world.pause(true);cancelAnimationFrame(world.frame);world.resizeObserver.disconnect();
 const point=world.scene.points.find(point=>point.id===requested.get('point'));
 if(point){world.player={x:point.x,y:point.y};world.interaction=interactionPose(id,point);world.direction=world.interaction.direction;world.interactionStarted=0;}
-for(const [dx,dy] of [[44,0],[-44,0],[0,-44],[0,44]])if(isWalkable(world.scene,world.player.x+dx,world.player.y+dy)){world.companion={x:world.player.x+dx,y:world.player.y+dy,direction:'down'};break;}
+const gap=companionSpacing(id,world.player.y);
+for(const [dx,dy] of [[gap,0],[-gap,0],[0,-gap],[0,gap]])if(isWalkable(world.scene,world.player.x+dx,world.player.y+dy)){world.companion={x:world.player.x+dx,y:world.player.y+dy,direction:'down'};break;}
 world.camera={x:0,y:0};world.transition=0;world.enteredAt=-10000;world.last=1000;world.lifeTime=0;
 canvas.width=world.scene.width;canvas.height=world.scene.height;world.renderer=null;
 World.prototype.draw.call(world,1000);

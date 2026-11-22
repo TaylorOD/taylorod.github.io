@@ -1,10 +1,12 @@
+import {applyPalette} from '../pixel-renderer.js';
+import {models} from './model-catalog.js';
 import {drawHuman,humanPose,playerLook,characterScale} from '../character-art.js';
 import {looks,arcadeRegulars} from '../residents.js';
 import {interactionPose,regularPose,drawFurnitureFront} from '../interaction-art.js';
 import {loadInterior} from '../interior-view.js';
 const $=id=>document.getElementById(id);
 const image=await loadInterior('arcade');
-const setup=id=>{const ctx=$(id).getContext('2d');ctx.imageSmoothingEnabled=false;ctx.fillStyle='#243e43';ctx.fillRect(0,0,$(id).width,$(id).height);ctx.font='16px monospace';return ctx;};
+const setup=id=>{const ctx=$(id).getContext('2d');ctx.imageSmoothingEnabled=false;ctx.fillStyle='#496475';ctx.fillRect(0,0,$(id).width,$(id).height);ctx.font='16px monospace';return ctx;};
 const label=(ctx,text,x,y)=>{ctx.fillStyle='#f8e7bd';ctx.fillText(text,x,y);};
 const line=(ctx,x,y,w)=>{ctx.fillStyle='#6ba5a2';ctx.fillRect(x,y,w,1);};
 const people=setup('people');line(people,20,240,1080);
@@ -26,3 +28,16 @@ const bar=setup('bar');bar.save();bar.scale(1.5,1.5);bar.translate(-90,-330);bar
 const bartender={...regularPose(arcadeRegulars.find(r=>r.playing==='bar')),look:looks[0]},customer={...interactionPose('arcade',{id:'pizza'}),look:playerLook};
 for(const actor of [bartender,customer]){drawHuman(bar,{...actor,scale:characterScale('arcade',actor.y),contacts:actor.hands});drawFurnitureFront(bar,'arcade',actor,image);}
 bar.restore();
+
+const cast=setup('cast');
+models.forEach((model,i)=>{
+  const x=112+(i%5)*224,y=170+Math.floor(i/5)*200;
+  line(cast,x-100,y,200);cast.save();cast.translate(x,y);cast.scale(2,2);
+  model.draw(cast,model.directions[0],model.id==='fisher'?'drift':model.actions[0],model.id==='fisher'?5200:0,'town');cast.restore();
+  label(cast,model.name,x-100,y+28);
+});
+
+for(const ctx of [people,furniture,bar,cast]){
+  const pixels=ctx.getImageData(0,0,ctx.canvas.width,ctx.canvas.height);
+  applyPalette(pixels.data);ctx.putImageData(pixels,0,0);
+}

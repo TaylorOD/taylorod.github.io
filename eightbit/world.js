@@ -1,5 +1,6 @@
 import { PixelRenderer } from './pixel-renderer.js';
-import { characterScale } from './character-art.js';
+import { campusScale } from './campus-life.js';
+import { characterScale, companionScale, companionSpacing } from './character-art.js';
 import { hiddenFriends } from './hunt-art.js';
 import { drawInterior, roofSky, interiorImage } from './interior-view.js';
 import { interactionPose, regularPose, drawFurnitureFront } from './interaction-art.js';
@@ -59,8 +60,9 @@ export class World {
     this.lastMove = this.enteredAt;
     this.stop(); this.id = id; this.scene = scenes[id];
     this.player = { ...(returnPoint || this.scene.spawn) };
+    this.gaitDistance=0;
     this.companion = { ...this.player, direction: 'down' };
-    const gap=id==='town'?28:44;
+    const gap=companionSpacing(id,this.player.y);
     for(const [dx,dy] of [[-gap,0],[gap,0],[0,gap],[0,-gap]]) {
       if(isWalkable(this.scene,this.player.x+dx,this.player.y+dy)){this.companion.x+=dx;this.companion.y+=dy;break;}
     }
@@ -116,6 +118,7 @@ export class World {
     const [dx, dy] = offsets[direction] || [0, 0];
     if (!this.keys.has(direction) && isWalkable(this.scene, this.player.x + dx, this.player.y + dy)) {
       this.player.x += dx; this.player.y += dy;
+      this.gaitDistance+=Math.hypot(dx,dy)/characterScale(this.id,this.player.y);
     }
     this.keys.add(direction);
   }
@@ -183,15 +186,16 @@ export class World {
       }
       const length = Math.hypot(dx, dy);
       if (length) {
-        const speed = Math.min(126 * delta, this.path.length ? Math.hypot(this.path[0].x-this.player.x,this.path[0].y-this.player.y) : Infinity), nx = this.player.x + dx / length * speed, ny = this.player.y + dy / length * speed;
+        const bodyScale=characterScale(this.id,this.player.y)*(this.id==='town'?campusScale(this.player.x,this.player.y):1);
+        const speed = Math.min(56 * bodyScale * delta, this.path.length ? Math.hypot(this.path[0].x-this.player.x,this.path[0].y-this.player.y) : Infinity), nx = this.player.x + dx / length * speed, ny = this.player.y + dy / length * speed;
         const before = { ...this.player };
         if (isWalkable(this.scene, nx, this.player.y)) this.player.x = nx;
         if (isWalkable(this.scene, this.player.x, ny)) this.player.y = ny;
         this.walking = Math.hypot(before.x - this.player.x, before.y - this.player.y) > .01;
         this.direction = Math.abs(dx) > Math.abs(dy) ? dx > 0 ? 'right' : 'left' : dy > 0 ? 'down' : 'up';
-        if (this.walking) { this.lastMove = time; this.onMove?.(time, this.id); }
+        if (this.walking) { this.gaitDistance+=Math.hypot(before.x-this.player.x,before.y-this.player.y)/bodyScale; this.lastMove = time; this.onMove?.(time, this.id); }
       }
-      followTrail(this.companion, this.trail, this.player, delta, this.id==='town'?28:44);
+      followTrail(this.companion, this.trail, this.player, delta, companionSpacing(this.id,this.player.y));
       if (!this.reduced.matches) updateResidents(this.residents, this.scene, delta, this.player, this.id, this.lifeTime);
     }
     }
@@ -224,8 +228,8 @@ export class World {
       if(!this.progress.adopted) return;
       const hop = greeting && !this.reduced.matches ? Math.max(0, Math.sin((time - this.enteredAt) / 150)) * 5 : 0;
       const direction = curious ? this.nearby.x > this.companion.x ? 'right' : 'left' : this.companion.direction;
-      pet(ctx, this.companion.x, this.companion.y - hop, this.progress.pet, this.reduced.matches ? 0 : time, !greeting && !curious && time - this.lastMove > 12000, 1, direction, greeting);
-      if (greeting || curious) text(ctx, greeting ? '♥' : this.nearby.id === 'snowcrust' || this.nearby.id === 'pizza' ? 'PIZZA?' : '?', this.companion.x, this.companion.y - 44, 8, '#edc389');
+      pet(ctx, this.companion.x, this.companion.y - hop, this.progress.pet, this.reduced.matches ? 0 : time, !greeting && !curious && time - this.lastMove > 12000, companionScale(this.id,this.companion.y), direction, greeting);
+      if (greeting || curious) text(ctx, greeting ? '♥' : this.nearby.id === 'snowcrust' || this.nearby.id === 'pizza' ? 'PIZZA?' : '?', this.companion.x, this.companion.y - 40*companionScale(this.id,this.companion.y), 8, '#edc389');
     };
     const playerPose=this.interaction;
     const settling=playerPose?Math.min(1,Math.max(0,(time-this.interactionStarted)/220)):0;
@@ -236,7 +240,7 @@ export class World {
       ...scoutActors(ctx, this.id, this.interaction?.action==='pet'?0:this.lifeTime, this.interaction?.action==='pet'?false:this.reduced.matches),
       ...(this.id === 'arcade' ? arcadeRegulars.filter(freeStation).map(resident => ({ ...regularPose(resident),look:resident.look, draw: () => drawArcadeRegular(ctx, resident, time, this.reduced.matches || this.paused) })) : []),
       { x:this.companion.x,y: this.companion.y, draw: companion },
-      { ...playerPosition, draw: () => person(ctx, playerPosition.x, playerPosition.y, this.direction, this.walking && !this.reduced.matches, time, this.progress.pizza === 'carrying', characterScale(this.id,playerPosition.y), this.progress.pizza==='carrying'?null:playerPose) },
+      { ...playerPosition, draw: () => person(ctx, playerPosition.x, playerPosition.y, this.direction, this.walking && !this.reduced.matches, time, this.progress.pizza === 'carrying', characterScale(this.id,playerPosition.y), this.progress.pizza==='carrying'?null:playerPose,this.gaitDistance) },
       ...this.residents.filter(resident => resident.room === this.id && !resident.hidden && !resident.home && freeStation(resident)).map(resident => ({ x:resident.x,y: resident.y + (resident.seated ? 16 : 0), draw: () => resident.playing && this.id === 'arcade' ? drawArcadeRegular(ctx, resident, time, this.reduced.matches || this.paused) : drawResident(ctx, resident, time, this.reduced.matches, characterScale(this.id,resident.y)) })),
     ];
 

@@ -8,10 +8,10 @@ export function castMoment(time) {
   return { phase, casting, angle: -.9 + swing * .85, drift: casting ? 0 : (phase - .4) / .6 };
 }
 
-export const raftScale = .65;
+export const raftScale = 1;
 
 export function raftPosition(time) {
-  return { x: 1630 - (time / 36 % 1750), y: 758 + Math.sin(time / 2700) };
+  return { x: 1630 - (time / 36 % 1750), y: 760 + Math.sin(time / 2700) };
 }
 
 function stroke(ctx, points, color, width = 1) {
@@ -60,7 +60,7 @@ export function drawRiverLife(ctx,time,reduced=false) {
 
 
 export function drawSurfer(ctx,t){
-  const surfX=579+Math.sin(t/1400)*23, surfY=735+Math.sin(t/750)*3;
+  const surfX=579+Math.sin(t/1400)*23, surfY=728+Math.sin(t/750)*3;
   polygon(ctx,[[surfX-17,surfY],[surfX-10,surfY-3],[surfX+18,surfY-2],[surfX+12,surfY+3]],'#e1ad56');
   stroke(ctx,[[surfX-9,surfY-2],[surfX-4,surfY-12],[surfX+4,surfY-16],[surfX+10,surfY-2]],'#344b53',3);
   polygon(ctx,[[surfX-5,surfY-24],[surfX+5,surfY-25],[surfX+6,surfY-14],[surfX-3,surfY-12]],'#b85e48');
@@ -75,9 +75,9 @@ export function drawRaft(ctx,t,seats=[-15,12]){
   polygon(ctx,[[x-25,y-5],[x+23,y-5],[x+26,y+4],[x-26,y+4]],'#344e4d');
   for(const offset of seats) {
     box(ctx,x+offset-5,y-13,10,12,'#d5a34a');box(ctx,x+offset-4,y-21,8,8,'#bb9270');box(ctx,x+offset-5,y-24,10,5,'#698d91');
-    const paddle=Math.sin(t/420+offset)*5;
-    stroke(ctx,[[x+offset,y-9],[x+offset-16,y+12+paddle]],'#d7c39a',2);
-    stroke(ctx,[[x+offset-16,y+12+paddle],[x+offset-22,y+18+paddle]],'#dfb367',4);
+    const paddle=Math.sin(t/420+offset)*2;
+    stroke(ctx,[[x+offset,y-9],[x+offset-16,y+4+paddle]],'#d7c39a',2);
+    stroke(ctx,[[x+offset-16,y+4+paddle],[x+offset-22,y+8+paddle]],'#dfb367',4);
   }
   ctx.restore();
 }

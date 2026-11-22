@@ -33,7 +33,7 @@ test('all arrival directions resolve to the object pose and release on movement'
     for(const [room,scene] of Object.entries(scenes))for(const point of scene.points)for(const direction of facings){
       world.enter(room);world.direction=direction;actions.length=0;world.goTo(point.id);
       let time=world.last;
-      for(let i=0;i<1000&&!actions.length;i++){time+=16;world.tick(time);assert.ok(isWalkable(scene,world.player.x,world.player.y));}
+      for(let i=0;i<6000&&!actions.length;i++){time+=16;world.tick(time);assert.ok(isWalkable(scene,world.player.x,world.player.y));}
       assert.deepEqual(actions,[point.action],`${room}/${point.id} from ${direction}`);
       assert.deepEqual(world.interaction,interactionPose(room,point));
       assert.equal(world.direction,world.interaction.direction);
