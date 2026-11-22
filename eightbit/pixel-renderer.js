@@ -1,11 +1,18 @@
 // Keep one world pixel of detail. The previous half resolution surface erased
 // sprite features and made the characters much coarser than the furniture.
 export const pixelGrid = 1;
-export const scenePalette = [];
-for (const r of [16,56,96,136,176,216]) for (const g of [16,56,96,136,176,216]) for (const b of [16,56,96,136,176,216]) scenePalette.push([r,g,b]);
-for (let i=0;i<24;i++) { const v=Math.round(i*255/23); scenePalette.push([v,v,v]); }
-scenePalette.push(...[[248,231,189],[244,187,114],[255,220,157],[239,213,170],[230,183,139],[212,164,120],[181,126,87],[117,75,56],
-  [130,181,217],[183,216,233],[239,85,62],[233,184,101],[227,165,182],[168,214,183],[224,225,203],[250,244,221]]);
+// One curated palette for scenery, people, fixtures and exported scene images.
+export const scenePalette=[
+  '#13262b','#203b3d','#29373b','#3b3944','#4f5350','#6d7166','#92998a','#bdc5b1','#dfe1ca','#faf4dd',
+  '#123e3b','#245449','#36705a','#4a805e','#68966a','#8ab477','#b0c98b','#536b43','#77864d',
+  '#223c58','#31566c','#49768c','#6597b0','#82b5d9','#a4cfe6','#b7d8e9',
+  '#3b2d2a','#584237','#754b38','#936044','#b07c51','#c99c62','#e2bd85','#f4d39a',
+  '#622e31','#8d3c37','#b34a3b','#d46646','#ef553e','#ef8662',
+  '#846b3f','#ad883f','#d6a94e','#f4bb72','#ffdc9d',
+  '#b57e57','#d4a478','#e6b78b','#efd5aa','#f8e7bd',
+  '#352d49','#574468','#796484','#9b7c9c','#c09abb','#b96087','#d1849c','#e3a5b6',
+  '#485663','#769090','#a8d6b7','#a7a2bb','#dbbfc4','#ffffff',
+].map(color=>[1,3,5].map(start=>parseInt(color.slice(start,start+2),16)));
 
 let lookup;
 export function paletteLookup() {

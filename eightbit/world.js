@@ -1,6 +1,6 @@
-import { PixelRenderer } from './pixel-renderer.js';
+import { PixelRenderer, applyPalette } from './pixel-renderer.js';
 import { campusScale } from './campus-life.js';
-import { characterScale, companionScale, companionSpacing } from './character-art.js';
+import { playerLook, characterScale, companionScale, companionSpacing } from './character-art.js';
 import { hiddenFriends } from './hunt-art.js';
 import { drawInterior, roofSky, interiorImage } from './interior-view.js';
 import { interactionPose, regularPose, drawFurnitureFront } from './interaction-art.js';
@@ -54,7 +54,7 @@ export class World {
   }
 
   enter(id, returnPoint) {
-    this.clearInteraction();
+    this.clearInteraction();this.leaving=null;this.exitStep=null;
     if (!scenes[id] || !canEnter(id, this.progress)) id = 'town';
     this.enteredAt = performance.now();
     this.lastMove = this.enteredAt;
@@ -79,7 +79,7 @@ export class World {
   resize() {
     const bounds = this.canvas.getBoundingClientRect();
     if (!bounds.width || !bounds.height) return;
-    const scale = this.id === 'town' ? (bounds.width < 600 ? .75 : Math.max(bounds.width / 1536, bounds.height / 1024)) : bounds.width < 600 ? .9 : Math.min(bounds.width / 960, bounds.height / 620);
+    const scale = this.id === 'town' ? (bounds.width < 600 ? .75 : Math.max(bounds.width / 1536, bounds.height / 1024)) : bounds.width < 600 ? .9 : Math.min(bounds.width / 768, bounds.height / 512);
     this.canvas.width = Math.round(bounds.width / scale);
     this.canvas.height = Math.round(bounds.height / scale);
     this.ctx.imageSmoothingEnabled = false; this.renderer?.resize(); this.updateCamera(true);
@@ -96,7 +96,7 @@ export class World {
     this.camera.x += (target.x - this.camera.x) * factor; this.camera.y += (target.y - this.camera.y) * factor;
   }
 
-  stop() { this.keys?.clear(); this.path = []; this.destination = null; }
+  stop() { this.keys?.clear(); this.path = []; this.destination = null; this.exitStep=null; }
   pause(value) { this.paused = value; this.stop(); }
 
   key(event, down) {
@@ -116,7 +116,8 @@ export class World {
     // A short tap takes a small step too, even between animation frames.
     const offsets = { arrowup: [0, -8], arrowdown: [0, 8], arrowleft: [-8, 0], arrowright: [8, 0] };
     const [dx, dy] = offsets[direction] || [0, 0];
-    if (!this.keys.has(direction) && isWalkable(this.scene, this.player.x + dx, this.player.y + dy)) {
+    if(this.leaving&&!this.keys.has(direction))this.exitStep=[dx,dy];
+    if (!this.leaving && !this.keys.has(direction) && isWalkable(this.scene, this.player.x + dx, this.player.y + dy)) {
       this.player.x += dx; this.player.y += dy;
       this.gaitDistance+=Math.hypot(dx,dy)/characterScale(this.id,this.player.y);
     }
@@ -148,13 +149,26 @@ export class World {
     this.path = findPath(this.scene, this.player, point); this.destination = this.path.length ? point : null; this.target = this.path.at(-1);
   }
 
-  clearInteraction() { this.interaction=null;this.pendingAction=null; }
+  clearInteraction() {
+    if(this.interaction&&this.player&&!this.reduced?.matches)this.leaving={pose:this.interaction,from:this.visualActor(this.last),start:this.last};
+    this.interaction=null;this.pendingAction=null;
+  }
+
+  visualActor(time){
+    const smooth=t=>{t=Math.max(0,Math.min(1,t));return t*t*(3-2*t);};
+    if(this.leaving){
+      const t=smooth((time-this.leaving.start)/320),{from,pose}=this.leaving;
+      return {x:from.x+(this.player.x-from.x)*t,y:from.y+(this.player.y-from.y)*t,pose:{...pose,blend:(from.pose?.blend??1)*(1-t)},direction:pose.direction};
+    }
+    const pose=this.interaction,t=pose?(this.reduced.matches?1:smooth((time-this.interactionStarted)/320)):0;
+    return {x:this.player.x+((pose?.x??this.player.x)-this.player.x)*t,y:this.player.y+((pose?.y??this.player.y)-this.player.y)*t,pose:pose?{...pose,blend:t}:null,direction:pose?.direction||this.direction};
+  }
 
   activate(point) {
     this.interaction=interactionPose(this.id,point);
     this.direction=this.interaction.direction;
     this.interactionStarted=this.last;
-    this.pendingAction={point,at:this.last+(this.reduced.matches?0:220)};
+    this.pendingAction={point,at:this.last+(this.reduced.matches?0:320)};
   }
 
   interact() { if (!this.paused && this.nearby) this.goTo(this.nearby.id); }
@@ -171,10 +185,14 @@ export class World {
   tick(time) {
     const elapsed = Math.max(0, Math.min((time - this.last) / 1000, .25)); this.last = time; this.walking = false;
     if (!this.paused && !this.reduced.matches) this.lifeTime += elapsed * 1000;
+    if(!this.paused&&this.leaving&&time-this.leaving.start>=320){
+      this.leaving=null;
+      if(this.exitStep){const [dx,dy]=this.exitStep;if(isWalkable(this.scene,this.player.x+dx,this.player.y+dy)){this.player.x+=dx;this.player.y+=dy;this.gaitDistance+=Math.hypot(dx,dy)/characterScale(this.id,this.player.y);}this.exitStep=null;}
+    }
     // Substeps preserve real movement speed on slower devices without tunneling through walls.
     const steps = Math.max(1, Math.ceil(elapsed * 60)), delta = elapsed / steps;
     for (let step = 0; step < steps; step++) {
-    if (!this.paused) {
+    if (!this.paused&&!this.leaving) {
       let dx = Number(this.keys.has('arrowright') || this.keys.has('d')) - Number(this.keys.has('arrowleft') || this.keys.has('a'));
       let dy = Number(this.keys.has('arrowdown') || this.keys.has('s')) - Number(this.keys.has('arrowup') || this.keys.has('w'));
       if (this.path.length) {
@@ -231,16 +249,14 @@ export class World {
       pet(ctx, this.companion.x, this.companion.y - hop, this.progress.pet, this.reduced.matches ? 0 : time, !greeting && !curious && time - this.lastMove > 12000, companionScale(this.id,this.companion.y), direction, greeting);
       if (greeting || curious) text(ctx, greeting ? '♥' : this.nearby.id === 'snowcrust' || this.nearby.id === 'pizza' ? 'PIZZA?' : '?', this.companion.x, this.companion.y - 40*companionScale(this.id,this.companion.y), 8, '#edc389');
     };
-    const playerPose=this.interaction;
-    const settling=playerPose?Math.min(1,Math.max(0,(time-this.interactionStarted)/220)):0;
-    const playerPosition=playerPose?{x:this.player.x+(playerPose.x-this.player.x)*settling,y:this.player.y+(playerPose.y-this.player.y)*settling}:this.player;
+    const visual=this.visualActor(time),playerPose=visual.pose,playerPosition={x:visual.x,y:visual.y};
     const freeStation=resident=>!playerPose||!resident.playing||Math.hypot(regularPose(resident).x-playerPose.x,regularPose(resident).y-playerPose.y)>32;
     const actors = [
       ...hiddenFriends(ctx,this.id,this.progress,this.reduced.matches?0:time),
       ...scoutActors(ctx, this.id, this.interaction?.action==='pet'?0:this.lifeTime, this.interaction?.action==='pet'?false:this.reduced.matches),
       ...(this.id === 'arcade' ? arcadeRegulars.filter(freeStation).map(resident => ({ ...regularPose(resident),look:resident.look, draw: () => drawArcadeRegular(ctx, resident, time, this.reduced.matches || this.paused) })) : []),
       { x:this.companion.x,y: this.companion.y, draw: companion },
-      { ...playerPosition, draw: () => person(ctx, playerPosition.x, playerPosition.y, this.direction, this.walking && !this.reduced.matches, time, this.progress.pizza === 'carrying', characterScale(this.id,playerPosition.y), this.progress.pizza==='carrying'?null:playerPose,this.gaitDistance) },
+      { ...playerPosition,action:playerPose?.action,hands:playerPose?.blend===1?playerPose.hands:null,look:playerLook, draw: () => person(ctx, playerPosition.x, playerPosition.y, visual.direction, this.walking && !this.reduced.matches, time, this.progress.pizza === 'carrying', characterScale(this.id,playerPosition.y), this.progress.pizza==='carrying'?null:playerPose,this.gaitDistance) },
       ...this.residents.filter(resident => resident.room === this.id && !resident.hidden && !resident.home && freeStation(resident)).map(resident => ({ x:resident.x,y: resident.y + (resident.seated ? 16 : 0), draw: () => resident.playing && this.id === 'arcade' ? drawArcadeRegular(ctx, resident, time, this.reduced.matches || this.paused) : drawResident(ctx, resident, time, this.reduced.matches, characterScale(this.id,resident.y)) })),
     ];
 
@@ -262,14 +278,18 @@ export class World {
 
   postcard(pose = 'hello') {
     const image = document.createElement('canvas'); image.width = 960; image.height = 640;
-    const ctx = image.getContext('2d'); ctx.save();ctx.scale(1,594/512);drawInterior(ctx, 'rooftop');ctx.restore();
-    box(ctx, 768, 0, 192, 640, '#f0dfba'); box(ctx, 0, 594, 768, 46, '#f0dfba');
-    person(ctx, 364, 440, pose === 'view' ? 'up' : 'down', pose === 'dance', 120, pose === 'pizza'); pet(ctx, 410, 440, this.progress.pet, 0, false, 1.4, pose === 'view' ? 'up' : 'down', true);
+    const ctx = image.getContext('2d'); ctx.imageSmoothingEnabled=false;drawInterior(ctx, 'rooftop');
+    box(ctx, 768, 0, 192, 640, '#f0dfba'); box(ctx, 0, 512, 768, 128, '#f0dfba');
+    person(ctx, 364, 352, pose === 'view' ? 'up' : 'down', pose === 'dance', 120, pose === 'pizza', characterScale('rooftop',352));
+    drawFurnitureFront(ctx,'rooftop',{x:364,y:352},interiorImage('rooftop'));
+    pet(ctx, 410, 352, this.progress.pet, 0, false, companionScale('rooftop',352), pose === 'view' ? 'up' : 'down', true);
+    drawFurnitureFront(ctx,'rooftop',{x:410,y:352},interiorImage('rooftop'));
     box(ctx, 150, 544, 468, 40, '#3e6057');
     text(ctx, pose === 'pizza' ? 'PIZZA BREAK' : pose === 'view' ? 'MOUNTAIN TIME' : 'HELLO FROM MISSOULA', 384, 565, 13, '#e5d7b0');
     text(ctx, '8 BIT', 864, 91, 23, '#3d5c56'); text(ctx, 'MISSOULA', 864, 123, 19, '#3d5c56');
     text(ctx, 'a little visit', 864, 212, 13, '#5c7262'); text(ctx, 'to missoula.', 864, 233, 13, '#5c7262');
     text(ctx, 'taylor dorsett', 864, 508, 13, '#5c7262'); text(ctx, 'taylordorsett.com', 864, 531, 11, '#5c7262');
-    text(ctx, 'THANKS FOR STOPPING BY ♥', 384, 618, 16, '#3d5c56'); return image;
+    text(ctx, 'THANKS FOR STOPPING BY ♥', 384, 618, 16, '#3d5c56');
+    const pixels=ctx.getImageData(0,0,image.width,image.height);applyPalette(pixels.data);ctx.putImageData(pixels,0,0);return image;
   }
 }

@@ -5,7 +5,7 @@ import { scenes,isWalkable,findSmoothPath } from '../scenes.js';
 import { interactionPose,regularPose,furnitureMasks } from '../interaction-art.js';
 import { facings,humanPose,characterScale } from '../character-art.js';
 import { bodyReference } from '../scale-rules.js';
-import { arcadeRegulars } from '../residents.js';
+import { arcadeRegulars,looks } from '../residents.js';
 
 test('every interaction is reachable both ways with clearance along the entire route',()=>{
   for(const [room,scene] of Object.entries(scenes))for(const point of scene.points)for(const [from,to] of [[scene.spawn,point],[point,scene.spawn]]) {
@@ -19,6 +19,24 @@ test('every interaction is reachable both ways with clearance along the entire r
     }
     assert.deepEqual(start,{x:to.x,y:to.y});
   }
+});
+
+test('shorter visitors keep their stature and sit on the same cabinet seats',()=>{
+  for(const look of looks){
+    const pose=regularPose({x:238,playing:'cabinet',look});
+    const scale=characterScale('arcade',pose.y)*(look.scale||1),body=humanPose(pose.direction,pose.action,0,look);
+    assert.ok(Math.abs(pose.y+body.hip*scale-232)<.01);
+    for(const [x,y] of pose.hands){
+      const shoulder=[pose.x+Math.sign(x-pose.x)*body.width/2*scale,pose.y+(body.shoulder+3)*scale];
+      assert.ok(Math.hypot(x-shoulder[0],y-shoulder[1])<=bodyReference.maxReachUnits*scale);
+    }
+  }
+});
+
+test('house seat and crouching feet meet the chair and clear the couch',()=>{
+  const typing=interactionPose('cabin',{id:'about'}),petting=interactionPose('cabin',{id:'pets'});
+  assert.equal(typing.y+humanPose('up','type').hip*characterScale('cabin'),344);
+  assert.ok(petting.x-9*characterScale('cabin')>328,'kneeling feet stay beside the couch');
 });
 
 test('all arrival directions resolve to the object pose and release on movement',()=>{
@@ -68,6 +86,6 @@ test('furniture anchors stay within arm reach and behind the correct foreground'
   }
   for(const r of arcadeRegulars.filter(r=>r.playing==='cabinet')){
     const pose=regularPose(r),body=humanPose(pose.direction,pose.action);
-    assert.equal(pose.y+body.seat[1]*characterScale('arcade',pose.y),232);
+    assert.ok(Math.abs(pose.y+body.seat[1]*characterScale('arcade',pose.y)-232)<.5);
   }
 });

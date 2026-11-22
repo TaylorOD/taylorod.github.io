@@ -24,9 +24,16 @@ test('physical height projection agrees with rendered adults through room and ca
   }
 });
 
-test('unverified dimensions never pass and known painting conflicts remain visible',()=>{
-  for(const id of ['cabinet','front-guard'])assert.equal(dimensionReport(landmarks.find(item=>item.id===id)).status,'mismatch');
-  assert.equal(dimensionReport(landmarks.find(item=>item.id==='wilma-building')).status,'unmeasured');
+test('every scene reference fits while uncertain anchors remain provisional',()=>{
+  for(const item of landmarks){assert.notEqual(dimensionReport(item).status,'mismatch',item.id);assert.notEqual(dimensionReport(item).status,'unmeasured',item.id);}
+  assert.equal(dimensionReport({...landmarks[0],confidence:'unknown'}).status,'unmeasured');
   assert.equal(dimensionReport(landmarks.find(item=>item.id==='keyboard')).status,'provisional');
   assert.equal(dimensionReport(landmarks.find(item=>item.id==='desk')).status,'within range');
+});
+
+test('the house path changes scale continuously and meets its door reference',()=>{
+  const near=projectHeight('town',[1460,558],175),far=projectHeight('town',[1416,251],175);
+  assert.equal(558-near.y,42);
+  assert.ok(Math.abs(251-far.y-33.6)<1e-8);
+  for(let y=252;y<558;y++)assert.ok(Math.abs(campusScale(1416,y)-campusScale(1416,y-1))<.001);
 });

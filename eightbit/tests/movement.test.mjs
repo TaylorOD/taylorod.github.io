@@ -22,7 +22,9 @@ test('click travel reaches a cabinet and triggers its action once', () => {
     assert.deepEqual(actions, ['project:lilgotchi']);
     assert.deepEqual(world.player, { x: 240, y: 272 });
     world.walk('arrowdown', true); world.walk('arrowdown', false);
-    assert.equal(world.player.y, 280, 'a quick direction tap moves between frames');
+    assert.equal(world.player.y,272,'leaving a seat does not snap the feet');
+    time+=336;world.tick(time);
+    assert.equal(world.player.y,280,'a quick tap is preserved after standing up');
     world.player.y = 272;
     const outdoorTime = world.lifeTime, gaitDistance=world.gaitDistance;
     assert.ok(gaitDistance>0,'travel advances the gait');

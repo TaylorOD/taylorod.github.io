@@ -32,9 +32,9 @@ test('contact hands stay on their prop through all action frames',()=>{
   }
 });
 
-test('final pixels are confined to the same 256 colors for every layer',()=>{
+test('final pixels are confined to the same 64 colors for every layer',()=>{
   assert.equal(pixelGrid,1,'the renderer must not discard half the sprite detail');
-  assert.equal(scenePalette.length,256);
+  assert.equal(scenePalette.length,64);
   const allowed=new Set(scenePalette.map(color=>color.join(',')));
   const data=new Uint8ClampedArray(4096*4);
   for(let i=0;i<data.length;i++)data[i]=(i*71+19)%256;

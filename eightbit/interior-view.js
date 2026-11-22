@@ -1,25 +1,28 @@
+import {fixtureSurface} from './scene-fixtures.js';
 import { box, text } from './art.js';
 import { paintSky } from './daylight.js';
 
-const images = new Map();
+const images = new Map(), surfaces = new Map();
 export function interiorImage(id) {
   if (!images.has(id)) {
     const image = new Image();
     image.src = new URL(`./assets/${id}.png`, import.meta.url).href;
     images.set(id, image);
   }
-  return images.get(id);
+  const image=images.get(id);
+  if(image.complete&&image.naturalWidth&&!surfaces.has(id))surfaces.set(id,fixtureSurface(image,id));
+  return surfaces.get(id)||image;
 }
 
 export async function loadInterior(id) {
   const image = interiorImage(id);
-  await image.decode();
-  return image;
+  if(image.decode)await image.decode();
+  return interiorImage(id);
 }
 
 export function drawInterior(ctx, id) {
   const image = interiorImage(id);
-  if (!image.complete || !image.naturalWidth) {
+  if (!(image instanceof HTMLCanvasElement) && (!image.complete || !image.naturalWidth)) {
     box(ctx, 0, 0, 768, 512, '#203e40');
     text(ctx, 'opening the door…', 384, 360, 14);
     return false;
