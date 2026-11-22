@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Missoula movement review</title>
+<style>
+*{box-sizing:border-box}body{display:flex;flex-direction:column;height:100dvh;margin:0;background:#17292f;color:#f8e7bd;font:16px monospace}header{padding:18px;display:flex;gap:16px;flex-wrap:wrap;align-items:center}h1{font-size:19px;margin:0}label{display:flex;gap:8px;align-items:center;max-width:100%}select{min-width:0;max-width:100%}button,select{font:inherit;background:#f8e7bd;color:#17292f;padding:8px;border:0}canvas{display:block;flex:none;width:100%;height:min(65dvh,700px);min-height:320px;image-rendering:pixelated;outline:0}p{margin:12px 18px}output{display:block;padding:0 18px}a{color:inherit}
+</style>
+<header><h1>Missoula movement review</h1>
+<label>Scene <select id="scene"><option value="town">Town</option><option value="arcade">Arcade</option><option value="cabin">Cabin</option><option value="rooftop">Roof</option></select></label>
+<label>Destination <select id="destination"></select></label><button id="walk">Walk there</button>
+<button id="freeze">Pause</button><details><summary>Scene clock</summary><label>Seconds <input id="clock" type="number" min="0" max="360" value="0" step="1"></label></details><label><input id="pizza" type="checkbox">Carry pizza</label><button id="save">Save scene image</button><a href="./models.html">Character models</a><a href="./scale.html">Height and size</a><a href="proportions.html">Proportion rules</a><a href="../../8-bit-missoula/">Open game</a></header>
+<canvas id="game" tabindex="0" role="img" aria-label="Live scene. Click to walk or use the arrow keys."></canvas>
+<p>Click the scene or use arrow keys. Every destination uses the same movement and rendering as the game.</p><output id="status">Loading scene</output>
+<script type="module" src="./review.js"></script></html>
