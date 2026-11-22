@@ -4,6 +4,7 @@ import { World } from '../world.js';
 import { scenes,isWalkable,findSmoothPath } from '../scenes.js';
 import { interactionPose,regularPose,furnitureMasks } from '../interaction-art.js';
 import { facings,humanPose,characterScale } from '../character-art.js';
+import { bodyReference } from '../scale-rules.js';
 import { arcadeRegulars } from '../residents.js';
 
 test('every interaction is reachable both ways with clearance along the entire route',()=>{
@@ -50,7 +51,7 @@ test('furniture anchors stay within arm reach and behind the correct foreground'
     const body=humanPose(pose.direction,pose.action),scale=characterScale(room,pose.y);
     for(const [x,y] of pose.hands||[]){
       const shoulder=[pose.x+(body.side?body.face*3:Math.sign(x-pose.x)*body.width/2)*scale,pose.y+(body.shoulder+3)*scale];
-      assert.ok(Math.hypot(x-shoulder[0],y-shoulder[1])<31*scale,`${room} ${pose.action} arm reach`);
+      assert.ok(Math.hypot(x-shoulder[0],y-shoulder[1])<=bodyReference.maxReachUnits*scale,`${room} ${pose.action} arm reach`);
     }
   }
   const bartender=regularPose(arcadeRegulars.find(r=>r.playing==='bar'));

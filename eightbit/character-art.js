@@ -1,10 +1,6 @@
-// One body model for the player, neighbors, students and arcade regulars.
-export const characterSizes={town: .7, arcade:1.75, cabin:2.25, rooftop:1.25};
-// The interior painting has larger foreground furniture. Apply its depth scale
-// to every adult, including the player and regulars, rather than scaling by role.
-export function characterScale(room,y){
-  return room==='arcade'?1.5+Math.max(0,Math.min(1,(y-260)/228))*.6:characterSizes[room];
-}
+import {bodyReference,sceneProfiles,sceneBodyScale} from './scale-rules.js';
+export const characterSizes=Object.fromEntries(Object.entries(sceneProfiles).map(([room,profile])=>[room,profile.scale]));
+export const characterScale=sceneBodyScale;
 export const companionScale=(room,y)=>.75*characterScale(room,y)/characterSizes.town;
 export const companionSpacing=(room,y)=>Math.max(28,32*companionScale(room,y));
 export const facings=['down','left','right','up'];
@@ -14,12 +10,14 @@ export const frameIndex=(time,walking=false)=>Math.floor(Math.max(0,time)/(walki
 export const gaitFrame=distance=>Math.floor(Math.max(0,distance)/4)%8;
 const strideX=[8,4,0,-4,-8,-4,0,4],strideLift=[0,0,0,0,0,3,5,3];
 
-export function humanPose(direction='down',action='idle',frame=0,look=playerLook) {
+export function humanPose(direction='down',action='idle',frame=0,look=playerLook,proportions=bodyReference) {
   if(!facings.includes(direction)||!humanActions.includes(action)) throw new Error('Unknown character pose');
   const side=direction==='left'||direction==='right',face=direction==='left'?-1:1;
   const seated=['sit','poker','type','cabinet','pet'].includes(action),stride=action==='walk'?strideX[frame%8]:0;
   const width=side?Math.round((look.width||21)*.65):look.width||21;
-  const top=action==='pet'?-39:action==='type'?-52:seated?-50:-60,shoulder=top+20,hip=action==='pet'?-10:seated&&action!=='cabinet'?-13:action==='cabinet'?-16:-23;
+  const hip=action==='pet'?-10:action==='cabinet'?-16:seated?-13:-proportions.legUnits;
+  const torso=proportions.torsoUnits*(action==='pet'?.6:action==='type'?.9:['cabinet','poker'].includes(action)?.85:1);
+  const shoulder=hip-Math.round(torso),top=shoulder-proportions.headUnits;
   const hands=side?[[face*(4+stride),shoulder+15-Math.abs(stride)/3],[face*(4-stride),shoulder+15-Math.abs(stride)/3]]:[[-width/2-2,shoulder+15+stride],[width/2+2,shoulder+15-stride]];
   if(['cabinet','pinball','read','type','poker','bar','pet'].includes(action)) {
     hands[0]=[side?face*16:-7,shoulder+8];hands[1]=[side?face*18:8,shoulder+8];
@@ -37,8 +35,8 @@ function pixelLine(rect,from,to,color,width=3){
   for(;;){rect(x-1,y-1,width,width,color);if(x===tx&&y===ty)break;const e=2*err;if(e>=dy){err+=dy;x+=sx;}if(e<=dx){err+=dx;y+=sy;}}
 }
 
-export function drawHuman(ctx,{x,y,look=playerLook,direction='down',action='idle',scale=1,time=0,contacts=null,carrying=false,gaitDistance=null}) {
-  const pose=humanPose(direction,action,action==='walk'&&gaitDistance!==null?gaitFrame(gaitDistance):frameIndex(time,action==='walk'),look);
+export function drawHuman(ctx,{x,y,look=playerLook,direction='down',action='idle',scale=1,time=0,contacts=null,carrying=false,gaitDistance=null,proportions=bodyReference}) {
+  const pose=humanPose(direction,action,action==='walk'&&gaitDistance!==null?gaitFrame(gaitDistance):frameIndex(time,action==='walk'),look,proportions);
   const {side,face,seated,width,top,shoulder,hip}=pose;
   const skin=look.skin,pants=look.pants||'#324354',shoes=look.shoes||'#1f2632',shirt=look.shirt;
   ctx.save();ctx.translate(Math.round(x),Math.round(y));ctx.scale(scale,scale);
