@@ -6,7 +6,7 @@ import {interactionPose,regularPose,drawFurnitureFront} from '../interaction-art
 import {loadInterior} from '../interior-view.js';
 const $=id=>document.getElementById(id);
 const image=await loadInterior('arcade');
-const setup=id=>{const ctx=$(id).getContext('2d');ctx.imageSmoothingEnabled=false;ctx.fillStyle='#243e43';ctx.fillRect(0,0,$(id).width,$(id).height);ctx.font='16px monospace';return ctx;};
+const setup=id=>{const ctx=$(id).getContext('2d');ctx.imageSmoothingEnabled=false;ctx.fillStyle='#496475';ctx.fillRect(0,0,$(id).width,$(id).height);ctx.font='16px monospace';return ctx;};
 const label=(ctx,text,x,y)=>{ctx.fillStyle='#f8e7bd';ctx.fillText(text,x,y);};
 const line=(ctx,x,y,w)=>{ctx.fillStyle='#6ba5a2';ctx.fillRect(x,y,w,1);};
 const people=setup('people');line(people,20,240,1080);

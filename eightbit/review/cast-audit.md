@@ -8,6 +8,6 @@ The shared human walk now bends at the knees and swings its arms. Player speed f
 
 Companions now keep the same proportion to adults across rooms. Their following distance grows with their size. Rafters are larger, their paddles stay in the water and their lane clears the surfboard.
 
-Browser checks covered the complete town height sheet, the shared human action sheet, all eight walking frames in each direction, Scout and a trail dog pose sheet, house travel to the desk, arcade travel from the bar to a cabinet, and desktop and phone layouts. These checks do not mean every frame of every animal animation has been visually approved. The catalog test renders every declared action and facing to catch invalid geometry.
+Browser checks covered the complete town height and facing sheets, the shared human action sheet, all eight walking frames in each direction, Scout and a trail dog pose sheet, house travel to the desk, arcade travel from the bar to a cabinet, and desktop and phone layouts. These checks do not mean every frame of every animal animation has been visually approved. The catalog test renders every declared action and facing to catch invalid geometry.
 
 The art remains a draft. The backgrounds still contain more texture than the procedural characters. This change fixes movement, scale comparisons and specific layering problems. It does not establish that the full art direction or every possible overlap is finished.

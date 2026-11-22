@@ -14,21 +14,21 @@ function measure(model,direction,action,time,room){
 function paint(time=0){
   cards.forEach(({renderer,direction,frame,model,action,label})=>{
     const ctx=renderer.ctx,room=$('room').value,zoom=room==='town'?2:1;
-    ctx.fillStyle='#243e43';ctx.fillRect(0,0,240,240);
-    ctx.fillStyle='#6ba5a2';ctx.fillRect(0,190,240,1);
-    ctx.save();ctx.translate(120,190);ctx.scale(zoom,zoom);model.draw(ctx,direction,action,frame*(action==='walk'?65:130)+time,room);ctx.restore();renderer.present();
+    ctx.fillStyle='#496475';ctx.fillRect(0,0,448,320);
+    ctx.fillStyle='#6ba5a2';ctx.fillRect(0,270,448,1);
+    ctx.save();ctx.translate(model.id==='fisher'?130:224,270);ctx.scale(zoom,zoom);model.draw(ctx,direction,action,frame*(action==='walk'?65:130)+time,room);ctx.restore();renderer.present();
     if(!time)label.textContent=`${overview?model.name+' / '+direction+' / '+action:direction+' · frame '+(frame+1)} · ${measure(model,direction,action,frame*(action==='walk'?65:130),room)}`;
   });
 }
 function card(model,direction,action,frame){
   const figure=document.createElement('figure'),canvas=document.createElement('canvas'),label=document.createElement('figcaption');
-  canvas.width=240;canvas.height=240;figure.append(canvas,label);$('frames').append(figure);
+  canvas.width=448;canvas.height=320;figure.append(canvas,label);$('frames').append(figure);
   const renderer=new PixelRenderer(canvas);renderer.resize();cards.push({renderer,direction,frame,model,action,label});
 }
 function frames(){
   overview=false;const model=models.find(model=>model.id===$('model').value),action=$('action').value;
   cards=[];$('frames').replaceChildren();
-  for(const direction of model.directions)for(let frame=0;frame<(model.human&&action==='walk'?8:4);frame++)card(model,direction,action,frame);
+  for(const direction of model.directions.filter(direction=>!model.supports||model.supports(direction,action)))for(let frame=0;frame<(model.human&&action==='walk'?8:4);frame++)card(model,direction,action,frame);
   $('metrics').textContent=`${model.name}: ${model.directions.join(', ')}. Actions: ${model.actions.join(', ')}. Bounds include equipment, shadows and headwear.`;
   paint();
 }
@@ -41,13 +41,13 @@ $('overview').onclick=()=>{
 };
 $('directions').onclick=()=>{
   overview=true;running=false;$('animate').textContent='Animate';cards=[];$('frames').replaceChildren();
-  for(const model of models)for(const direction of model.directions)card(model,direction,model.actions.includes('walk')?'walk':model.actions[0],0);
+  for(const model of models)for(const direction of model.directions)card(model,direction,model.actions.includes('walk')?'walk':model.actions.find(action=>!model.supports||model.supports(direction,action)),0);
   $('metrics').textContent='Every declared facing for all 44 models. Walking where supported, otherwise the first supported action. The scene selector applies to humans and companions.';paint();
 };
 $('poses').onclick=()=>{
   overview=true;running=false;$('animate').textContent='Animate';cards=[];$('frames').replaceChildren();
   const model=models.find(model=>model.id===$('model').value);
-  for(const action of model.actions)for(const direction of model.directions)card(model,direction,action,0);
+  for(const action of model.actions)for(const direction of model.directions)if(!model.supports||model.supports(direction,action))card(model,direction,action,0);
   $('metrics').textContent=`Every action and facing for ${model.name}. Choose one action to inspect all of its frames.`;paint();
 };
 $('animate').onclick=()=>{running=!running;$('animate').textContent=running?'Pause':'Animate';};
