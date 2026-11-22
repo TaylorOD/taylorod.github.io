@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { World } from '../world.js';
 import { scenes,isWalkable,findSmoothPath } from '../scenes.js';
 import { interactionPose,regularPose,furnitureMasks } from '../interaction-art.js';
-import { facings,humanPose,characterSizes } from '../character-art.js';
+import { facings,humanPose,characterScale } from '../character-art.js';
 import { arcadeRegulars } from '../residents.js';
 
 test('every interaction is reachable both ways with clearance along the entire route',()=>{
@@ -47,17 +47,26 @@ test('furniture anchors stay within arm reach and behind the correct foreground'
   const poses=Object.entries(scenes).flatMap(([room,scene])=>scene.points.map(point=>[room,interactionPose(room,point)]));
   poses.push(...arcadeRegulars.map(resident=>['arcade',regularPose(resident)]));
   for(const [room,pose] of poses){
-    const body=humanPose(pose.direction,pose.action),scale=characterSizes[room];
+    const body=humanPose(pose.direction,pose.action),scale=characterScale(room,pose.y);
     for(const [x,y] of pose.hands||[]){
       const shoulder=[pose.x+(body.side?body.face*3:Math.sign(x-pose.x)*body.width/2)*scale,pose.y+(body.shoulder+3)*scale];
       assert.ok(Math.hypot(x-shoulder[0],y-shoulder[1])<31*scale,`${room} ${pose.action} arm reach`);
     }
   }
   const bartender=regularPose(arcadeRegulars.find(r=>r.playing==='bar'));
-  assert.ok(bartender.y<furnitureMasks.arcade[0].behind);
-  assert.ok(bartender.hands.every(([,y])=>y>=360&&y<=385));
+  assert.ok(bartender.x>165&&bartender.x<335&&bartender.y>432&&bartender.y<492,'bartender is inside the lower L shaped service area');
+  const customer=interactionPose('arcade',{id:'pizza'});
+  assert.ok(customer.x>369,'customer is outside the short return');
+  assert.equal(bartender.direction,'right');assert.equal(customer.direction,'left');
+  for(const pose of [bartender,customer]){
+    const body=humanPose(pose.direction,pose.action),scale=characterScale('arcade',pose.y);
+    const head=pose.y+body.top*scale,shoulder=pose.y+body.shoulder*scale;
+    const counter=pose.hands[0][1];
+    assert.ok(counter-head>42,'the full head and shoulders clear the counter');
+    assert.ok(counter>shoulder&&counter<shoulder+26*scale,'counter is between shoulder and relaxed hand height');
+  }
   for(const r of arcadeRegulars.filter(r=>r.playing==='cabinet')){
     const pose=regularPose(r),body=humanPose(pose.direction,pose.action);
-    assert.equal(pose.y+body.seat[1]*characterSizes.arcade,232);
+    assert.equal(pose.y+body.seat[1]*characterScale('arcade',pose.y),232);
   }
 });

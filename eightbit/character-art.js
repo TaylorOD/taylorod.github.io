@@ -1,18 +1,23 @@
 // One body model for the player, neighbors, students and arcade regulars.
-export const characterSizes={town: .8, arcade:1.75, cabin:2, rooftop:1.25};
+export const characterSizes={town: .7, arcade:1.75, cabin:2.25, rooftop:1.25};
+// The interior painting has larger foreground furniture. Apply its depth scale
+// to every adult, including the player and regulars, rather than scaling by role.
+export function characterScale(room,y){
+  return room==='arcade'?1.5+Math.max(0,Math.min(1,(y-260)/228))*.6:characterSizes[room];
+}
 export const facings=['down','left','right','up'];
-export const humanActions=['idle','walk','carry','talk','sit','cabinet','pinball','poker','bar','read','type','wave'];
+export const humanActions=['idle','walk','carry','talk','sit','cabinet','pinball','poker','bar','read','type','wave','pet'];
 export const playerLook={skin:'#d5aa86',hair:'#684c3b',shirt:'#82b5d9',pants:'#253039',shoes:'#ef553e',width:21,bald:true,beard:true,hoodie:true,shorts:true};
 export const frameIndex=(time,walking=false)=>Math.floor(Math.max(0,time)/(walking?130:300))%4;
 
 export function humanPose(direction='down',action='idle',frame=0,look=playerLook) {
   if(!facings.includes(direction)||!humanActions.includes(action)) throw new Error('Unknown character pose');
   const side=direction==='left'||direction==='right',face=direction==='left'?-1:1;
-  const seated=['sit','poker','type','cabinet'].includes(action),stride=action==='walk'?[0,3,0,-3][frame%4]:0;
+  const seated=['sit','poker','type','cabinet','pet'].includes(action),stride=action==='walk'?[0,3,0,-3][frame%4]:0;
   const width=side?Math.round((look.width||21)*.65):look.width||21;
-  const top=action==='type'?-52:seated&&action!=='cabinet'?-40:-46,shoulder=top+19,hip=seated&&action!=='cabinet'?-13:-16;
+  const top=action==='pet'?-39:action==='type'?-52:seated?-50:-60,shoulder=top+20,hip=action==='pet'?-10:seated&&action!=='cabinet'?-13:action==='cabinet'?-16:-23;
   const hands=side?[[face*7,shoulder+15],[face*4,shoulder+14]]:[[-width/2-2,shoulder+15+stride],[width/2+2,shoulder+15-stride]];
-  if(['cabinet','pinball','read','type','poker','bar'].includes(action)) {
+  if(['cabinet','pinball','read','type','poker','bar','pet'].includes(action)) {
     hands[0]=[side?face*16:-7,shoulder+8];hands[1]=[side?face*18:8,shoulder+8];
   }
   if(action==='carry') {hands[0]=[side?face*17:-7,-16];hands[1]=[side?face*22:8,-16];}
@@ -32,6 +37,7 @@ export function drawHuman(ctx,{x,y,look=playerLook,direction='down',action='idle
   const skin=look.skin,pants=look.pants||'#324354',shoes=look.shoes||'#1f2632',shirt=look.shirt;
   ctx.save();ctx.translate(Math.round(x),Math.round(y));ctx.scale(scale,scale);
   const rect=(a,b,w,h,color)=>{ctx.fillStyle=color;ctx.fillRect(Math.round(a),Math.round(b),Math.round(w),Math.round(h));};
+  const shade=(color,amount)=>{const n=parseInt(color.slice(1),16);return '#'+[n>>16,n>>8&255,n&255].map(v=>Math.max(0,Math.min(255,v+amount)).toString(16).padStart(2,'0')).join('');};
   rect(-width/2-2,1,width+4,2,'#203b3d');
   // Legs bend at the knee when sitting. Side views no longer keep a front torso.
   if(seated){
@@ -42,16 +48,24 @@ export function drawHuman(ctx,{x,y,look=playerLook,direction='down',action='idle
       const foot=action==='walk'?swing:0;
       const lift=side?Math.abs(foot)/3:Math.max(0,foot);
       rect(dx,hip,6,-hip-2-lift,look.shorts?skin:pants);
+      rect(dx+4,hip+7,2,-hip-9-lift,shade(look.shorts?skin:pants,-25));
       if(look.shorts)rect(dx,hip,7,7,pants);
       rect(dx+(side?foot:0),-2-lift,8,3,shoes);
+      rect(dx+(side?foot:0),-lift,8,1,shade(shoes,45));
     }
   }
   rect(-width/2,shoulder,width,hip-shoulder+2,shirt);
-  rect(width/2-3,shoulder+3,3,hip-shoulder-1,look.shade||'#496475');
+  rect(-width/2+2,shoulder+2,3,hip-shoulder-2,shade(shirt,22));
+  rect(width/2-3,shoulder+3,3,hip-shoulder-1,look.shade||shade(shirt,-28));
+  rect(-width/2+2,hip,Math.max(3,width-4),2,shade(shirt,-40));
   if(look.hoodie){
     rect(-width/2+1,shoulder+2,6,4,'#b7d8e9');rect(0,shoulder+8,side?5:9,5,'#a4cfe6');
     if(direction==='up'){rect(-7,shoulder,14,5,'#b7d8e9');rect(-5,shoulder+4,10,2,'#669ec9');}
     if(direction==='down'){rect(-4,shoulder+5,8,4,'#f8e7bd');rect(3,shoulder+4,3,4,'#f8e7bd');rect(-4,shoulder+9,2,2,'#f8e7bd');rect(2,shoulder+9,2,2,'#f8e7bd');}
+    if(direction!=='up'){
+      rect(side?(face>0?1:-4):-6,hip-5,side?4:12,1,shade(shirt,-30));
+      if(!side){rect(-5,shoulder+2,1,3,'#f8e7bd');rect(5,shoulder+2,1,3,'#f8e7bd');}
+    }
   }
   const hands=contacts?contacts.map(([hx,hy])=>[(hx-x)/scale,(hy-y)/scale]):carrying?humanPose(direction,'carry',0,look).hands:pose.hands;
   for(let i=0;i<2;i++){
@@ -59,10 +73,13 @@ export function drawHuman(ctx,{x,y,look=playerLook,direction='down',action='idle
     const start=[side?face*3:(i?-1:1)*(-width/2),shoulder+3];
     const hand=hands[i]||hands[0];
     const elbow=[start[0]+(hand[0]-start[0])*.35,Math.max(start[1]+4,hand[1]+3)];
-    pixelLine(rect,start,elbow,shirt,4);pixelLine(rect,elbow,hand,skin,3);rect(hand[0]-2,hand[1]-1,4,3,skin);
+    pixelLine(rect,start,elbow,shade(shirt,-28),5);pixelLine(rect,start,elbow,shirt,3);pixelLine(rect,elbow,hand,skin,3);rect(hand[0]-2,hand[1]-1,4,3,skin);
   }
   rect(-3,top+15,6,5,skin);
   rect(side?-6:-8,top+3,side?13:17,14,skin);rect(side?-3:-5,top,side?9:11,4,skin);
+  rect(side?-5:-7,top+4,3,9,shade(skin,15));
+  rect(side?4:6,top+5,2,10,shade(skin,-28));
+  rect(side?-3:-4,top+1,7,1,shade(skin,26));
   if(!look.bald){
     rect(side?-7:-9,top,side?14:19,5,look.hair);
     if(direction==='up')rect(-8,top+3,17,14,look.hair);
@@ -72,7 +89,9 @@ export function drawHuman(ctx,{x,y,look=playerLook,direction='down',action='idle
   }
   if(direction!=='up'){
     if(look.beard){rect(side?(face>0?0:-7):-7,top+12,side?8:15,7,look.hair);rect(side?(face>0?1:-6):-4,top+17,side?6:9,3,look.hair);}
+    if(look.beard){rect(side?(face>0?1:-5):-5,top+14,side?4:10,1,shade(look.hair,22));rect(side?(face>0?3:-6):-2,top+15,side?2:5,1,shade(skin,-30));}
     rect(side?(face>0?4:-5):-4,top+9,2,2,'#17292f');if(!side)rect(4,top+9,2,2,'#17292f');
+    rect(side?(face>0?3:-6):-5,top+7,3,1,look.hair);if(!side)rect(3,top+7,3,1,look.hair);
     if(side)rect(face>0?7:-9,top+11,3,3,skin);
   }
   if(look.hat){rect(-10,top-2,20,6,'#daa34d');rect(side?(face>0?-9:-14):-13,top+3,side?24:27,3,'#daa34d');}

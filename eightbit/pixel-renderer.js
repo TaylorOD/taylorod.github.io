@@ -1,5 +1,6 @@
-// All scene layers finish on the same two world pixel grid and 256 color palette.
-export const pixelGrid = 2;
+// Keep one world pixel of detail. The previous half resolution surface erased
+// sprite features and made the characters much coarser than the furniture.
+export const pixelGrid = 1;
 export const scenePalette = [];
 for (const r of [16,56,96,136,176,216]) for (const g of [16,56,96,136,176,216]) for (const b of [16,56,96,136,176,216]) scenePalette.push([r,g,b]);
 for (let i=0;i<24;i++) { const v=Math.round(i*255/23); scenePalette.push([v,v,v]); }

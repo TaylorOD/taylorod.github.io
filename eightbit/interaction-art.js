@@ -4,13 +4,13 @@ export function interactionPose(room,point) {
   if(!point)return null;
   if(room==='arcade'&&cabinetCenters[point.id]) {
     const x=cabinetCenters[point.id];
-    return {x,y:260,direction:'up',action:'cabinet',hands:[[x-10,197],[x+10,197]]};
+    return {x,y:256,direction:'up',action:'cabinet',hands:[[x-10,197],[x+10,197]]};
   }
-  if(room==='arcade'&&point.id==='pizza')return {x:256,y:456,direction:'up',action:'bar',hands:[[246,385],[266,385]]};
+  if(room==='arcade'&&point.id==='pizza')return {x:400,y:480,direction:'left',action:'bar',hands:[[370,415],[365,423]]};
   if(room==='arcade'&&point.id==='poker')return {x:472,y:344,direction:'right',action:'poker',hands:[[501,314],[509,308]]};
   if(room==='cabin'&&point.id==='about')return {x:640,y:380,direction:'up',action:'type',hands:[[636,312],[652,315]]};
   if(room==='cabin'&&point.id==='books')return {x:384,y:328,direction:'up',action:'read',hands:[[374,267],[394,267]]};
-  if(room==='cabin'&&point.id==='pets')return {x:336,y:328,direction:'left',action:'talk'};
+  if(room==='cabin'&&point.id==='pets')return {x:336,y:344,direction:'left',action:'pet',hands:[[303,305],[307,309]]};
   if(room==='rooftop'&&point.id==='view')return {x:384,y:288,direction:'up',action:'idle'};
   if(point.id==='photo')return {x:point.x,y:point.y,direction:'down',action:'wave'};
   if(room==='town'&&point.id==='bench')return {x:point.x,y:point.y,direction:'up',action:'talk'};
@@ -20,9 +20,9 @@ export function interactionPose(room,point) {
 export function regularPose(resident) {
   if(resident.playing==='cabinet') {
     const x=Object.values(cabinetCenters).reduce((best,x)=>Math.abs(x-resident.x)<Math.abs(best-resident.x)?x:best,238);
-    return {x,y:260,direction:'up',action:'cabinet',hands:[[x-10,197],[x+10,197]]};
+    return {x,y:256,direction:'up',action:'cabinet',hands:[[x-10,197],[x+10,197]]};
   }
-  if(resident.playing==='bar')return {x:238,y:390,direction:'down',action:'bar',hands:[[226,370],[250,370]]};
+  if(resident.playing==='bar')return {x:304,y:480,direction:'right',action:'bar',hands:[[340,415],[344,424]]};
   if(resident.playing==='poker')return {x:546,y:310,direction:'down',action:'poker',hands:[[536,291],[553,294]]};
   const first=resident.x>150;
   return first?{x:160,y:270,direction:'left',action:'pinball',hands:[[142,229],[131,239]]}:

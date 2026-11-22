@@ -23,6 +23,8 @@ export function loadTownArt() {
   painting.src = new URL('./assets/town.png', import.meta.url).href;
 }
 
+export async function readyTownArt(){loadTownArt();await painting?.decode();}
+
 function sky(ctx,light) {
   // Mask follows the mountain skyline so the painted hills retain their detail.
   ctx.save();

@@ -1,4 +1,4 @@
-import { drawHuman, characterSizes } from './character-art.js';
+import { drawHuman, characterSizes, characterScale } from './character-art.js';
 import { regularPose } from './interaction-art.js';
 import { findSmoothPath as findPath, scenes } from './scenes.js';
 import { box, polygon } from './art.js';
@@ -125,5 +125,5 @@ export const arcadeRegulars = [
 
 export function drawArcadeRegular(ctx, resident, time, reduced) {
   const pose=regularPose(resident);
-  drawHuman(ctx,{...pose,look:resident.look,scale:arcadePersonScale,time:reduced?0:time,contacts:pose.hands});
+  drawHuman(ctx,{...pose,look:resident.look,scale:characterScale('arcade',pose.y),time:reduced?0:time,contacts:pose.hands});
 }

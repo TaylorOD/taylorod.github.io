@@ -1,5 +1,5 @@
 import { PixelRenderer } from './pixel-renderer.js';
-import { characterSizes } from './character-art.js';
+import { characterScale } from './character-art.js';
 import { hiddenFriends } from './hunt-art.js';
 import { drawInterior, roofSky, interiorImage } from './interior-view.js';
 import { interactionPose, regularPose, drawFurnitureFront } from './interaction-art.js';
@@ -233,11 +233,11 @@ export class World {
     const freeStation=resident=>!playerPose||!resident.playing||Math.hypot(regularPose(resident).x-playerPose.x,regularPose(resident).y-playerPose.y)>32;
     const actors = [
       ...hiddenFriends(ctx,this.id,this.progress,this.reduced.matches?0:time),
-      ...scoutActors(ctx, this.id, this.lifeTime, this.reduced.matches),
+      ...scoutActors(ctx, this.id, this.interaction?.action==='pet'?0:this.lifeTime, this.interaction?.action==='pet'?false:this.reduced.matches),
       ...(this.id === 'arcade' ? arcadeRegulars.filter(freeStation).map(resident => ({ ...regularPose(resident),look:resident.look, draw: () => drawArcadeRegular(ctx, resident, time, this.reduced.matches || this.paused) })) : []),
       { x:this.companion.x,y: this.companion.y, draw: companion },
-      { ...playerPosition, draw: () => person(ctx, playerPosition.x, playerPosition.y, this.direction, this.walking && !this.reduced.matches, time, this.progress.pizza === 'carrying', characterSizes[this.id], this.progress.pizza==='carrying'?null:playerPose) },
-      ...this.residents.filter(resident => resident.room === this.id && !resident.hidden && !resident.home && freeStation(resident)).map(resident => ({ x:resident.x,y: resident.y + (resident.seated ? 16 : 0), draw: () => resident.playing && this.id === 'arcade' ? drawArcadeRegular(ctx, resident, time, this.reduced.matches || this.paused) : drawResident(ctx, resident, time, this.reduced.matches, characterSizes[this.id]) })),
+      { ...playerPosition, draw: () => person(ctx, playerPosition.x, playerPosition.y, this.direction, this.walking && !this.reduced.matches, time, this.progress.pizza === 'carrying', characterScale(this.id,playerPosition.y), this.progress.pizza==='carrying'?null:playerPose) },
+      ...this.residents.filter(resident => resident.room === this.id && !resident.hidden && !resident.home && freeStation(resident)).map(resident => ({ x:resident.x,y: resident.y + (resident.seated ? 16 : 0), draw: () => resident.playing && this.id === 'arcade' ? drawArcadeRegular(ctx, resident, time, this.reduced.matches || this.paused) : drawResident(ctx, resident, time, this.reduced.matches, characterScale(this.id,resident.y)) })),
     ];
 
     actors.sort((a, b) => a.y - b.y).forEach(actor => {actor.draw();if(Number.isFinite(actor.x))drawFurnitureFront(ctx,this.id,actor,interiorImage(this.id));});

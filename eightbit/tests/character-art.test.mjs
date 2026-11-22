@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { humanPose,humanActions,facings,playerLook,frameIndex,drawHuman } from '../character-art.js';
-import { scenePalette,applyPalette } from '../pixel-renderer.js';
+import { scenePalette,applyPalette,pixelGrid } from '../pixel-renderer.js';
 
 test('every human action has four explicit facings and stable ground anchors',()=>{
   for(const action of humanActions)for(const direction of facings)for(let frame=0;frame<4;frame++){
@@ -33,6 +33,7 @@ test('contact hands stay on their prop through all action frames',()=>{
 });
 
 test('final pixels are confined to the same 256 colors for every layer',()=>{
+  assert.equal(pixelGrid,1,'the renderer must not discard half the sprite detail');
   assert.equal(scenePalette.length,256);
   const allowed=new Set(scenePalette.map(color=>color.join(',')));
   const data=new Uint8ClampedArray(4096*4);
