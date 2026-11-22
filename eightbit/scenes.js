@@ -28,7 +28,7 @@ export const scenes = {
       ...[['lilgotchi','meet lilgotchi',240],['snowcrust','play snowcrust',288],['relay','try relay',336],['fight','fight terminal',384],['sweat','mr game and sweat',432],['moonbean','moonbean coffee',480],['reachoutt','reachoutt',528]].map(([id,label,x]) => point(id,label,x,272,`project:${id}`,{hit:[x-22,132,44,128]})),
       point('hidden-cypunk','look beside the pinball',224,328,'find:cypunk',{hit:[213,315,24,32]}),
       point('poker','poker seater',472,344,'project:poker',{hit:[490,274,138,88]}),
-      point('pizza','coins and beer',256,456,'coins',{hit:[145,360,224,132]}),
+      point('pizza','coins and beer',400,480,'coins',{hit:[145,360,224,132]}),
       point('photo','take a photo',480,392,'photo'),
       point('roof','stairs to the rooftop',600,456,'roof',{hit:[628,344,120,136]}),
       point('exit','back to main street',400,488,'room:town',{hit:[336,480,96,32]}),

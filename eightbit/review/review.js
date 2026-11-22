@@ -32,4 +32,7 @@ $('save').onclick=()=>{
     link.href=url;link.download=`missoula-${id}.png`;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
   });
 };
+const requested=new URLSearchParams(location.search);
+if(scenes[requested.get('scene')])$('scene').value=requested.get('scene');
 scene();
+if(scenes[world.id].points.some(point=>point.id===requested.get('point'))){$('destination').value=requested.get('point');world.goTo(requested.get('point'));}
