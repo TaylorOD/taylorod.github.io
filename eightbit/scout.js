@@ -1,3 +1,4 @@
+import {sceneBodyScale,depthFactor,woodlandDepth} from './scale-rules.js';
 import { woodlandTrees } from './woodland.js';
 import { box, polygon } from './art.js';
 
@@ -33,7 +34,8 @@ export function scoutMoment(time) {
     const following=along(route,Math.min(1,(phase-11+2.03)/30));
     squirrel.climbing=phase>=39;squirrel.direction=following.x>=ahead.x?1:-1;
   }
-  return {...position,direction:watching?1:next.x>=position.x?1:-1,walking:!indoors&&!watching,indoors,squirrel,
+  const depth=phase<11?.8-(.8-woodlandDepth)*Math.max(0,(phase-8)/3):phase>=63?woodlandDepth+(.8-woodlandDepth)*Math.min(1,(phase-63)/3):woodlandDepth;
+  return {...position,depth,direction:watching?1:next.x>=position.x?1:-1,walking:!indoors&&!watching,indoors,squirrel,
     vertical:!indoors&&(phase<11||phase>=63),entering:phase>=63,watching,
     jump:watching?Math.max(0,Math.sin((phase-41)*Math.PI*1.1))*9:0};
 }
@@ -47,9 +49,10 @@ export function elkMoment(time) {
 }
 
 export function drawScout(ctx, scout, time, sleeping = false) {
-  ctx.save(); ctx.translate(Math.round(scout.x),Math.round(scout.y-(scout.jump||0))); ctx.scale(scout.direction || 1,1);
+  ctx.save(); ctx.translate(Math.round(scout.x),Math.round(scout.y-(scout.jump||0))); const size=scout.scale??sceneBodyScale('town')*(scout.depth??depthFactor('town',scout.x,scout.y));ctx.scale((scout.direction||1)*size,size);
   const black = '#222d35', white = '#e6e3ce';
   if (sleeping) {
+    ctx.scale(.75*.55,.75*.55);
     polygon(ctx,[[-22,-3],[-25,-12],[-17,-21],[6,-23],[20,-14],[21,-4]],black);
     box(ctx,4,-19,10,15,white); box(ctx,11,-14,16,11,black); box(ctx,19,-8,11,6,white);
     box(ctx,26,-7,4,3,black); box(ctx,17,-14,5,7,'#151f28'); box(ctx,-18,-5,19,4,white);
@@ -90,7 +93,7 @@ export function drawScout(ctx, scout, time, sleeping = false) {
 }
 
 export function drawSquirrel(ctx, squirrel, time) {
-  ctx.save(); ctx.translate(Math.round(squirrel.x),Math.round(squirrel.y));
+  ctx.save(); ctx.translate(Math.round(squirrel.x),Math.round(squirrel.y));const size=.35*(squirrel.depth??woodlandDepth);ctx.scale(size,size);
   if (squirrel.climbing) ctx.rotate(-Math.PI/2);
   else ctx.scale(squirrel.direction,1);
   box(ctx,-7,-7,12,6,'#ac7950'); box(ctx,3,-10,7,7,'#b58b5c'); box(ctx,7,-8,2,2,'#2d3d34');
@@ -101,7 +104,7 @@ export function drawSquirrel(ctx, squirrel, time) {
 
 export function scoutActors(ctx, room, time, reduced = false, layout = null) {
   const scout = scoutMoment(reduced ? 45000 : time);
-  if (room === 'cabin' && scout.indoors) return [{ y: 318, draw: () => drawScout(ctx,{ x: 280, y: 318, direction: 1 },0,true) }];
+  if (room === 'cabin' && scout.indoors) return [{ y: 318, draw: () => drawScout(ctx,{ x: 280, y: 318, direction: 1,scale:sceneBodyScale('cabin') },0,true) }];
   if (room !== 'town' || scout.indoors) return [];
   const actors = [{ y: scout.y, draw: () => drawScout(ctx,scout,reduced ? 0 : time * 1.6) }];
   if (scout.squirrel) actors.push({ y: scout.squirrel.y, draw: () => drawSquirrel(ctx,scout.squirrel,time) });

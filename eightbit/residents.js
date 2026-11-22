@@ -8,11 +8,11 @@ export const looks = [
   { skin: '#754b38', hair: '#261f2c', shirt: '#e1ad49', width: 22, curls: true },
   { skin: '#e4b08c', hair: '#d9d6c7', shirt: '#8aafbd', width: 20, cane: true },
   { skin: '#b7815b', hair: '#383043', shirt: '#d173ab', width: 25 },
-  { skin: '#f0c8a1', hair: '#8c4738', shirt: '#789a71', width: 17, scale: .78 },
+  { skin: '#f0c8a1', hair: '#8c4738', shirt: '#789a71', width: 17, scale: 160/175 },
   { skin: '#edc4a4', hair: '#212831', shirt: '#8d87c7', width: 27, long: true },
   { skin: '#e2b38f', hair: '#25272d', shirt: '#f08168', width: 20, hat: true },
   { skin: '#d3a17d', hair: '#cbb695', shirt: '#5a9b9e', width: 23, long: true },
-  { skin: '#e7bd9e', hair: '#392f2d', shirt: '#b8ba74', width: 18, scale: .85 },
+  { skin: '#e7bd9e', hair: '#392f2d', shirt: '#b8ba74', width: 18, scale: 165/175 },
 ];
 const destinations = [{ x: 424, y: 576 }, { x: 1304, y: 576, door: 'arcade' }, { x: 1200, y: 656 }, { x: 896, y: 800 }, { x: 584, y: 656, activity: 'sit' }, { x: 640, y: 656, activity: 'talk' }, { x: 672, y: 656, activity: 'talk' }];
 const indoorStops = {
@@ -22,7 +22,7 @@ const indoorStops = {
 export function createResidents() {
   return [
     ...looks.map((look, index) => ({
-      ...(index === 7 ? { x: 1440, y: 576 } : destinations[index % destinations.length]), index, look, room: 'town', direction: 'down', route: [],
+      ...(index === 7 ? { x: 1472, y: 576 } : destinations[index % destinations.length]), index, look, room: 'town', direction: 'down', route: [],
       stop: index * .7, next: (index + 2) % destinations.length, speed: 27 + index % 3 * 8,
       phase: 'street', hidden: 0,
     })),
@@ -119,12 +119,12 @@ export function drawResident(ctx, resident, time, reduced, roomScale = character
 
 // Regulars and visitors never block the player or project interactions.
 export const arcadeRegulars = [
-  [168, 272, 0, 'pinball'], [137, 310, 4, 'pinball'], [546, 320, 5, 'poker'],
+  [168, 272, 0, 'pinball'], [137, 310, 4, 'pinball'], [626, 320, 5, 'poker'],
   [288, 260, 2, 'cabinet'], [432, 260, 6, 'cabinet'],
   [230, 400, 0, 'bar'],
-].map(([x, y, look, playing]) => ({ x, y, look: { ...looks[look], scale: arcadePersonScale }, direction: ['poker', 'bar'].includes(playing) ? 'down' : 'up', playing }));
+].map(([x, y, look, playing]) => ({ x, y, look: { ...looks[look] }, direction: ['poker', 'bar'].includes(playing) ? 'down' : 'up', playing }));
 
 export function drawArcadeRegular(ctx, resident, time, reduced) {
   const pose=regularPose(resident);
-  drawHuman(ctx,{...pose,look:resident.look,scale:characterScale('arcade',pose.y),time:reduced?0:time,contacts:pose.hands});
+  drawHuman(ctx,{...pose,look:resident.look,scale:characterScale('arcade',pose.y)*(resident.look.scale||1),time:reduced?0:time,contacts:pose.hands});
 }

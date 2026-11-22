@@ -15,8 +15,8 @@ export function humanPose(direction='down',action='idle',frame=0,look=playerLook
   const side=direction==='left'||direction==='right',face=direction==='left'?-1:1;
   const seated=['sit','poker','type','cabinet','pet'].includes(action),stride=action==='walk'?strideX[frame%8]:0;
   const width=side?Math.round((look.width||21)*.65):look.width||21;
-  const hip=action==='pet'?-10:action==='cabinet'?-16:seated?-13:-proportions.legUnits;
-  const torso=proportions.torsoUnits*(action==='pet'?.6:action==='type'?.9:['cabinet','poker'].includes(action)?.85:1);
+  const hip=action==='pet'?-10:action==='cabinet'?-16:seated?-16:-proportions.legUnits;
+  const torso=proportions.torsoUnits*(action==='pet'?.6:['type','sit','poker'].includes(action)?.76:action==='cabinet'?.85:1);
   const shoulder=hip-Math.round(torso),top=shoulder-proportions.headUnits;
   const hands=side?[[face*(4+stride),shoulder+15-Math.abs(stride)/3],[face*(4-stride),shoulder+15-Math.abs(stride)/3]]:[[-width/2-2,shoulder+15+stride],[width/2+2,shoulder+15-stride]];
   if(['cabinet','pinball','read','type','poker','bar','pet'].includes(action)) {
@@ -35,36 +35,38 @@ function pixelLine(rect,from,to,color,width=3){
   for(;;){rect(x-1,y-1,width,width,color);if(x===tx&&y===ty)break;const e=2*err;if(e>=dy){err+=dy;x+=sx;}if(e<=dx){err+=dx;y+=sy;}}
 }
 
-export function drawHuman(ctx,{x,y,look=playerLook,direction='down',action='idle',scale=1,time=0,contacts=null,carrying=false,gaitDistance=null,proportions=bodyReference}) {
+export function drawHuman(ctx,{x,y,look=playerLook,direction='down',action='idle',scale=1,time=0,contacts=null,carrying=false,gaitDistance=null,proportions=bodyReference,poseBlend=1}) {
   const pose=humanPose(direction,action,action==='walk'&&gaitDistance!==null?gaitFrame(gaitDistance):frameIndex(time,action==='walk'),look,proportions);
+  const blend=Math.max(0,Math.min(1,poseBlend)),standing=humanPose(direction,'idle',0,look,proportions);
+  for(const key of ['top','shoulder','hip'])pose[key]=standing[key]+(pose[key]-standing[key])*blend;
   const {side,face,seated,width,top,shoulder,hip}=pose;
   const skin=look.skin,pants=look.pants||'#324354',shoes=look.shoes||'#1f2632',shirt=look.shirt;
   ctx.save();ctx.translate(Math.round(x),Math.round(y));ctx.scale(scale,scale);
   const rect=(a,b,w,h,color)=>{ctx.fillStyle=color;ctx.fillRect(Math.round(a),Math.round(b),Math.round(w),Math.round(h));};
   const shade=(color,amount)=>{const n=parseInt(color.slice(1),16);return '#'+[n>>16,n>>8&255,n&255].map(v=>Math.max(0,Math.min(255,v+amount)).toString(16).padStart(2,'0')).join('');};
   rect(-width/2-2,1,width+4,2,'#203b3d');
-  // Legs bend at the knee when sitting. Side views no longer keep a front torso.
-  if(seated){
-    if(side){rect(face>0?-5:-10,hip,15,5,pants);rect(face>0?7:-8,hip+3,5,-hip-3,look.shorts?skin:pants);rect(face>0?6:-10,-2,9,3,shoes);}
-    else {for(const dx of [-8,3]){rect(dx,hip,8,6,pants);rect(dx+1,hip+5,5,-hip-5,look.shorts?skin:pants);rect(dx,-2,9,3,shoes);}}
-  } else {
-    for(let i=0;i<2;i++){
-      const foot=pose.feet[i],hipPoint=[side?0:(i?6:-6),hip];
-      const knee=[Math.round((hipPoint[0]+foot[0])*.5)+(side&&action==='walk'?face*2:0),Math.round((hip+foot[1])*.5)];
-      const ankle=[foot[0],foot[1]-2],leg=look.shorts?skin:pants;
-      pixelLine(rect,hipPoint,knee,shade(leg,-25),5);pixelLine(rect,knee,ankle,shade(leg,-25),5);
-      pixelLine(rect,hipPoint,knee,leg,3);pixelLine(rect,knee,ankle,leg,3);
-      if(look.shorts)pixelLine(rect,hipPoint,[hipPoint[0]+(knee[0]-hipPoint[0])*.55,hip+6],pants,6);
-      rect(foot[0]-(side&&face<0?5:3),foot[1]-2,8,3,shoes);
-      rect(foot[0]-(side&&face<0?5:3),foot[1],8,1,shade(shoes,45));
-    }
+  // One continuous knee and ankle model handles standing, sitting and transitions.
+  for(let i=0;i<2;i++){
+    const standingFoot=pose.feet[i],seatX=side?face*9:standingFoot[0];
+    const foot=[standingFoot[0]+(seatX-standingFoot[0])*(seated?blend:0),standingFoot[1]];
+    const hipPoint=[side?0:(i?6:-6),hip];
+    const walkKnee=[(hipPoint[0]+foot[0])*.5+(side&&action==='walk'?face*2:0),(hip+foot[1])*.5];
+    const seatedKnee=[seatX,hip+4];
+    const knee=walkKnee.map((v,n)=>v+(seatedKnee[n]-v)*(seated?blend:0));
+    const ankle=[foot[0],foot[1]-2],leg=look.shorts?skin:pants;
+    pixelLine(rect,hipPoint,knee,shade(leg,-25),5);pixelLine(rect,knee,ankle,shade(leg,-25),5);
+    pixelLine(rect,hipPoint,knee,leg,3);pixelLine(rect,knee,ankle,leg,3);
+    if(look.shorts)pixelLine(rect,hipPoint,[hipPoint[0]+(knee[0]-hipPoint[0])*.55,hip+(knee[1]-hip)*.55],pants,6);
+    rect(foot[0]-(side&&face<0?5:3),foot[1]-2,8,3,shoes);
+    rect(foot[0]-(side&&face<0?5:3),foot[1],8,1,shade(shoes,45));
   }
   function drawArms(){
     const hands=contacts?contacts.map(([hx,hy])=>[(hx-x)/scale,(hy-y)/scale]):carrying?humanPose(direction,'carry',0,look).hands:pose.hands;
     for(let i=0;i<2;i++){
       if(side&&i===0&&!contacts&&!carrying)continue;
       const start=[side?face*3:(i?-1:1)*(-width/2),shoulder+3];
-      const hand=hands[i]||hands[0];
+      const target=hands[i]||hands[0],idle=standing.hands[i];
+      const hand=target.map((v,n)=>idle[n]+(v-idle[n])*blend);
       const elbow=[start[0]+(hand[0]-start[0])*.35,Math.max(start[1]+4,hand[1]+3)];
       pixelLine(rect,start,elbow,shade(shirt,-28),5);pixelLine(rect,start,elbow,shirt,3);pixelLine(rect,elbow,hand,skin,3);rect(hand[0]-2,hand[1]-1,4,3,skin);
     }

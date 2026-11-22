@@ -1,14 +1,18 @@
 // Total stature is a scene reference, not a claim about Taylor's real height.
 export const bodyReference=Object.freeze({heightCm:175,heightUnits:60,headUnits:20,torsoUnits:21,legUnits:19,maxReachUnits:24});
 export const sceneProfiles=Object.freeze({
-  town:{scale:.7,projection:'Street level uses one scale. The campus path recedes separately.'},
-  arcade:{scale:1.75,back:{y:260,scale:1.5},front:{y:488,scale:2.1},projection:'Scale increases between the rear cabinets and the front counter.'},
+  town:{scale:.7,projection:'Street level uses one scale. Campus and house paths recede continuously toward their doors.'},
+  arcade:{scale:1.75,back:{y:260,scale:1.8},front:{y:488,scale:2.1},projection:'Scale increases between the rear cabinets and the front counter.'},
   cabin:{scale:2.25,projection:'One room scale. Floor depth is separate from vertical furniture height.'},
   rooftop:{scale:1.25,projection:'One roof scale. Distant buildings are scenery, not the roof floor plane.'},
 });
+export const woodlandDepth=.55;
 export const clamp=value=>Math.max(0,Math.min(1,value));
 export function depthFactor(room,x,y){
-  return room==='town'&&x>=340&&x<=480&&y<566?.28+.72*clamp((y-303)/263):1;
+  if(room!=='town')return 1;
+  if(x>=340&&x<=480&&y<566)return .28+.72*clamp((y-303)/263);
+  if(x>=1340&&y<558)return .8+.2*clamp((y-251)/307);
+  return 1;
 }
 export function sceneBodyScale(room,y=0){
   const p=sceneProfiles[room];

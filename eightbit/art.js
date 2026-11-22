@@ -222,7 +222,7 @@ export function paintScene(ctx, id, projects, transparentSky = false) {
 
 export function person(ctx, x, y, direction = 'down', walking = false, time = 0, carrying = false, scale = 1, pose = null, gaitDistance = null) {
   return drawHuman(ctx,{x,y,direction,look:playerLook,scale,time,carrying,gaitDistance,
-    action:pose?.action || (walking?'walk':carrying?'carry':'idle'),contacts:pose?.hands});
+    action:pose?.action || (walking?'walk':carrying?'carry':'idle'),contacts:pose?.hands,poseBlend:pose?.blend??1});
 }
 export const pet = drawCompanion;
 

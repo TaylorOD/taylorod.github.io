@@ -36,13 +36,13 @@ export const scenes = {
   },
   cabin: {
     name: 'home base', subtitle: 'a few things beyond the keyboard', width: 768, height: 512,
-    spawn: { x: 384, y: 432 }, bounds: [32,304,736,456], grid: 8,
+    spawn: { x: 384, y: 424 }, bounds: [32,304,736,456], grid: 8,
     obstacles: [[80,336,248,112],[590,304,144,104],[128,304,128,24],[476,304,112,16]],
     points: [
-      point('about','a bit about taylor',640,424,'about',{hit:[590,276,144,132]}),
-      point('pets','visit Scout and your companions',336,328,'pets',{hit:[140,230,120,98]}),
+      point('about','a bit about taylor',640,432,'about',{hit:[590,276,144,132]}),
+      point('pets','visit Scout and your companions',352,328,'pets',{hit:[140,230,120,98]}),
       point('books','on the bookshelf',384,328,'books',{hit:[284,160,176,144]}),
-      point('exit','back to main street',384,440,'room:town',{hit:[324,438,118,74]}),
+      point('exit','back to main street',384,432,'room:town',{hit:[324,438,118,74]}),
     ],
   },
   rooftop: {
@@ -53,7 +53,8 @@ export const scenes = {
   },
 };
 
-export function isWalkable(scene, x, y, radius = scene === scenes.arcade ? 16 : 7) {
+export const collisionRadius=scene=>scene===scenes.arcade?16:scene===scenes.cabin?22:7;
+export function isWalkable(scene, x, y, radius = collisionRadius(scene)) {
   const [left, top, right, bottom] = scene.bounds;
   if (x < left + radius || y < top + radius || x > right - radius || y > bottom - radius) return false;
   if (scene.paths && ![[0,0],[radius,0],[-radius,0],[0,radius],[0,-radius]].every(([dx,dy]) => scene.paths.some(p => insidePolygon(x+dx,y+dy,p)))) return false;
@@ -100,7 +101,7 @@ export function findSmoothPath(scene, from, to) {
       const target = route[i], steps = Math.ceil(Math.hypot(target.x-anchor.x,target.y-anchor.y) / .5);
       let clear = true;
       for (let n = 0; n <= steps; n++) {
-        if (!isWalkable(scene, anchor.x+(target.x-anchor.x)*n/steps, anchor.y+(target.y-anchor.y)*n/steps, scene === scenes.arcade ? 16.5 : 7.5)) { clear = false; break; }
+        if (!isWalkable(scene, anchor.x+(target.x-anchor.x)*n/steps, anchor.y+(target.y-anchor.y)*n/steps, collisionRadius(scene)+.5)) { clear = false; break; }
       }
       if (!clear) break;
       end = i;

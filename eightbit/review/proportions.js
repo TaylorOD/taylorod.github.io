@@ -1,3 +1,4 @@
+import {loadInterior} from '../interior-view.js';
 import {bodyReference,sceneProfiles,sceneBodyScale,depthFactor,dimensionReport} from '../scale-rules.js';
 import {landmarks} from '../scale-landmarks.js';
 import {drawHuman,humanPose} from '../character-art.js';
@@ -27,11 +28,14 @@ for(const item of landmarks){
   const report=dimensionReport(item),row=cells([`${item.room} / ${item.label}`,`${item.heightCm} cm`,item.confidence==='unknown'?'not verified':`${report.inferredCm.toFixed(1)} cm`,item.confidence==='unknown'?'unknown':`${(report.error*100).toFixed(0)}%`,item.confidence,report.status]);
   const button=document.createElement('button');button.dataset.object=item.id;button.textContent=`${item.room} / ${item.label}`;button.onclick=()=>{$('room').value=item.room;selectRoom(item.id);$('scene-art').scrollIntoView({block:'center'});};row.firstChild.replaceChildren(button);row.lastChild.className=report.status==='mismatch'?'bad':report.status==='within range'?'good':'';$('ledger').append(row);
 }
-for(const [room,scene] of Object.entries(scenes))for(const point of scene.points){const arm=reach(room,point),pose=interactionPose(room,point);$('contacts').append(cells([`${room} / ${point.id}`,isWalkable(scene,point.x,point.y)?'clear':'blocked',pose.hands?`${arm.toFixed(1)} / ${bodyReference.maxReachUnits} ${arm<=bodyReference.maxReachUnits?'within reach':'too far'}`:'no hand contact','visual check required']));}
-for(const model of models)$('roster').append(cells([model.name,model.human?`${(bodyReference.heightCm*(model.look.scale||1)).toFixed(1)} cm`:'not assigned',model.human?(model.look.scale?'short stature needs review':'reference adult'):'physical target open']));
+for(const [room,scene] of Object.entries(scenes))for(const point of scene.points){
+  const arm=reach(room,point),pose=interactionPose(room,point),row=cells([`${room} / ${point.id}`,isWalkable(scene,point.x,point.y)?'clear':'blocked',pose.hands?`${arm.toFixed(1)} / ${bodyReference.maxReachUnits} ${arm<=bodyReference.maxReachUnits?'within reach':'too far'}`:'no hand contact','']);
+  const link=document.createElement('a');link.href=`stills.html?scene=${room}&point=${point.id}`;link.textContent='View pose and layers';row.lastChild.append(link);$('contacts').append(row);
+}
+for(const model of models)$('roster').append(cells([model.name,model.physicalReference,'design reference']));
 async function paint(){
   const room=$('room').value,item=landmarks.find(item=>item.room===room&&item.id===$('object').value),report=dimensionReport(item),scene=scenes[room],canvas=$('scene-art');
-  if(!images.has(room)){const image=new Image();image.src=new URL(`../assets/${room}.png`,import.meta.url).href;await image.decode();images.set(room,image);}
+  if(!images.has(room)){if(room==='town'){const image=new Image();image.src=new URL('../assets/town.png',import.meta.url).href;await image.decode();images.set(room,image);}else images.set(room,await loadInterior(room));}
   if(room!==$('room').value||item.id!==$('object').value)return;
   canvas.width=scene.width;canvas.height=scene.height;const ctx=canvas.getContext('2d');ctx.imageSmoothingEnabled=false;ctx.drawImage(images.get(room),0,0,scene.width,scene.height);
   const scale=sceneBodyScale(room,item.ground[1])*depthFactor(room,...item.ground),x=item.ground[0],y=item.ground[1];
