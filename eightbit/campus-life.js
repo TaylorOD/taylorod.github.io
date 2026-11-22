@@ -1,3 +1,4 @@
+import {depthFactor} from './scale-rules.js';
 import { drawResident } from './residents.js';
 
 export const students = [
@@ -26,6 +27,5 @@ export function campusActors(ctx, time, reduced = false) {
 }
 
 export function campusScale(x, y) {
-  if (x < 340 || x > 480 || y >= 566) return 1;
-  return .28 + .72 * Math.max(0, Math.min(1, (y - 303) / 263));
+  return depthFactor('town',x,y);
 }
